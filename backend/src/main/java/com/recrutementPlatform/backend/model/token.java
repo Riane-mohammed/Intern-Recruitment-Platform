@@ -1,5 +1,6 @@
 package com.recrutementPlatform.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,7 +21,15 @@ public class token {
     @Column(nullable = false, unique = true)
     private String value;
 
+    @ManyToOne
+    @JoinColumn(name = "quiz_id")
+    private quiz quiz;
+
+    @ManyToOne
+    @JoinColumn(name = "candidate_id")
+    @JsonBackReference
+    private candidate candidate;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date expirationDate;
-    
 }

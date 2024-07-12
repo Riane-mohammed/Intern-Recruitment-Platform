@@ -1,12 +1,15 @@
 package com.recrutementPlatform.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.recrutementPlatform.backend.enums.candidateGender;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -38,5 +41,13 @@ public class candidate {
 
     @Column(nullable = false)
     private String address;
+
+    @OneToMany(mappedBy = "candidate")
+    @JsonManagedReference
+    private List<token> tokens;
+
+    @OneToMany(mappedBy = "candidate")
+    @JsonManagedReference
+    private List<result> results;
 
 }

@@ -1,5 +1,6 @@
 package com.recrutementPlatform.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +24,21 @@ public class result {
     @Column(name = "taken_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date takenAt;
+
+    @ManyToOne
+    @JoinColumn(name = "quiz_id")
+    @JsonBackReference
+    private quiz quiz;
+
+    @ManyToOne
+    @JoinColumn(name = "test_id")
+    @JsonBackReference
+    private test test;
+
+    @ManyToOne
+    @JoinColumn(name = "cadidate_id")
+    @JsonBackReference
+    private candidate candidate;
 
     @PrePersist
     protected void onCreate() {

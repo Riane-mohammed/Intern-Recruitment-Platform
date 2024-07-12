@@ -1,9 +1,12 @@
 package com.recrutementPlatform.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "Section")
@@ -22,6 +25,9 @@ public class testSection {
     @Column(nullable = false, length = 50)
     private String description;
 
-    //constructor
+    @OneToMany(mappedBy = "section")
+    @JsonManagedReference
+    private List<test> tests;
+
 }
 

@@ -1,9 +1,12 @@
 package com.recrutementPlatform.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -21,10 +24,9 @@ public class answer {
     @Column(nullable = false)
     private Boolean isCorrect;
 
-    //constructor
-    public answer(String answer, Boolean isCorrect) {
-        this.answer = answer;
-        this.isCorrect = isCorrect;
-    }
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    @JsonBackReference
+    private question question;
 
 }
