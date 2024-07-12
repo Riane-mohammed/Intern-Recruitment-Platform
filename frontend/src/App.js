@@ -1,24 +1,50 @@
-import logo from './logo.svg';
+import { Button, ThemeProvider } from '@mui/material';
 import './App.css';
+import { theme } from './theme';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './routes';
+// import SignIn from './pages/admin/SignIn';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeUser, setUser } from './store/actions/userActions';
 
 function App() {
+  const user = useSelector( state => state.user.user );
+  const dispatch = useDispatch();
+
+  
+  const handleSet = ()=>{
+
+    dispatch(setUser({
+      name: 'med',
+      role: 'admin',
+      number: 1
+    }));
+  };
+
+  const handleRemove = ()=>{
+    dispatch(removeUser());
+  };
+
+  const handleDisplay = ()=>{
+    console.log(user);
+  };
+  
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      {user ? (
+        //<SignIn />
+        <>
+          <Button variant="outlined" onClick={handleSet}>SET</Button>
+          <br/>
+          <Button variant="outlined" onClick={handleRemove}>REMOVE</Button>
+          <br/>
+          <Button variant="outlined" onClick={handleDisplay}>DISPLAY</Button>
+        </>
+      ) : (
+        <RouterProvider router={router} />
+      )}
+    </ThemeProvider>
   );
 }
 
