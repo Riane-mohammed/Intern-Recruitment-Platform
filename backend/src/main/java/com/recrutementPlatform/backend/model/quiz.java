@@ -1,14 +1,16 @@
 package com.recrutementPlatform.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
@@ -40,12 +42,21 @@ public class quiz {
             inverseJoinColumns = @JoinColumn(name = "test_id"))
     private List<test> tests;
 
-    @OneToMany(mappedBy = "quiz")
+
+    @ManyToMany(mappedBy = "quizzes")
     @JsonManagedReference
+    private List<candidate> candidates = new ArrayList<>();
+
+    @OneToMany(mappedBy = "quiz")
+    @JsonBackReference
     private List<result> results;
 
     @OneToMany(mappedBy = "quiz")
-    @JsonManagedReference
+    @JsonBackReference
     private List<token> tokens;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+    }
 }

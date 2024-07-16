@@ -11,4 +11,8 @@ public class passwordUtil {
         return passwordEncoder.encode(password);
     }
 
+    public static boolean matches(String password, String encodedPassword) {
+        return passwordEncoder.matches(password, encodedPassword);
+    }
+
 }

@@ -10,25 +10,24 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
-@Table(name = "Section")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class testSection {
+public class level {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(unique=true)
     private String name;
 
-    @Column(nullable = false)
-    private String description;
-
-    @OneToMany(mappedBy = "section")
+    @OneToMany(mappedBy = "level")
     @JsonIgnore
     private List<test> tests;
 
+    //constuctor
+    public level(String name) {
+        this.name = name;
+    }
 }
-

@@ -1,6 +1,7 @@
 package com.recrutementPlatform.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,15 +30,19 @@ public class test {
     private int nbrQst;
 
     @ManyToOne
+    @JoinColumn(name = "level_id")
+    private level level;
+
+    @ManyToOne
     @JoinColumn(name = "section_id")
-    @JsonBackReference
     private testSection section;
 
     @ManyToMany(mappedBy = "tests")
+    @JsonIgnore
     private List<quiz> quizzes;
 
     @OneToMany(mappedBy = "test")
-    @JsonManagedReference
+    @JsonIgnore
     private List<result> results;
 
     @OneToMany(mappedBy = "test")

@@ -32,14 +32,14 @@ public class question {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created_at;
 
-    @OneToMany(mappedBy = "question")
-    @JsonManagedReference
-    private List<answer> answers;
-
     @ManyToOne
     @JoinColumn(name = "test_id")
     @JsonBackReference
     private test test;
+
+    @OneToMany(mappedBy = "question")
+    @JsonManagedReference
+    private List<answer> answers;
 
     //Constructor
     public question(String question, questionType type) {
