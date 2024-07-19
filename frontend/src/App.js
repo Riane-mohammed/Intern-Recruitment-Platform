@@ -1,37 +1,34 @@
 import './App.css';
+
+//router import
 import { RouterProvider } from 'react-router-dom';
-import { router } from './routes';
-import { useDispatch, useSelector } from 'react-redux';
-import { removeUser, setUser } from './store/actions/userActions';
-import LoginForm from './pages/admin/LoginForm';
-import './index.css';
+
+//redux import
+// import { useDispatch, useSelector } from 'react-redux';
+// import { removeUser, setUser } from './store/actions/userActions';
+
+//material ui import
+import { ThemeProvider } from '@emotion/react';
+import { router } from './common/routers/routes.js';
+
+//pages import
+import LoginForm from './modules/admin/ui/LoginForm.jsx';
+import { theme } from './common/utils/theme';
+
+
+
+
 function App() {
-  const user = useSelector( state => state.user.user );
-  const dispatch = useDispatch();
-
+  const user = 1;
   
-  const handleSet = ()=>{
-
-    dispatch(setUser({
-      name: 'med',
-      role: 'admin',
-      number: 1
-    }));
-  };
-
-  const handleRemove = ()=>{
-    dispatch(removeUser());
-  };
-
-  const handleDisplay = ()=>{
-    console.log(user);
-  };
-  
-
   return (
-   <div>  
-   <LoginForm/>
-   </div>
+    <ThemeProvider theme={theme}>
+      {user ? (
+        <RouterProvider router={router} />
+      ) : (
+        <LoginForm/>
+      )}
+    </ThemeProvider>
   );
 }
 

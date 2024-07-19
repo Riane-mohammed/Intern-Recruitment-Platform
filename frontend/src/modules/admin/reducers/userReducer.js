@@ -1,4 +1,4 @@
-import { REMOVE_USER, SET_USER } from "../constants/actionTypes";
+import { REMOVE_USER, SET_USER } from "../../../common/constants/actionTypes";
 
 const initialState = {
     user : {},

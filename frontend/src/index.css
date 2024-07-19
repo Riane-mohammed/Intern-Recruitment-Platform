@@ -7,25 +7,21 @@
    box-sizing: border-box;
 
 }
-body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    display:flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: url(./Assets/Portnet.jpg); 
-    background-size: cover;
-    background-position: center;
-    
-  }
-  
-  
- code{
 
-    font-family: 'Courier New', Courier, monospace;
- }
- 
-  
+/* body {
+   margin: 0;
+   font-family: 'Poppins', sans-serif;
+   -webkit-font-smoothing:antialiased;
+   -moz-osx-font-smoothing:grayscale;
+   display:flex;
+   justify-content: center;
+   align-items: center;
+   min-height: 100vh;
+   background: url("./assets/Portnet.jpg"); 
+   background-size: cover;
+   background-position: center;
+}
+
+code{
+   font-family: 'Courier New', Courier, monospace;
+} */

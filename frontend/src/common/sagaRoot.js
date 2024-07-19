@@ -1,8 +1,8 @@
 import { takeEvery } from 'redux-saga/effects';
-import { SET_USER } from '../store/constants/actionTypes';
+import { SET_USER } from './constants/actionTypes';
 
 function* workerSaga(){
-    console.log('hi man');
+    console.log('hello world !');
     yield ;
 }
 
