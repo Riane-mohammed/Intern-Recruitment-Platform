@@ -1,7 +1,9 @@
 import './App.css';
+import { RouterProvider } from 'react-router-dom';
 
 //router import
-import { RouterProvider } from 'react-router-dom';
+// import { router } from './common/routers/adminRoutes.js';
+import { quizRouter } from './common/routers/quizRoutes.js';
 
 //redux import
 // import { useDispatch, useSelector } from 'react-redux';
@@ -9,7 +11,6 @@ import { RouterProvider } from 'react-router-dom';
 
 //material ui import
 import { ThemeProvider } from '@emotion/react';
-import { router } from './common/routers/routes.js';
 
 //pages import
 import LoginForm from './modules/admin/ui/LoginForm.jsx';
@@ -24,7 +25,8 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       {user ? (
-        <RouterProvider router={router} />
+        //<RouterProvider router={router} />
+        <RouterProvider router={quizRouter} />
       ) : (
         <LoginForm/>
       )}
