@@ -15,7 +15,7 @@ public class adminConfig {
     private adminRepository adminRepo;
 
     @Bean
-    public CommandLineRunner init() {
+    public CommandLineRunner initDefaultAccount() {
         return args -> {
             if (adminRepo.count() == 0){
                 admin defaultAccount = new admin("admin", "admin@gmail.com", passwordUtil.hashPassword("admin123"));

@@ -1,5 +1,6 @@
 package com.recrutementPlatform.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.recrutementPlatform.backend.enums.candidateGender;
 import jakarta.persistence.*;
@@ -41,6 +42,15 @@ public class candidate {
 
     @Column(nullable = false)
     private String address;
+
+    @ManyToMany
+    @JoinTable(
+            name = "candidate_quiz",
+            joinColumns = @JoinColumn(name = "candidate_email"),
+            inverseJoinColumns = @JoinColumn(name = "quiz_id")
+    )
+    @JsonBackReference
+    private List<quiz> quizzes = new ArrayList<>();
 
     @OneToMany(mappedBy = "candidate")
     @JsonManagedReference

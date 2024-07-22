@@ -1,6 +1,7 @@
 package com.recrutementPlatform.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +24,7 @@ public class token {
 
     @ManyToOne
     @JoinColumn(name = "quiz_id")
+    @JsonManagedReference
     private quiz quiz;
 
     @ManyToOne

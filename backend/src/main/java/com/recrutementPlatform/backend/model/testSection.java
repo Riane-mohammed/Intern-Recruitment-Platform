@@ -1,5 +1,6 @@
 package com.recrutementPlatform.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,11 +23,11 @@ public class testSection {
     @Column(nullable = false, unique = true, length = 50)
     private String name;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private String description;
 
     @OneToMany(mappedBy = "section")
-    @JsonManagedReference
+    @JsonIgnore
     private List<test> tests;
 
 }

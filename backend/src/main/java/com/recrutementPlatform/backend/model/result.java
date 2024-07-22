@@ -1,6 +1,8 @@
 package com.recrutementPlatform.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,12 +29,12 @@ public class result {
 
     @ManyToOne
     @JoinColumn(name = "quiz_id")
-    @JsonBackReference
+    @JsonManagedReference
+    @JsonIgnore
     private quiz quiz;
 
     @ManyToOne
     @JoinColumn(name = "test_id")
-    @JsonBackReference
     private test test;
 
     @ManyToOne
