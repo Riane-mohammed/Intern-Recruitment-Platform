@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 import React from 'react'
 
 //logo
-import logo from '../../../assets/images/logoPortNetWeb.png'
+import logo from '../../../Assets/images/logoPortNetWeb.png'
 import ProgressBar from '../../../common/components/bars/progressBar'
 import { Outlet } from 'react-router-dom'
 
