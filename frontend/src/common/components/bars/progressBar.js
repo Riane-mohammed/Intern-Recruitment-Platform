@@ -1,15 +1,10 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
 
-function ProgressBar(){
+//icons
+import CheckIcon from '@mui/icons-material/Check';
 
-    const pageNames = [
-        "CONDITIONS",
-        "FORMULAIRE",
-        "RÈGLES"
-    ];
-
-    const currentPageNumber= 1;
+function ProgressBar({currentPageNumber, pageNames}){
 
     const nbrList = [];
     for (let i = 0; i < pageNames.length; i++) {
@@ -25,16 +20,14 @@ function ProgressBar(){
                 p: 2,
                 pt: 0,
                 mb: 3,
-                
             }}
         >
-            {pageNames.map((name, index) =>(
-                <>
+            {pageNames.map((name, index) => (
+                <React.Fragment key={name + index}>
                     <Box 
-                        key={name}
                         sx={{
                             bgcolor: `${index + 1 < currentPageNumber ? 'primary.main' : '' }`,
-                            border: `${index + 1 === currentPageNumber? '4' : '2'}px solid`,
+                            border: `${index + 1 === currentPageNumber ? '4' : '2'}px solid`,
                             borderColor: `${index + 1 <= currentPageNumber ? 'primary.main' : 'secondary.main' }`,
                             width: '45px',
                             height: '45px',
@@ -43,38 +36,42 @@ function ProgressBar(){
                             alignItems: 'center',
                             justifyContent: 'center',
                             position: 'relative',
-                                '&::after': {
-                                    content: `"${name}"`,
-                                    position: 'absolute',
-                                    top: 'calc(100% + 10px)',
-                                    left: '50%',
-                                    transform: 'translateX(-50%)',
-                                    fontWeight: `${index + 1 <= currentPageNumber ? 'bold' : '' }`,
-                                    color: `${index + 1 <= currentPageNumber ? 'primary.main' : 'secondary.main' }`,
-                                },
+                            '&::after': {
+                                content: `"${name}"`,
+                                position: 'absolute',
+                                top: 'calc(100% + 10px)',
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                fontWeight: `${index + 1 <= currentPageNumber ? 'bold' : '' }`,
+                                color: `${index + 1 <= currentPageNumber ? 'primary.main' : 'secondary.main' }`,
+                            },
                         }}
                     >
                         <Typography 
+                            component='div'
                             fontWeight='bold' 
                             fontSize='20px' 
                             color={index + 1 < currentPageNumber ? 'white' : 'primary.main' } 
                             fontFamily='Times new roman' 
-                            >
-                            {nbrList[index]}
+                            display='flex'
+                            alignItems='center'
+                            justifyContent='center'
+                        >
+                            {index + 1 < currentPageNumber ? <CheckIcon /> : nbrList[index] }
                         </Typography>
                     </Box>
                     {index < nbrList.length - 1 && (
                         <Box
+                            key={`connector-${index}`}
                             sx={{
                                 bgcolor: `${index + 1 < currentPageNumber ? 'primary.main' : 'secondary.main'}`,
                                 width: '175px', height: `${index + 1 < currentPageNumber ? '4' : '2'}px`,
                                 mx: '3px'
-                            }}>
-                        </Box>
+                            }}
+                        />
                     )}
-                </>
-        ))}
-
+                </React.Fragment>
+            ))}
         </Box>
     )
 }

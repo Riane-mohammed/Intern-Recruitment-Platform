@@ -1,12 +1,57 @@
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { Box } from '@mui/material'
-import React from 'react'
+import { Outlet, useParams } from 'react-router-dom'
+
+//actions
+import { setCandidateEmail, setExpired, setInexpired, setInvalid, setValid } from '../actions/candidateActions';
 
 //logo
 import logo from '../../../assets/images/logoPortNetWeb.png'
-import ProgressBar from '../../../common/components/bars/progressBar'
-import { Outlet } from 'react-router-dom'
+
+//componenets
+import Loding from '../../../common/components/loding';
+import QuizErrorPage from '../../../common/errorPages/quizErrorPage';
+
 
 function QuizLayout() {
+    const message = "Please wait while we verify your authorization to access this page.";
+    const { token } = useParams();
+
+    const dispatch = useDispatch();
+    const isValid = useSelector(state => state.candidate.isValid);
+    const isExpired = useSelector(state => state.candidate.isExpired);
+    const email = "moha@gmail.com";
+
+    useEffect(() => {
+        const TokenIsExpired = (token) => {
+            return false;
+        };
+
+        const TokenIsValid = (token) => {
+            if (token === 'azer') {
+                if (TokenIsExpired(token)) {
+                    dispatch(setInvalid());
+                    dispatch(setExpired());
+                } else {
+                    dispatch(setValid());
+                    dispatch(setInexpired());
+                    dispatch(setCandidateEmail(email))
+                }
+            } else {
+                dispatch(setInvalid());
+            }
+        };
+
+        TokenIsValid(token);
+    }, [token, dispatch]);
+
+    if (isValid === null) {
+        return (
+            <Loding message={message} />
+        );
+    }
+
     return (
         <Box
             sx={{
@@ -36,26 +81,19 @@ function QuizLayout() {
                     }}
                 />
             </Box>
-            <Box
-                sx={{
-                    // bgcolor: 'white',
-                    width: '85vw',
-                    height: '80vh',
-                }}
-            >
-                <ProgressBar />
-                <Box 
-                    sx={{
-                        bgcolor: 'white',
-                        border: '1px solid rgba(0, 0, 0, 0.12)',
-                        borderRadius: 5,
-                        minHeight: '70vh',
-                        boxShadow: 2
-                    }}
-                >
-                    <Outlet />
-                </Box>
-            </Box>
+            {isValid && !isExpired && <Outlet />}
+            {isExpired &&
+                <QuizErrorPage
+                    name="Token expiré"
+                    code="401"
+                    description="Votre token a expiré et n'est plus valide."
+                    instructions="Veuillez vous reconnecter pour obtenir un nouveau token et réessayer." />}
+            {isValid === false && !isExpired &&
+                <QuizErrorPage
+                    name="Accès non autorisé"
+                    code="401"
+                    description="Vous n'avez pas les autorisations nécessaires pour accéder à cette ressource."
+                    instructions="Veuillez vérifier votre token et réessayer. Si le problème persiste, contactez l'administrateur du système." />}
         </Box>
     )
 }
