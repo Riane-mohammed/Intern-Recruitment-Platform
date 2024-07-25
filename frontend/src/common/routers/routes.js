@@ -18,14 +18,15 @@ import Settings from '../../modules/admin/ui/settings';
 import AddAdmin from '../../modules/admin/ui/addAdmin';
 
 //quiz Pages
-import QuizHome from "../../modules/quiz/ui/quizHome";
+import QuizHome from "../../modules/quiz/ui/home";
+import QuizTests from "../../modules/quiz/ui/tests";
 
 //errors
 import AdminNotFound from "../errorPages/adminNotFound";
 import NotFound from "../errorPages/notFound";
 import QuizErrorPage from "../errorPages/quizErrorPage";
 
-const user = 0;
+const user = 1;
 
 const routes = (
     <>
@@ -33,13 +34,13 @@ const routes = (
             //Admin Routes 
             <Route path="/" element={<AdminLayout />}>
                 <Route index element={<Dashboard /> } />
-                <Route path="/Candidats" element={<Candidates />} />
-                <Route path="/Tests" element={<Tests />} />
-                <Route path="/Questions" element={<Questions />} />
-                <Route path="/Quiz" element={<Quiz />} />
-                <Route path="/Profil" element={<Profile />} />
-                <Route path="/Paramètres" element={<Settings />} />
-                <Route path="/Ajouter-Admin" element={<AddAdmin />} />
+                <Route path="Candidats" element={<Candidates />} />
+                <Route path="Tests" element={<Tests />} />
+                <Route path="Questions" element={<Questions />} />
+                <Route path="Quiz" element={<Quiz />} />
+                <Route path="Profil" element={<Profile />} />
+                <Route path="Paramètres" element={<Settings />} />
+                <Route path="Ajouter-Admin" element={<AddAdmin />} />
                 <Route path="*" element={<AdminNotFound />} />
             </Route>
         ) : (
@@ -49,6 +50,7 @@ const routes = (
         {/* Quiz Routes */}
         <Route path="/Espace-quiz/:token" element={<QuizLayout />} >
             <Route index element={<QuizHome />} />
+            <Route path="quiz-en-cours" element={<QuizTests />} />
             <Route path="*" element={<QuizErrorPage name="Page introuvable" code="404" description="L'adresse demandée n'a pas été trouvée dans le système." instructions="Vérifiez l'URL saisie et essayez d'actualiser la page. Le problème peut être temporaire."/>} />
         </Route>
 

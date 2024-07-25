@@ -1,7 +1,6 @@
 import { Box, Button, Typography } from '@mui/material'
-import React from 'react'
 
-function Regles({ handleBackButton, handleNextButton}) {
+function Regles({ handleBackButton, handleStartQuiz }) {
     return (
         <Box
             sx={{
@@ -55,9 +54,9 @@ function Regles({ handleBackButton, handleNextButton}) {
                     Précédent
                     </Button>
                 <Button
+                    onClick={handleStartQuiz}
                     variant="contained"
                     sx={{ width: '45%' }}
-                    onClick={handleNextButton}
                 >
                     Commencer
                 </Button>

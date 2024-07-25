@@ -1,9 +1,10 @@
 import { Box } from '@mui/material'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 //Actions
-import { decrement, increment } from '../actions/candidateActions';
+import { decrement, increment, setCurrentPage } from '../actions/candidateActions';
 
 //Componenets
 import ProgressBar from '../../../common/components/bars/progressBar'
@@ -14,18 +15,25 @@ import VerifyEmail from '../../../common/components/quizHomeComponents/verifyEma
 
 
 function QuizHome() {
+    const navigate = useNavigate();
+
     const [checked, setChecked] = useState(false);
     const dispatch = useDispatch();
-
+    
     const isVerified = useSelector(state => state.candidate.isVerified);
     const currentPage = useSelector(state => state.candidate.currentPage);
-
+    
     const pageNames = [
         "CONDITIONS",
         "FORMULAIRE",
         "RÈGLES"
     ];
 
+    const handleStartQuiz = () => {
+        dispatch(setCurrentPage(1));
+        navigate('quiz-en-cours');
+    };
+    
     const handleNextButton = () => {
         dispatch(increment(pageNames.length));
     };
@@ -73,8 +81,8 @@ function QuizHome() {
                     }
                     {currentPage === 3 && 
                         <Regles 
-                            handleNextButton={handleNextButton} 
                             handleBackButton={handleBackButton} 
+                            handleStartQuiz={handleStartQuiz}
                         />
                     }
                 </Box>

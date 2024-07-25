@@ -1,49 +1,76 @@
 import { DECREMENT, INCREMENT, SET_CANDIDATE, SET_CANDIDATE_EMAIL, SET_CURRENT_PAGE, SET_EXPIRED, SET_INEXPIRED, SET_INVALID, SET_INVERIFIED, SET_VALID, SET_VERIFIED } from "../../../common/constants/actionTypes";
 
-const initialState = {
-    candidate: {
-        firstName: "",
-        lastName: "",
-        gender: "",
-        email: "",
-        date: "",
-        numero: "",
-        cin: "",
-        adresse: ""
-    },
-    currentPage: 1,
-    isValid : null,
-    isExpired : null,
-    isVerified : false,
+
+const getInitialStateFromLocalStorage = () => {
+    const savedState = localStorage.getItem('candidateState');
+
+    if (savedState) {
+        return JSON.parse(savedState);
+    }
+
+    return {
+        candidate: {
+            firstName: "",
+            lastName: "",
+            gender: "",
+            email: "",
+            date: "",
+            numero: "",
+            cin: "",
+            adresse: ""
+        },
+        currentPage: 1,
+        isValid : null,
+        isExpired : null,
+        isVerified : false,
+    };
 };
 
+const initialState = getInitialStateFromLocalStorage();
+
 const candidateReducer = (state = initialState, action) => {
+    let newState;
     switch (action.type) {
         case SET_CANDIDATE_EMAIL:
-            return { ...state, candidate: { ...state.candidate , email: action.payload } };
+            newState = { ...state, candidate: { ...state.candidate , email: action.payload } };
+            break;
         case SET_CANDIDATE:
-            return { ...state, candidate: action.payload };
+            newState = { ...state, candidate: action.payload };
+            break;
         case SET_CURRENT_PAGE:
-            return { ...state, currentPage: action.payload };
+            newState = { ...state, currentPage: action.payload };
+            break;
         case INCREMENT:
-            return { ...state, currentPage: state.currentPage < action.payload ? state.currentPage + 1 : state.currentPage };
+            newState = { ...state, currentPage: state.currentPage < action.payload ? state.currentPage + 1 : state.currentPage };
+            break;
         case DECREMENT:
-            return { ...state, currentPage: state.currentPage > 1 ? state.currentPage - 1 : state.currentPage };
+            newState = { ...state, currentPage: state.currentPage > 1 ? state.currentPage - 1 : state.currentPage };
+            break;
         case SET_VALID:
-            return { ...state, isValid: true };
+            newState = { ...state, isValid: true };
+            break;
         case SET_INVALID:
-            return { ...state, isValid: false };
+            newState = { ...state, isValid: false };
+            break;
         case SET_EXPIRED:
-            return { ...state, isExpired: true };
+            newState = { ...state, isExpired: true };
+            break;
         case SET_INEXPIRED:
-            return { ...state, isExpired: false };
+            newState = { ...state, isExpired: false };
+            break;
         case SET_VERIFIED:
-            return { ...state, isVerified: true };
+            newState = { ...state, isVerified: true };
+            break;
         case SET_INVERIFIED:
-            return { ...state, isVerified: false };
+            newState = { ...state, isVerified: false };
+            break;
         default:
-            return state;
-}
+            newState = state;
+    }
+
+    localStorage.setItem('candidateState', JSON.stringify(newState));
+
+    return newState;
 };
 
 export default candidateReducer;
