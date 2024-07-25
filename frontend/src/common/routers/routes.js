@@ -24,7 +24,7 @@ import QuizTests from "../../modules/quiz/ui/tests";
 //errors
 import AdminNotFound from "../errorPages/adminNotFound";
 import NotFound from "../errorPages/notFound";
-import QuizErrorPage from "../errorPages/quizErrorPage";
+import QuizErrorPage from "../errorPages/quizError";
 
 const user = 1;
 

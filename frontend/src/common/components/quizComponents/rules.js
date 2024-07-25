@@ -1,6 +1,6 @@
 import { Box, Button, Typography } from '@mui/material'
 
-function Regles({ handleBackButton, handleStartQuiz }) {
+function Rules({ handleBackButton, handleStart }) {
     return (
         <Box
             sx={{
@@ -18,7 +18,7 @@ function Regles({ handleBackButton, handleStartQuiz }) {
                     Lisez attentivement les instructions avant de commencer.
                 </Typography>
             </Box>
-            <Typography mx='150px' fontFamily='poppins, Sora' >
+            <Typography  component='div' mx='150px' fontFamily='poppins, Sora' >
                 Pour compléter votre candidature, vous devrez passer un test en ligne d'une durée de 15 minutes.
                 Ce test se divise en trois sections : <span style={{color: 'blue'}}>Calcul Mental</span>, <span style={{color: 'blue'}}>Psychologique</span> et<span style={{color: 'blue'}}>Technique</span> .
                 <br/>
@@ -54,7 +54,7 @@ function Regles({ handleBackButton, handleStartQuiz }) {
                     Précédent
                     </Button>
                 <Button
-                    onClick={handleStartQuiz}
+                    onClick={handleStart}
                     variant="contained"
                     sx={{ width: '45%' }}
                 >
@@ -65,4 +65,4 @@ function Regles({ handleBackButton, handleStartQuiz }) {
     )
 }
 
-export default Regles
+export default Rules

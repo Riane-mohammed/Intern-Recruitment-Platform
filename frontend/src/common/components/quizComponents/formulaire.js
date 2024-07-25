@@ -93,10 +93,9 @@ function Formulaire({ handleBackButton, handleNextButton }) {
                 <TextField
                     disabled
                     name="email"
-                    value={form.email|| ""}
                     onChange={handleChange}
                     label="Adresse email"
-                    defaultValue='med@gmail.com'
+                    defaultValue={form.email|| ""}
                     type="email"
                 />
                 <TextField

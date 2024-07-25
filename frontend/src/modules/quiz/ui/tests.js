@@ -3,15 +3,31 @@ import { Box } from '@mui/material'
 //Components
 import ProgressBar from '../../../common/components/bars/progressBar'
 import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
 function QuizTests() {
-    const currentPage = useSelector( state => state.candidate.currentPage );
+    const currentPage = useSelector(state => state.candidate.currentPage);
 
     const testNames = [
         "Calcul Mental",
         "Psychologique",
         "Technique"
     ];
+
+    
+    useEffect(() => {
+        const handleBeforeUnload = (event) => {
+            event.preventDefault();
+            event.returnValue = 'Are you sure you want to leave this page?';
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+
+    }, []);
 
     return (
         <Box
@@ -33,8 +49,8 @@ function QuizTests() {
                 }}
             > 
             </Box>
-        </Box>        
-    )
+        </Box>
+    );
 }
 
-export default QuizTests
+export default QuizTests;

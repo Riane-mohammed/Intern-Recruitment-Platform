@@ -1,4 +1,4 @@
-import { DECREMENT, INCREMENT, SET_CANDIDATE, SET_CANDIDATE_EMAIL, SET_CURRENT_PAGE, SET_EXPIRED, SET_INEXPIRED, SET_INVALID, SET_INVERIFIED, SET_VALID, SET_VERIFIED } from "../../../common/constants/actionTypes";
+import { DECREMENT, INCREMENT, SET_CANDIDATE, SET_CANDIDATE_EMAIL, SET_CURRENT_PAGE, SET_DISQUALIFIED, SET_EXPIRED, SET_PREVIOUS_PATH, SET_VALID, SET_VERIFIED } from "../../../common/constants/actionTypes";
 
 
 const getInitialStateFromLocalStorage = () => {
@@ -20,9 +20,11 @@ const getInitialStateFromLocalStorage = () => {
             adresse: ""
         },
         currentPage: 1,
+        previousPath:"",
         isValid : null,
         isExpired : null,
-        isVerified : false,
+        isVerified: false,
+        isDisqualified: false,
     };
 };
 
@@ -37,6 +39,9 @@ const candidateReducer = (state = initialState, action) => {
         case SET_CANDIDATE:
             newState = { ...state, candidate: action.payload };
             break;
+        case SET_PREVIOUS_PATH:
+            newState = { ...state, previousPath: action.payload };
+            break;
         case SET_CURRENT_PAGE:
             newState = { ...state, currentPage: action.payload };
             break;
@@ -47,22 +52,16 @@ const candidateReducer = (state = initialState, action) => {
             newState = { ...state, currentPage: state.currentPage > 1 ? state.currentPage - 1 : state.currentPage };
             break;
         case SET_VALID:
-            newState = { ...state, isValid: true };
-            break;
-        case SET_INVALID:
-            newState = { ...state, isValid: false };
+            newState = { ...state, isValid: action.payload };
             break;
         case SET_EXPIRED:
-            newState = { ...state, isExpired: true };
-            break;
-        case SET_INEXPIRED:
-            newState = { ...state, isExpired: false };
+            newState = { ...state, isExpired: action.payload };
             break;
         case SET_VERIFIED:
-            newState = { ...state, isVerified: true };
+            newState = { ...state, isVerified: action.payload };
             break;
-        case SET_INVERIFIED:
-            newState = { ...state, isVerified: false };
+        case SET_DISQUALIFIED:
+            newState = { ...state, isDisqualified: action.payload };
             break;
         default:
             newState = state;

@@ -19,7 +19,7 @@ const VerifyEmail = ({ setIsVerified }) => {
     const handleVerify = () => {
         if (code === "123456") {
             setError(false);
-            dispatch(setVerified());
+            dispatch(setVerified(true));
         } else {
             setError(true);
         }

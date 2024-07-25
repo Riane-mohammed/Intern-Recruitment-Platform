@@ -19,12 +19,12 @@ function Conditions({ checked, handleCheckboxChange, handleNextButton }){
               Vos droits et responsabilités
           </Typography>
         </Box>
-        <Typography mx='150px' fontFamily='poppins, Sora' >
+        <Typography component='div' mx='150px' fontFamily='poppins, Sora' >
           Veuillez lire et accepter les Mentions Légales et Conditions Générales avant de commencer l'examen.
           En accédant à notre plateforme et en passant l'examen, vous acceptez de respecter les conditions et règles suivantes :
           <br/>
           <br />
-          <Box sx={{ml: 4}}>
+          <Box component='ul' sx={{ml: 4}}>
             <li>
               Toute tentative de tricherie ou de fraude entraînera une disqualification immédiate.
             </li>

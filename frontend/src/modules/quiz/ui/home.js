@@ -8,17 +8,24 @@ import { decrement, increment, setCurrentPage } from '../actions/candidateAction
 
 //Componenets
 import ProgressBar from '../../../common/components/bars/progressBar'
-import Conditions from '../../../common/components/quizHomeComponents/conditions';
-import Formulaire from '../../../common/components/quizHomeComponents/formulaire';
-import Regles from '../../../common/components/quizHomeComponents/regles';
-import VerifyEmail from '../../../common/components/quizHomeComponents/verifyEmail';
+import Conditions from '../../../common/components/quizComponents/conditions';
+import Formulaire from '../../../common/components/quizComponents/formulaire';
+import Rules from '../../../common/components/quizComponents/rules';
+import VerifyEmail from '../../../common/components/quizComponents/verifyEmail';
+import AlertModal from '../../../common/components/quizComponents/alertModal';
+
+//icons
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 
 function QuizHome() {
+    const confirmationAlert = "Confirmez-vous que toutes les données sont correctes? Une fois le quiz lancé, les informations saisies ne pourront plus être modifiées.";
+
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const [checked, setChecked] = useState(false);
-    const dispatch = useDispatch();
+    const [open, setOpen] = useState(false);
     
     const isVerified = useSelector(state => state.candidate.isVerified);
     const currentPage = useSelector(state => state.candidate.currentPage);
@@ -28,6 +35,9 @@ function QuizHome() {
         "FORMULAIRE",
         "RÈGLES"
     ];
+
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
     const handleStartQuiz = () => {
         dispatch(setCurrentPage(1));
@@ -45,6 +55,8 @@ function QuizHome() {
     const handleCheckboxChange = (event) => {
         setChecked(event.target.checked);
     };
+
+    const handleStart = () => handleOpen();;
 
     return (
         isVerified ? (
@@ -80,11 +92,20 @@ function QuizHome() {
                         />
                     }
                     {currentPage === 3 && 
-                        <Regles 
+                        <Rules 
                             handleBackButton={handleBackButton} 
-                            handleStartQuiz={handleStartQuiz}
+                            handleStart={handleStart}
                         />
                     }
+                    <AlertModal
+                        open={open}
+                        handleClose={handleClose}
+                        hendleConfirm={handleStartQuiz}
+                        title="Alerte d'information"
+                        color='primary.main'
+                        icon={<InfoOutlinedIcon color='primary' sx={{ mr: 1 }} />}
+                        message={confirmationAlert}
+                        />
                 </Box>
             </Box>
         ) : (

@@ -1,27 +1,48 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { Box } from '@mui/material'
-import { Outlet, useParams } from 'react-router-dom'
+import { Outlet, useLocation, useParams } from 'react-router-dom'
 
 //actions
-import { setCandidateEmail, setExpired, setInexpired, setInvalid, setValid } from '../actions/candidateActions';
+import { setCandidateEmail, setDisqualified, setExpired, setPreviousPath, setValid } from '../actions/candidateActions';
 
 //logo
 import logo from '../../../assets/images/logoPortNetWeb.png'
 
 //componenets
 import Loding from '../../../common/components/loding';
-import QuizErrorPage from '../../../common/errorPages/quizErrorPage';
+
+//Error Pages
+import QuizErrorPage from '../../../common/errorPages/quizError';
+import DisqualifiedPage from '../../../common/errorPages/disqualifiedPage';
 
 
 function QuizLayout() {
     const message = "Please wait while we verify your authorization to access this page.";
+    const quizPath = "/espace-quiz/azer/quiz-en-cours";
     const { token } = useParams();
+    const location = useLocation();
 
     const dispatch = useDispatch();
+
+    const previousPath = useSelector(state => state.candidate.previousPath);
     const isValid = useSelector(state => state.candidate.isValid);
     const isExpired = useSelector(state => state.candidate.isExpired);
+    const isDisqualified = useSelector(state => state.candidate.isDisqualified);
+
     const email = "moha@gmail.com";
+
+
+    useEffect(() => {
+        const handlePathChange = () => {
+            if (previousPath === quizPath && location.pathname !== quizPath) {
+                dispatch(setDisqualified(true));
+            }
+        };
+
+        handlePathChange();
+        dispatch(setPreviousPath(location.pathname));
+    }, [location.pathname, previousPath, dispatch]);
 
     useEffect(() => {
         const TokenIsExpired = (token) => {
@@ -29,21 +50,29 @@ function QuizLayout() {
         };
 
         const TokenIsValid = (token) => {
-            if (token === 'azer') {
-                if (TokenIsExpired(token)) {
-                    dispatch(setInvalid());
-                    dispatch(setExpired());
-                } else {
-                    dispatch(setValid());
-                    dispatch(setInexpired());
-                    dispatch(setCandidateEmail(email))
-                }
+            if (token === "azer") {
+                return true;
             } else {
-                dispatch(setInvalid());
+                return false;
             }
         };
 
-        TokenIsValid(token);
+        const validateToken = (token) => {
+            if (TokenIsValid(token)) {
+                if (TokenIsExpired(token)) {
+                    dispatch(setValid(false));
+                    dispatch(setExpired(true));
+                } else {
+                    dispatch(setValid(true));
+                    dispatch(setExpired(false));
+                    dispatch(setCandidateEmail(email))
+                }
+            } else {
+                dispatch(setValid(false));
+            }
+        };
+
+        validateToken(token);
     }, [token, dispatch]);
 
     if (isValid === null) {
@@ -81,7 +110,8 @@ function QuizLayout() {
                     }}
                 />
             </Box>
-            {isValid && !isExpired && <Outlet />}
+            {isDisqualified && <DisqualifiedPage />}
+            {isValid && !isExpired && !isDisqualified && <Outlet />}
             {isExpired &&
                 <QuizErrorPage
                     name="Token expiré"
