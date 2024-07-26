@@ -1,7 +1,7 @@
 import { AppBar, Avatar, Divider, IconButton, ListItemIcon, Menu, MenuItem, Toolbar, Typography } from '@mui/material'
 import { useState } from "react";
 import { Logout } from '@mui/icons-material';
-import { locationNames } from '../../routers/adminRoutes';
+import { locationNames } from '../../routers/routes';
 
 //icons
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
