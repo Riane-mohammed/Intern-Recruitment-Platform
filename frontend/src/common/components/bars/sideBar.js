@@ -1,6 +1,6 @@
 import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material'
 import { NavLink } from 'react-router-dom'
-import logo from '../../../assets/images/logoPortNetWeb.png'
+import logo from '../../../Assets/images/logoPortNetWeb.png'
 
 function SideBar ({SideBarLinks, location, drawerWidth}) {
 

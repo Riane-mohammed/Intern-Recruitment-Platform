@@ -23,8 +23,6 @@ const LoginForm=()=>{
             </div>
             <button type="submit">Login</button>
         </form>
-        <h1>This is a test</h1>
-        <h1>This is a test2222</h1>
 
         </div>
         
