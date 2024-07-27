@@ -48,7 +48,7 @@ const routes = (
         )}
 
         {/* Quiz Routes */}
-        <Route path="/Espace-quiz/:token" element={<QuizLayout />} >
+        <Route path="/Espace-quiz/token=:token" element={<QuizLayout />} >
             <Route index element={<QuizHome />} />
             <Route path="quiz-en-cours" element={<QuizTests />} />
             <Route path="*" element={<QuizErrorPage name="Page introuvable" code="404" description="L'adresse demandée n'a pas été trouvée dans le système." instructions="Vérifiez l'URL saisie et essayez d'actualiser la page. Le problème peut être temporaire."/>} />
