@@ -1,28 +1,5 @@
-/*import { Typography } from '@mui/material'
-
-function Candidates () {
-    return (
-        <div>
-            <Typography variant='h2' component='p' textAlign='center' >
-                Candidats
-            </Typography>
-        </div>
-    )
-}
-
-export default Candidates*/
 import React, { useState } from 'react';
-import { 
-  Typography, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TableRow, 
-  TablePagination, 
-  Paper 
-} from '@mui/material';
+import { Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination } from '@mui/material';
 
 // Données de démonstration pour les candidats
 const rows = [
@@ -67,10 +44,11 @@ function Candidates() {
 
   return (
     <div>
-      <Typography variant='h2' component='p' textAlign='center'>
-        Candidats
-      </Typography>
-      <TableContainer component={Paper} style={{ marginTop: '20px' }}>
+      <TableContainer
+        component= 'Paper'
+        sx={{
+          marginTop: '20px',
+        }}>
         <Table>
           <TableHead>
             <TableRow>
