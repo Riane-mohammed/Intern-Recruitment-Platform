@@ -1,23 +1,23 @@
 import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material'
 import { NavLink } from 'react-router-dom'
-import logo from '../../../Assets/images/logoPortNetWeb.png'
+import logo from '../../../assets/images/logoPortNetWeb.png'
 
 function SideBar ({SideBarLinks, location, drawerWidth}) {
 
     return (
         <Drawer 
-        variant='permanent'
-        anchor='left'
-        sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            '& .MuiDrawer-paper': {
+            variant='permanent'
+            anchor='left'
+            sx={{
                 width: drawerWidth,
-                borderRadius: '0px 20px 20px 0px',
-                boxSizing: 'border-box',
-            },
-        }}
-    >
+                flexShrink: 0,
+                '& .MuiDrawer-paper': {
+                    width: drawerWidth,
+                    borderRadius: '0px 20px 20px 0px',
+                    boxSizing: 'border-box',
+                },
+            }}
+        >
 
         <Box 
             sx={{
@@ -36,27 +36,33 @@ function SideBar ({SideBarLinks, location, drawerWidth}) {
         </Box>
         <List
             sx={{
-                mt: '20px'
+                    mt: '20px',
+                    ml: '10px'
             }}
         >
             {SideBarLinks.map((link)=>(
                 <ListItem 
-                key={link.name}
-                component={NavLink}
-                to={link.path}
-                sx={{
-                        borderRadius: '20px 0 0 20px',
-                        '&.active': {
-                            bgcolor: 'grey.light',
-                        }
-                    }}
-                className={location.pathname === link.path ? 'active' : ''}>
+                    key={link.name}
+                    component={NavLink}
+                    to={link.path}
+                    sx={{
+                        borderRadius: '12px 0 0 12px',
+                        maxWidth: drawerWidth,
+                            '&.active': {
+                                bgcolor: 'blue.light',
+                                borderRight: '3px solid',
+                                borderColor: 'primary.main'
+                            }
+                        }}
+                    className={location.pathname === link.path ? 'active' : ''}
+                >
                     <ListItemIcon>{location.pathname === link.path ? link.activeIcon : link.icon }</ListItemIcon>
                     <ListItemText 
                         primary={link.name}
                         primaryTypographyProps={{
-                            fontWeight: 600,
-                            color: `${location.pathname === link.path ? 'primary' : 'grey'}`,
+                            fontFamily: 'Poppins',
+                            fontWeight: '600',
+                            color: `${location.pathname === link.path ? 'primary' : '#999999'}`,
                         }}
                         />
                 </ListItem>
