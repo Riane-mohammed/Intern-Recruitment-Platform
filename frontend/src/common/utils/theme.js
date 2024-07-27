@@ -8,11 +8,12 @@ export const theme = createTheme({
         secondary: {
             main: '#596DB9',
         },
-        portnet: {
-            main: '#e3d5eb',
+        blue : {
+            light : '#edf0ff',
         },
         grey : {
-            light: '#f6f6f6',
+            light: '#edf0ff',
+            // light: '#f6f6f6',
             main : '#333',
         }
     }
