@@ -11,10 +11,15 @@ export const theme = createTheme({
         blue : {
             light : '#edf0ff',
         },
+        red: {
+            main : '#E72929',
+        },
         grey : {
-            light: '#edf0ff',
-            // light: '#f6f6f6',
+            light: '#e0e0e0',
             main : '#333',
         }
-    }
+    },
+    typography: {
+        fontFamily: 'Poppins, Roboto, Helvetica, Arial, sans-serif', 
+    },
     })

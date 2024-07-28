@@ -61,7 +61,7 @@ function SideBar ({SideBarLinks, location, drawerWidth}) {
                         primary={link.name}
                         primaryTypographyProps={{
                             fontFamily: 'Poppins',
-                            fontWeight: '600',
+                            fontWeight: '500',
                             color: `${location.pathname === link.path ? 'primary' : '#999999'}`,
                         }}
                         />

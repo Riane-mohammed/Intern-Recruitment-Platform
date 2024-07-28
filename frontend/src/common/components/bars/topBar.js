@@ -23,7 +23,7 @@ function TopBar({drawerWidth, admin, location, accountItems}) {
         <AppBar
         elevation={0}
         sx={{
-            bgcolor: 'grey.light',
+            bgcolor: 'blue.light',
             width: `calc( 100% - ${drawerWidth}px )`,
         }}
         >

@@ -7,7 +7,7 @@ import { Outlet, useLocation, useParams } from 'react-router-dom'
 import { setCandidateEmail, setDisqualified, setExpired, setPreviousPath, setValid } from '../actions/candidateActions';
 
 //logo
-import logo from '../../../Assets/images/logoPortNetWeb.png';
+import logo from '../../../assets/images/logoPortNetWeb.png';
 
 //componenets
 import Loding from '../../../common/components/loding';
@@ -19,8 +19,8 @@ import DisqualifiedPage from '../../../common/errorPages/disqualifiedPage';
 
 function QuizLayout() {
     const message = "Please wait while we verify your authorization to access this page.";
-    const quizPath = "/espace-quiz/azer/quiz-en-cours";
     const { token } = useParams();
+    const quizPath = `/espace-quiz/token=${token}/quiz-en-cours`;
     const location = useLocation();
 
     const dispatch = useDispatch();
@@ -42,7 +42,7 @@ function QuizLayout() {
 
         handlePathChange();
         dispatch(setPreviousPath(location.pathname));
-    }, [location.pathname, previousPath, dispatch]);
+    }, [location.pathname, previousPath, dispatch, quizPath]);
 
     useEffect(() => {
         const TokenIsExpired = (token) => {

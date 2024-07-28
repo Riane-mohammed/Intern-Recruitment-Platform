@@ -2,13 +2,11 @@ import React from 'react';
 import {
   TextField, Button, Checkbox, FormControlLabel, Typography, Box, Paper, Link
 } from '@mui/material';
+
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LockIcon from '@mui/icons-material/Lock';
-import backgroundUrl from '../../../Assets/Portnet.jpg';
+import backgroundUrl from '../../../assets/Portnet.jpg';
 
-// Import custom fonts
-import '@fontsource/roboto'; // Default font for Material-UI
-import '@fontsource/poppins'; // Example of custom font
 //this is a test
 const styles = {
   container: {

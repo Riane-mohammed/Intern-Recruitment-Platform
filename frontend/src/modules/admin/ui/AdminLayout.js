@@ -26,8 +26,10 @@ const admin ={
 }
 
 function AdminLayout() {
-
     const location = useLocation();
+    const excludedPaths = ['/'];
+
+    const isExcludedPath = excludedPaths.includes(location.pathname);
 
     const SideBarLinks = [
         {
@@ -79,7 +81,7 @@ function AdminLayout() {
         <Box 
         sx={{
             display: 'flex',
-            bgcolor: 'grey.light',
+            bgcolor: 'blue.light',
         }}>
 
         <TopBar location={location} drawerWidth={drawerWidth} admin={admin} accountItems={accountItems} />
@@ -100,8 +102,8 @@ function AdminLayout() {
                     sx={{
                         mx: 1,
                         borderRadius: 5,
-                        border: '1px solid rgba(0, 0, 0, 0.12)',
-                        bgcolor: '#fff',
+                        border: isExcludedPath ? 'none' : '1px solid rgba(0, 0, 0, 0.12)',
+                        bgcolor: isExcludedPath ? '' : '#fff',
                         minHeight: `calc( 100vh - ( ${theme.mixins.toolbar.minHeight}px + 15px ) )`,
                     }}
                 >
