@@ -1,4 +1,4 @@
-import { DECREMENT, INCREMENT, SET_CANDIDATE, SET_CANDIDATE_EMAIL, SET_CURRENT_PAGE, SET_DISQUALIFIED, SET_EXPIRED, SET_PREVIOUS_PATH, SET_VALID, SET_VERIFIED } from "../../../common/constants/actionTypes";
+import { DECREMENT, INCREMENT, INCREMENT_QUESTION_NUMBER, SET_CANDIDATE, SET_CANDIDATE_EMAIL, SET_CURRENT_PAGE, SET_DISQUALIFIED, SET_EXPIRED, SET_FINISHED, SET_PREVIOUS_PATH, SET_QUESTION_NUMBER, SET_STARTED, SET_VALID, SET_VERIFIED } from "../../../common/constants/actionTypes";
 
 
 const getInitialStateFromLocalStorage = () => {
@@ -25,6 +25,9 @@ const getInitialStateFromLocalStorage = () => {
         isExpired : null,
         isVerified: false,
         isDisqualified: false,
+        isStarted: false,
+        isFinished: false,
+        questionNbr: 0,
     };
 };
 
@@ -62,6 +65,18 @@ const candidateReducer = (state = initialState, action) => {
             break;
         case SET_DISQUALIFIED:
             newState = { ...state, isDisqualified: action.payload };
+            break;
+        case SET_STARTED:
+            newState = { ...state, isStarted: action.payload };
+            break;
+        case SET_FINISHED:
+            newState = { ...state, isFinished: action.payload };
+            break;
+        case SET_QUESTION_NUMBER:
+            newState = { ...state, questionNbr: action.payload };
+            break;
+        case INCREMENT_QUESTION_NUMBER:
+            newState = { ...state, questionNbr: state.questionNbr < action.payload ? state.questionNbr + 1 : state.questionNbr };
             break;
         default:
             newState = state;

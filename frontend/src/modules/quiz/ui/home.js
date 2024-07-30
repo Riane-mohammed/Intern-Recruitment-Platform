@@ -8,11 +8,11 @@ import { decrement, increment, setCurrentPage } from '../actions/candidateAction
 
 //Componenets
 import ProgressBar from '../../../common/components/bars/progressBar'
-import Conditions from '../../../common/components/quizComponents/conditions';
-import Formulaire from '../../../common/components/quizComponents/formulaire';
-import Rules from '../../../common/components/quizComponents/rules';
-import VerifyEmail from '../../../common/components/quizComponents/verifyEmail';
-import AlertModal from '../../../common/components/quizComponents/alertModal';
+import Conditions from '../../../common/components/quizComponents/home/conditions';
+import Formulaire from '../../../common/components/quizComponents/home/formulaire';
+import Rules from '../../../common/components/quizComponents/home/rules';
+import VerifyEmail from '../../../common/components/quizComponents/home/verifyEmail';
+import AlertModal from '../../../common/components/quizComponents/home/alertModal';
 
 //icons
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';

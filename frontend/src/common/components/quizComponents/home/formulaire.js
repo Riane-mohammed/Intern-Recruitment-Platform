@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 
 //Actions
-import { setCandidate } from '../../../modules/quiz/actions/candidateActions';
+import { setCandidate } from '../../../../modules/quiz/actions/candidateActions';
 
 function Formulaire({ handleBackButton, handleNextButton }) {
     const dispatch = useDispatch();

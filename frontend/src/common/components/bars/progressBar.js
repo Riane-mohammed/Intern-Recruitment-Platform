@@ -38,7 +38,7 @@ function ProgressBar({currentPageNumber, pageNames}){
                             position: 'relative',
                             '&::after': {
                                 content: `"${name}"`,
-                                width: '100px',
+                                width: '130PX',
                                 textAlign: 'center',
                                 position: 'absolute',
                                 top: 'calc(100% + 10px)',

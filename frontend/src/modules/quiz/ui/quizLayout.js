@@ -11,6 +11,7 @@ import logo from '../../../assets/images/logoPortNetWeb.png';
 
 //componenets
 import Loding from '../../../common/components/loding';
+import FinishedPage from '../../../common/components/quizComponents/tests/finishedPage';
 
 //Error Pages
 import QuizErrorPage from '../../../common/errorPages/quizError';
@@ -29,20 +30,21 @@ function QuizLayout() {
     const isValid = useSelector(state => state.candidate.isValid);
     const isExpired = useSelector(state => state.candidate.isExpired);
     const isDisqualified = useSelector(state => state.candidate.isDisqualified);
+    const isFinished = useSelector(state => state.candidate.isFinished);
 
     const email = "moha@gmail.com";
 
 
     useEffect(() => {
         const handlePathChange = () => {
-            if (previousPath === quizPath && location.pathname !== quizPath) {
+            if (previousPath === quizPath && location.pathname !== quizPath && !isFinished ) {
                 dispatch(setDisqualified(true));
             }
         };
 
         handlePathChange();
         dispatch(setPreviousPath(location.pathname));
-    }, [location.pathname, previousPath, dispatch, quizPath]);
+    }, [location.pathname, previousPath, dispatch, quizPath, isFinished]);
 
     useEffect(() => {
         const TokenIsExpired = (token) => {
@@ -111,7 +113,8 @@ function QuizLayout() {
                 />
             </Box>
             {isDisqualified && <DisqualifiedPage />}
-            {isValid && !isExpired && !isDisqualified && <Outlet />}
+            {isFinished && !isDisqualified && <FinishedPage />}
+            {isValid && !isExpired && !isDisqualified && !isFinished && <Outlet />}
             {isExpired &&
                 <QuizErrorPage
                     name="Token expiré"

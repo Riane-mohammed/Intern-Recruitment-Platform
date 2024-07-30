@@ -3,7 +3,7 @@ import { Box, Typography, TextField, Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 
 //Actions
-import { setVerified } from '../../../modules/quiz/actions/candidateActions';
+import { setVerified } from '../../../../modules/quiz/actions/candidateActions';
 
 const VerifyEmail = ({ setIsVerified }) => {
     const [code, setCode] = useState('');
