@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Box, IconButton, Checkbox, Typography, TextField } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Box, IconButton, Checkbox, Typography, MenuItem, Select, FormControl, InputLabel, TextField } from '@mui/material';
 
 // Components
+import Search from '../../../common/components/search';
 import ViewModal from '../../../common/components/adminComponents.js/viewModal';
 import ModifyModal from '../../../common/components/adminComponents.js/modifyModal';
 
@@ -10,6 +11,7 @@ import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 const tests = [
   { id: 1, name: 'Math Test 1', category: 'Mathematics', level: 'Beginner' },
@@ -31,8 +33,7 @@ function Tests() {
   const [openModifyModal, setOpenModifyModal] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchCategory, setSearchCategory] = useState('');
-  const [searchLevel, setSearchLevel] = useState('');
+  const [searchFilter, setSearchFilter] = useState('name');
   const rowsPerPage = 8;
 
   const handleOpenViewModal = (row) => {
@@ -84,43 +85,41 @@ function Tests() {
   const handleSave = () => console.log('updated successfully');
 
   const filteredTests = tests.filter((test) => {
-    return (
-      (test.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-       test.category.toLowerCase().includes(searchCategory.toLowerCase()) || 
-       test.level.toLowerCase().includes(searchLevel.toLowerCase()))
-    );
+    const lowercasedTerm = searchTerm.toLowerCase();
+    if (searchFilter === 'name') {
+      return test.name.toLowerCase().includes(lowercasedTerm);
+    } else if (searchFilter === 'category') {
+      return test.category.toLowerCase().includes(lowercasedTerm);
+    } else if (searchFilter === 'level') {
+      return test.level.toLowerCase().includes(lowercasedTerm);
+    }
+    return true;
   });
 
   return (
     <Box sx={{ p: '10px' }}>
-      <Box sx={{
-        p: '20px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '10px'
-      }}>
+      <Box sx={{ p: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Box sx={{ display: 'flex', gap: '10px' }}>
+          <Box sx={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <FormControl variant="outlined" size="small">
+              <InputLabel>Filter By</InputLabel>
+              <Select
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+                label="Filter By"
+                startAdornment={<FilterListIcon />}
+              >
+                <MenuItem value="name">Name</MenuItem>
+                <MenuItem value="category">Category</MenuItem>
+                <MenuItem value="level">Level</MenuItem>
+              </Select>
+            </FormControl>
             <TextField
-              label="Search by Name"
+              label="Search"
               variant="outlined"
               size="small"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <TextField
-              label="Search by Category"
-              variant="outlined"
-              size="small"
-              value={searchCategory}
-              onChange={(e) => setSearchCategory(e.target.value)}
-            />
-            <TextField
-              label="Search by Level"
-              variant="outlined"
-              size="small"
-              value={searchLevel}
-              onChange={(e) => setSearchLevel(e.target.value)}
             />
           </Box>
           <Box
@@ -143,7 +142,7 @@ function Tests() {
               </IconButton>
               <IconButton
                 sx={{ width: '45px', height: '45px' }}
-                onClick={() => handleOpenModifyModal(null)} // Open Add Modal with no data
+                onClick={() =>{} } 
                 aria-label="Add"
               >
                 <AddRoundedIcon color='green' />
@@ -204,6 +203,7 @@ function Tests() {
                           checked={isItemSelected}
                           onChange={() => handleClick(test.id)}
                           inputProps={{
+                           
                             'aria-label': `select row ${test.id}`
                           }}
                         />
