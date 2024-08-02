@@ -7,11 +7,10 @@ import { Outlet, useLocation, useParams } from 'react-router-dom'
 import { setCandidateEmail, setDisqualified, setExpired, setPreviousPath, setValid } from '../actions/candidateActions';
 
 //logo
-import logo from '../../../assets/images/logoPortNetWeb.png';
+import logo from '../../../Assets/images/logoPortNetWeb.png';
 
 //componenets
 import Loding from '../../../common/components/loding';
-import FinishedPage from '../../../common/components/quizComponents/tests/finishedPage';
 
 //Error Pages
 import QuizErrorPage from '../../../common/errorPages/quizError';
@@ -20,8 +19,8 @@ import DisqualifiedPage from '../../../common/errorPages/disqualifiedPage';
 
 function QuizLayout() {
     const message = "Please wait while we verify your authorization to access this page.";
+    const quizPath = "/espace-quiz/azer/quiz-en-cours";
     const { token } = useParams();
-    const quizPath = `/espace-quiz/token=${token}/quiz-en-cours`;
     const location = useLocation();
 
     const dispatch = useDispatch();
@@ -30,21 +29,20 @@ function QuizLayout() {
     const isValid = useSelector(state => state.candidate.isValid);
     const isExpired = useSelector(state => state.candidate.isExpired);
     const isDisqualified = useSelector(state => state.candidate.isDisqualified);
-    const isFinished = useSelector(state => state.candidate.isFinished);
 
     const email = "moha@gmail.com";
 
 
     useEffect(() => {
         const handlePathChange = () => {
-            if (previousPath === quizPath && location.pathname !== quizPath && !isFinished ) {
+            if (previousPath === quizPath && location.pathname !== quizPath) {
                 dispatch(setDisqualified(true));
             }
         };
 
         handlePathChange();
         dispatch(setPreviousPath(location.pathname));
-    }, [location.pathname, previousPath, dispatch, quizPath, isFinished]);
+    }, [location.pathname, previousPath, dispatch]);
 
     useEffect(() => {
         const TokenIsExpired = (token) => {
@@ -113,8 +111,7 @@ function QuizLayout() {
                 />
             </Box>
             {isDisqualified && <DisqualifiedPage />}
-            {isFinished && !isDisqualified && <FinishedPage />}
-            {isValid && !isExpired && !isDisqualified && !isFinished && <Outlet />}
+            {isValid && !isExpired && !isDisqualified && <Outlet />}
             {isExpired &&
                 <QuizErrorPage
                     name="Token expiré"
