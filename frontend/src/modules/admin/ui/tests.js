@@ -109,7 +109,7 @@ function Tests() {
                 label="Filter By"
                 startAdornment={<FilterListIcon />}
               >
-                <MenuItem value="name">Name</MenuItem>
+                
                 <MenuItem value="category">Category</MenuItem>
                 <MenuItem value="level">Level</MenuItem>
               </Select>
@@ -142,7 +142,7 @@ function Tests() {
               </IconButton>
               <IconButton
                 sx={{ width: '45px', height: '45px' }}
-                onClick={() =>{} } 
+                onClick={() =>{}} // Open Add Modal with no data
                 aria-label="Add"
               >
                 <AddRoundedIcon color='green' />
