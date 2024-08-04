@@ -27,9 +27,9 @@ const admin ={
 
 function AdminLayout() {
     const location = useLocation();
-    const excludedPaths = ['/'];
+    // const excludedPaths = ['/'];
 
-    const isExcludedPath = excludedPaths.includes(location.pathname);
+    // const isExcludedPath = excludedPaths.includes(location.pathname);
 
     const SideBarLinks = [
         {
@@ -101,9 +101,9 @@ function AdminLayout() {
                 <Box 
                     sx={{
                         mx: 1,
-                        borderRadius: 5,
-                        border: isExcludedPath ? 'none' : '1px solid rgba(0, 0, 0, 0.12)',
-                        bgcolor: isExcludedPath ? '' : '#fff',
+                        // borderRadius: 5,
+                        // border: isExcludedPath ? 'none' : '1px solid rgba(0, 0, 0, 0.12)',
+                        // bgcolor: isExcludedPath ? '' : '#fff',
                         minHeight: `calc( 100vh - ( ${theme.mixins.toolbar.minHeight}px + 15px ) )`,
                     }}
                 >

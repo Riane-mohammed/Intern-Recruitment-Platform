@@ -5,7 +5,7 @@ import {
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LockIcon from '@mui/icons-material/Lock';
-import backgroundUrl from '../../../Assets/Portnet.jpg';
+import backgroundUrl from '../../../assets/Portnet.jpg';
 
 //this is a test
 const styles = {

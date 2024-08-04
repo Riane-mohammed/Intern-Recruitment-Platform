@@ -13,6 +13,8 @@ import Candidates from '../../modules/admin/ui/candidates';
 import Tests from '../../modules/admin/ui/tests';
 import Questions from '../../modules/admin/ui/questions';
 import Quiz from '../../modules/admin/ui/quiz';
+import AddQuiz from "../../modules/admin/ui/addQuiz";
+import QuizById from "../../modules/admin/ui/quizById";
 import Profile from '../../modules/admin/ui/profile';
 import Settings from '../../modules/admin/ui/settings';
 import AddAdmin from '../../modules/admin/ui/addAdmin';
@@ -38,6 +40,8 @@ const routes = (
                 <Route path="Tests" element={<Tests />} />
                 <Route path="Questions" element={<Questions />} />
                 <Route path="Quiz" element={<Quiz />} />
+                <Route path="Quiz/Ajouter" element={<AddQuiz />} />
+                <Route path="Quiz/id=:id" element={<QuizById />} />
                 <Route path="Profil" element={<Profile />} />
                 <Route path="Paramètres" element={<Settings />} />
                 <Route path="Ajouter-Admin" element={<AddAdmin />} />
@@ -69,7 +73,12 @@ export const locationNames = {
     "/Tests": "Gestion des Tests",
     "/Questions": "Gestion des Questions",
     "/Quiz": "Gestion des Quiz",
+    "/Quiz/Ajouter": "Gestion des Quiz / Ajouter",
     "/Profil": "Profil",
     "/Param%C3%A8tres": "Paramètres",
     "/Ajouter-Admin": "Ajouter un nouveau compte",
 };
+
+export const dynamicPaths = [
+    { pattern: /^\/Quiz\/id=\d+$/, name: "Gestion des Quiz / Quiz " },
+];
