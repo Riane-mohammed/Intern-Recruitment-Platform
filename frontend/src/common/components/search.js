@@ -14,10 +14,18 @@ const Search = () => {
                             <SearchIcon />
                         </InputAdornment>
                     ),
+                    sx: {
+                        '& .MuiOutlinedInput-root': {
+                            borderRadius: 5,
+                        },
+                        '& .MuiOutlinedInput-input': {
+                            padding: 1,
+                        },
+                    },
                 }}
-                sx={{
-                    '& .MuiOutlinedInput-root': {
-                        borderRadius: 5, 
+                InputLabelProps={{
+                    sx: {
+                        top: '-10px',
                     },
                 }}
             />

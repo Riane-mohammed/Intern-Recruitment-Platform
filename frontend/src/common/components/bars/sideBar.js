@@ -1,8 +1,15 @@
 import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material'
 import { NavLink } from 'react-router-dom'
-import logo from '../../../Assets/images/logoPortNetWeb.png';
+import logo from '../../../assets/images/logoPortNetWeb.png';
 
-function SideBar ({SideBarLinks, location, drawerWidth}) {
+function SideBar({ SideBarLinks, location, drawerWidth }) {
+    
+    const isActiveLink = (path, currentPath) => {
+        if (path === '/') {
+            return currentPath === path;
+        }
+        return currentPath.startsWith(path);
+    };
 
     return (
         <Drawer 
@@ -51,12 +58,12 @@ function SideBar ({SideBarLinks, location, drawerWidth}) {
                         }
                     }}
                 className={location.pathname === link.path ? 'active' : ''}>
-                    <ListItemIcon>{location.pathname === link.path ? link.activeIcon : link.icon }</ListItemIcon>
+                    <ListItemIcon>{isActiveLink(link.path, location.pathname) ? link.activeIcon : link.icon }</ListItemIcon>
                     <ListItemText 
                         primary={link.name}
                         primaryTypographyProps={{
                             fontWeight: 600,
-                            color: `${location.pathname === link.path ? 'primary' : 'grey'}`,
+                            color: isActiveLink(link.path, location.pathname) ? 'primary' : 'grey',
                         }}
                         />
                 </ListItem>
