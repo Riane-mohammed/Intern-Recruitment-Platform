@@ -61,7 +61,8 @@ function TestPage({ test, time, quizLength }) {
             dispatch(increment(quizLength)); // Increment the page number
             return;
         }
-
+        console.log(quizLength)
+        console.log(currentPage)
         dispatch(incrementQuestionNumber(questionsLength - 1)); // Move to the next question
         setSelectedAnswers([]); // Reset selected answers
     };
