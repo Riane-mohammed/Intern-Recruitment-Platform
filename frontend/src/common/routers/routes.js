@@ -11,6 +11,9 @@ import LoginForm from "../../modules/admin/ui/LoginForm";
 import Dashboard from '../../modules/admin/ui/dashboard';
 import Candidates from '../../modules/admin/ui/candidates';
 import Tests from '../../modules/admin/ui/tests';
+import AddTest from "../../modules/admin/ui/addTest";
+import ViewTest from "../../modules/admin/ui/viewTest";
+import ModifyTest from "../../modules/admin/ui/modifyTest";
 import Questions from '../../modules/admin/ui/questions';
 import Quiz from '../../modules/admin/ui/quiz';
 import AddQuiz from "../../modules/admin/ui/addQuiz";
@@ -37,11 +40,18 @@ const routes = (
             <Route path="/" element={<AdminLayout />}>
                 <Route index element={<Dashboard /> } />
                 <Route path="Candidats" element={<Candidates />} />
+
                 <Route path="Tests" element={<Tests />} />
+                <Route path="Tests/Ajouter" element={<AddTest/>} />
+                <Route path="Tests/Voir/id=:id" element={<ViewTest/>} />
+                <Route path="Tests/Modifier/id=:id" element={<ModifyTest/>} />
+
                 <Route path="Questions" element={<Questions />} />
+                
                 <Route path="Quiz" element={<Quiz />} />
                 <Route path="Quiz/Ajouter" element={<AddQuiz />} />
                 <Route path="Quiz/id=:id" element={<QuizById />} />
+
                 <Route path="Profil" element={<Profile />} />
                 <Route path="Paramètres" element={<Settings />} />
                 <Route path="Ajouter-Admin" element={<AddAdmin />} />
@@ -71,6 +81,7 @@ export const locationNames = {
     "/": "Tableau de Bord",
     "/Candidats": "Gestion des Candidats",
     "/Tests": "Gestion des Tests",
+    "/Tests/Ajouter": "Gestion des Tests / Ajouter",
     "/Questions": "Gestion des Questions",
     "/Quiz": "Gestion des Quiz",
     "/Quiz/Ajouter": "Gestion des Quiz / Ajouter",
@@ -80,5 +91,7 @@ export const locationNames = {
 };
 
 export const dynamicPaths = [
-    { pattern: /^\/Quiz\/id=\d+$/, name: "Gestion des Quiz / Quiz " },
+    { pattern: /^\/Quiz\/id=\d+$/, name: "Gestion des Quizzes / Quiz " },
+    { pattern: /^\/Tests\/Modifier\/id=\d+$/, name: "Gestion des Tests / Modifier / Test " },
+    { pattern: /^\/Tests\/Voir\/id=\d+$/, name: "Gestion des Tests / Voir / Test " },
 ];

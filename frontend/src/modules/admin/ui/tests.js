@@ -1,17 +1,14 @@
 import { useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Box, IconButton, Checkbox, Typography, MenuItem, Select, FormControl, InputLabel, TextField } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Box, IconButton, Checkbox, MenuItem, Select, FormControl, InputLabel, Typography, Button } from '@mui/material';
 
 // Components
 import Search from '../../../common/components/search';
-import ViewModal from '../../../common/components/adminComponents.js/viewModal';
-import ModifyModal from '../../../common/components/adminComponents.js/modifyModal';
 
 // Icons
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import FilterListIcon from '@mui/icons-material/FilterList';
+import { useNavigate } from 'react-router-dom';
 
 const tests = [
   { id: 1, name: 'Math Test 1', category: 'Mathematics', level: 'Beginner' },
@@ -27,28 +24,22 @@ const tests = [
 ];
 
 function Tests() {
+  const navigate = useNavigate();
+
   const [page, setPage] = useState(0);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [openViewModal, setOpenViewModal] = useState(false);
-  const [openModifyModal, setOpenModifyModal] = useState(false);
-  const [selectedRowData, setSelectedRowData] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchFilter, setSearchFilter] = useState('name');
+  const [category, setCategory] = useState('');
+  const [level, setLevel] = useState('');
   const rowsPerPage = 8;
 
-  const handleOpenViewModal = (row) => {
-    setSelectedRowData(row);
-    setOpenViewModal(true);
+    const handleAdd = () => {
+        navigate('Ajouter');
   };
 
-  const handleOpenModifyModal = (row) => {
-    setSelectedRowData(row);
-    setOpenModifyModal(true);
-  };
-
-  const handleCloseViewModal = () => setOpenViewModal(false);
-  const handleCloseModifyModal = () => setOpenModifyModal(false);
-
+    const openViewPage = (row) => navigate(`Voir/id=${row.id.toString()}`);
+  
+    const openModifyPage = (row) => navigate(`Modifier/id=${row.id.toString()}`);
+  
   const handleChangePage = (event, newPage) => setPage(newPage);
 
   const handleDelete = () => console.log(selectedRows);
@@ -82,172 +73,168 @@ function Tests() {
     setSelectedRows(newSelected);
   };
 
-  const handleSave = () => console.log('updated successfully');
-
-  const filteredTests = tests.filter((test) => {
-    const lowercasedTerm = searchTerm.toLowerCase();
-    if (searchFilter === 'name') {
-      return test.name.toLowerCase().includes(lowercasedTerm);
-    } else if (searchFilter === 'category') {
-      return test.category.toLowerCase().includes(lowercasedTerm);
-    } else if (searchFilter === 'level') {
-      return test.level.toLowerCase().includes(lowercasedTerm);
-    }
-    return true;
-  });
-
   return (
     <Box sx={{ p: '10px' }}>
-      <Box sx={{ p: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Box sx={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            <FormControl variant="outlined" size="small">
-              <InputLabel>Filter By</InputLabel>
-              <Select
-                value={searchFilter}
-                onChange={(e) => setSearchFilter(e.target.value)}
-                label="Filter By"
-                startAdornment={<FilterListIcon />}
-              >
-                
-                <MenuItem value="category">Category</MenuItem>
-                <MenuItem value="level">Level</MenuItem>
-              </Select>
-            </FormControl>
-            <TextField
-              label="Search"
-              variant="outlined"
-              size="small"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center'
-            }}
-          >
-            <Typography fontWeight={500} color='primary'>
-              sélectionné : {selectedRows.length}
-            </Typography>
-            <Box sx={{ display: 'flex', gap: '10px' }}>
-              <IconButton
-                sx={{ width: '45px', height: '45px' }}
-                onClick={handleDelete}
-                aria-label="Delete"
-              >
-                <DeleteRoundedIcon color='red' />
-              </IconButton>
-              <IconButton
-                sx={{ width: '45px', height: '45px' }}
-                onClick={() =>{}} // Open Add Modal with no data
-                aria-label="Add"
-              >
-                <AddRoundedIcon color='green' />
-              </IconButton>
-            </Box>
-          </Box>
+      {/* Header */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Typography variant='h5' fontWeight={500} color='primary'>
+          Tests
+        </Typography>
+        <Button variant="contained" onClick={handleAdd}>+ Ajouter</Button>
+      </Box>
+      {/* Filter Bar */}
+      <Box sx={{ my: 2, p: '15px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: 5, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Search />
+          <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+            <InputLabel id="demo-select-small-label">Catégorie</InputLabel>
+            <Select
+              labelId="demo-select-small-label"
+              id="demo-select-small"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              label="Catégorie"
+            >
+              <MenuItem value="">
+                <em>Aucun</em>
+              </MenuItem>
+              <MenuItem value="Technical" >Technique</MenuItem>
+              <MenuItem value="Psychotechnique" >Psychotechnique</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+            <InputLabel id="demo-select-small-label">Niveau</InputLabel>
+            <Select
+              labelId="demo-select-small-label"
+              id="demo-select-small"
+              value={level}
+              onChange={(e) => setLevel(e.target.value)}
+              label="Niveau"
+            >
+              <MenuItem value="">
+                <em>Aucun</em>
+              </MenuItem>
+              <MenuItem value="Beginner" >Débutant</MenuItem>
+              <MenuItem value="Intermediate" >Intermédiaire</MenuItem>
+              <MenuItem value="Advanced" >Avancé</MenuItem>
+            </Select>
+          </FormControl>
         </Box>
-        <TableContainer sx={{ p: '0 20px 0 20px', maxWidth: '100%' }}>
-          <Table
-            sx={{
-              border: '1px solid',
-              borderColor: 'grey.light',
-              borderRadius: '10px',
-              overflow: 'hidden',
-              boxShadow: 1,
-            }}
-          >
-            <TableHead sx={{ bgcolor: 'blue.light' }}>
-              <TableRow>
-                <TableCell
-                  sx={{
-                    width: '42px',
-                    p: 0,
-                    pl: 2
-                  }}
-                >
-                  <Checkbox
-                    indeterminate={selectedRows.length > 0 && selectedRows.length < filteredTests.length}
-                    checked={filteredTests.length > 0 && selectedRows.length === filteredTests.length}
-                    onChange={handleSelectAllClick}
-                    inputProps={{
-                      'aria-label': 'Select all tests'
-                    }}
-                  />
-                </TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Test Name</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Category</TableCell>
-                <TableCell sx={{ textAlign: 'center', fontWeight: 600 }}>
-                  Level
-                </TableCell>
-                <TableCell sx={{ textAlign: 'center', fontWeight: 600 }}>
-                  Actions
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredTests
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((test) => {
-                  const isItemSelected = selectedRows.indexOf(test.id) !== -1;
-                  return (
-                    <TableRow
-                      key={test.id}
-                      selected={isItemSelected}
-                    >
-                      <TableCell sx={{ p: 0, pl: 2 }}>
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={() => handleClick(test.id)}
-                          inputProps={{
-                           
-                            'aria-label': `select row ${test.id}`
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell>{test.name}</TableCell>
-                      <TableCell>{test.category}</TableCell>
-                      <TableCell sx={{ textAlign: 'center' }}>
-                        {test.level}
-                      </TableCell>
-                      <TableCell sx={{ p: 0 }}>
-                        <Box sx={{ textAlign: 'center' }}>
-                          <IconButton
-                            onClick={() => handleOpenModifyModal(test)}
-                            aria-label="Modify"
-                          >
-                            <CreateRoundedIcon color='primary' />
-                          </IconButton>
-                          <IconButton
-                            onClick={() => handleOpenViewModal(test)}
-                            aria-label="View"
-                          >
-                            <VisibilityRoundedIcon color='blue' />
-                          </IconButton>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-          <TablePagination
+        <Button variant="outlined">Filtrer</Button>
+      </Box>
+      {/* Table */}
+      <TableContainer sx={{ maxWidth: '100%', minHeight: '480px', my: 2, p: '15px 20px', borderRadius: 5, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Typography variant='h6' fontWeight={500} color='primary'>
+            {tests.length} Tests
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            {selectedRows.length > 0 && (
+              <>
+                <Typography fontWeight={500} color='primary'>
+                  sélectionné : {selectedRows.length}
+                </Typography>
+                <IconButton sx={{ width: '45px', height: '45px' }} onClick={handleDelete} aria-label="delete">
+                  <DeleteRoundedIcon color='error' />
+                </IconButton>
+              </>
+            )}
+            <TablePagination
               component="div"
-              count={filteredTests.length}
+              count={tests.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
               rowsPerPageOptions={[rowsPerPage]}
+              labelDisplayedRows={({ from, to, count }) => `${from}–${to} sur ${count !== -1 ? count : `plus de ${to}`}`}
             />
-          </TableContainer>
+          </Box>
         </Box>
-        <ViewModal open={openViewModal} handleClose={handleCloseViewModal} selectedRowData={selectedRowData} />
-        <ModifyModal open={openModifyModal} handleClose={handleCloseModifyModal} selectedRowData={selectedRowData} handleSave={handleSave} />
-      </Box>
-    );
-  }
+        <Table
+          sx={{
+            border: '1px solid',
+            borderColor: 'grey.light',
+            borderRadius: '10px',
+            overflow: 'hidden',
+            boxShadow: 1,
+          }}
+        >
+          <TableHead sx={{ bgcolor: 'blue.light' }}>
+            <TableRow>
+              <TableCell
+                sx={{
+                  width: '42px',
+                  p: 0,
+                  pl: 2
+                }}
+              >
+                <Checkbox
+                  indeterminate={selectedRows.length > 0 && selectedRows.length < tests.length}
+                  checked={tests.length > 0 && selectedRows.length === tests.length}
+                  onChange={handleSelectAllClick}
+                  inputProps={{
+                    'aria-label': 'Select all candidates'
+                  }}
+                />
+              </TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Test Name</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Category</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 600 }}>
+                Level
+              </TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 600 }}>
+                Actions
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {tests
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((test) => {
+                const isItemSelected = selectedRows.indexOf(test.id) !== -1;
+                return (
+                  <TableRow
+                    key={test.id}
+                    selected={isItemSelected}
+                  >
+                    <TableCell sx={{ p: 0, pl: 2 }}>
+                      <Checkbox
+                        checked={isItemSelected}
+                        onChange={() => handleClick(test.id)}
+                        inputProps={{
+                          'aria-label': `select row ${test.id}`
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell sx={{ py: 0  }} >{test.name}</TableCell>
+                    <TableCell sx={{ py: 0  }} >{test.category}</TableCell>
+                    <TableCell sx={{ textAlign: 'center', py: 0 }}>
+                      {test.level}
+                    </TableCell>
+                    <TableCell sx={{ p: 0 }}>
+                      <Box sx={{ textAlign: 'center' }}>
+                        <IconButton
+                          onClick={()=> openModifyPage(test)}
+                          aria-label="Modify"
+                        >
+                          <CreateRoundedIcon color='primary' />
+                        </IconButton>
+                        <IconButton
+                          onClick={()=> openViewPage(test)}
+                          aria-label="View"
+                        >
+                          <VisibilityRoundedIcon color='blue' />
+                        </IconButton>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
+  );
+}
 
 export default Tests;

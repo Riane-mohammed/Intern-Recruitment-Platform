@@ -3,8 +3,8 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Table
 
 //components
 import Search from '../../../common/components/search';
-import ViewModal from '../../../common/components/adminComponents.js/viewModal';
-import ModifyModal from '../../../common/components/adminComponents.js/modifyModal';
+import ViewModal from '../../../common/components/adminComponents.js/candidate/viewModal';
+import ModifyModal from '../../../common/components/adminComponents.js/candidate/modifyModal';
 
 //icons
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
@@ -92,44 +92,47 @@ function Candidates() {
   const handleSave = () => console.log('updated successfully');
 
   return (
-    <Box sx={{ p: '10px' }}>
-      <Box sx={{
-        p: '20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
-        <Search />
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center'
-          }}
-        >
-          <Typography fontWeight={500} color='primary'>
-            sélectionné : {selectedRows.length}
+        <Box sx={{ p: '10px' }}>
+            {/* Header */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography variant='h5' fontWeight={500} color='primary'>
+                    Candidats
+                </Typography>
+            </Box>
+            {/* Filter Bar */}
+            <Box sx={{ my: 2, p: '15px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: 5, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff' }}>
+                  <Search />
+            </Box>
+      {/* Table */}
+      <TableContainer sx={{ maxWidth: '100%', minHeight: '480px', my: 2, p: '15px 20px', borderRadius: 5, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Typography variant='h6' fontWeight={500} color='primary'>
+            {rows.length} Candidats
           </Typography>
-          <IconButton
-            sx={{ width: '45px', height: '45px' }}
-            onClick={handleDelete}
-            aria-label="Ajouter"
-          >
-            <DeleteRoundedIcon color='red' />
-          </IconButton>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            {selectedRows.length > 0 && (
+              <>
+                <Typography fontWeight={500} color='primary'>
+                  sélectionné : {selectedRows.length}
+                </Typography>
+                <IconButton sx={{ width: '45px', height: '45px' }} onClick={handleDelete} aria-label="delete">
+                  <DeleteRoundedIcon color='error' />
+                </IconButton>
+              </>
+            )}
+            <TablePagination
+              component="div"
+              count={rows.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              rowsPerPageOptions={[rowsPerPage]}
+              labelDisplayedRows={({ from, to, count }) => `${from}–${to} sur ${count !== -1 ? count : `plus de ${to}`}`}
+            />
+          </Box>
         </Box>
-      </Box>
-      <TableContainer sx={{ p: '0 20px 0 20px', maxWidth: '100%' }}>
-        <Table
-          sx={{
-            border: '1px solid',
-            borderColor: 'grey.light',
-            borderRadius: '10px',
-            overflow: 'hidden',
-            boxShadow: 1,
-          }}
-        >
-          <TableHead sx={{ bgcolor: 'blue.light' }}>
+          <Table sx={{ border: '1px solid', borderColor: 'grey.200', borderRadius: '10px', overflow: 'hidden', boxShadow: 1 }}>
+                    <TableHead sx={{ bgcolor: 'blue.light' }}>
             <TableRow>
               <TableCell
                 sx={{
@@ -179,18 +182,12 @@ function Candidates() {
                         }}
                       />
                     </TableCell>
-                    <TableCell>{row.name}</TableCell>
-                    <TableCell>
-                      {row.email}
-                    </TableCell>
-                    <TableCell sx={{ textAlign: 'center' }}>
-                      {row.phone}
-                    </TableCell>
-                    <TableCell sx={{ textAlign: 'center' }}>
-                      {row.age}
-                    </TableCell>
+                    <TableCell sx={{ py: 0 }}>{row.name}</TableCell>
+                    <TableCell sx={{ py: 0 }}>{row.email}</TableCell>
+                    <TableCell sx={{ textAlign: 'center', py: 0 }}>{row.phone}</TableCell>
+                    <TableCell sx={{ textAlign: 'center', py: 0 }}>{row.age}</TableCell>
                     <TableCell sx={{ p: 0 }}>
-                      <Box sx={{ textAlign: 'center' }}>
+                      <Box sx={{ textAlign: 'center', py: 0 }}>
                         <IconButton
                           onClick={() => handleOpenModifyModal(row)}
                           aria-label="Modify"
@@ -210,14 +207,6 @@ function Candidates() {
               })}
           </TableBody>
         </Table>
-        <TablePagination
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPageOptions={[rowsPerPage]}
-        />
       </TableContainer>
       <ViewModal open={openViewModal} handleClose={handleCloseViewModal} selectedRowData={selectedRowData} />
       <ModifyModal open={openModifyModal} handleClose={handleCloseModifyModal} selectedRowData={selectedRowData} handleSave={handleSave} />
