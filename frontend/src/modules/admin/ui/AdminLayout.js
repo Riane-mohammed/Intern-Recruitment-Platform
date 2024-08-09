@@ -35,31 +35,31 @@ function AdminLayout() {
         {
             name: "Tableau de Bord",
             icon: <HomeOutlinedIcon color='primary' />,
-            activeIcon: <HomeIcon color='white' />,
+            activeIcon: <HomeIcon color='blanc' />,
             path: "/",
         },
         {
             name: "Candidats",
             icon: <PersonOutlineOutlinedIcon color='primary' />,
-            activeIcon: <PersonIcon color='white' />,
+            activeIcon: <PersonIcon color='blanc' />,
             path: "/Candidats",
         },
         {
             name: "Tests",
             icon: <FeaturedPlayListOutlinedIcon color='primary' />,
-            activeIcon: <FeaturedPlayListIcon color='white' />,
+            activeIcon: <FeaturedPlayListIcon color='blanc' />,
             path: "/Tests",
         },
         {
             name: "Questions",
             icon: <ContactSupportOutlinedIcon color='primary' />,
-            activeIcon: <ContactSupportIcon color='white' />,
+            activeIcon: <ContactSupportIcon color='blanc' />,
             path: "/Questions",
         },
         {
             name: "Quiz",
             icon: <QuizOutlinedIcon color='primary' />,
-            activeIcon: <QuizIcon color='white' />,
+            activeIcon: <QuizIcon color='blanc' />,
             path: "/Quiz",
         },
     ];
