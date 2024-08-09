@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material'
-import React from 'react'
+import React, { Fragment } from 'react'
 
 //icons
 import CheckIcon from '@mui/icons-material/Check';
@@ -23,7 +23,7 @@ function ProgressBar({currentPageNumber, pageNames}){
             }}
         >
             {pageNames.map((name, index) => (
-                <React.Fragment key={name + index}>
+                <Fragment key={name + index}>
                     <Box 
                         sx={{
                             bgcolor: `${index + 1 < currentPageNumber ? 'primary.main' : '' }`,
@@ -72,7 +72,7 @@ function ProgressBar({currentPageNumber, pageNames}){
                             }}
                         />
                     )}
-                </React.Fragment>
+                </Fragment>
             ))}
         </Box>
     )

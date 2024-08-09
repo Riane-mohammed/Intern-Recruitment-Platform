@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Box, IconButton, Checkbox, MenuItem, Select, FormControl, InputLabel, Typography, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 // Components
 import Search from '../../../common/components/search';
+import ViewTest from '../../../common/components/adminComponents.js/tests/viewTest';
 
 // Icons
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
-import { useNavigate } from 'react-router-dom';
 
 const tests = [
   { id: 1, name: 'Math Test 1', category: 'Mathematics', level: 'Beginner' },
@@ -28,15 +29,19 @@ function Tests() {
 
   const [page, setPage] = useState(0);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [openViewModal, setOpenViewModal] = useState(false);
   const [category, setCategory] = useState('');
   const [level, setLevel] = useState('');
   const rowsPerPage = 8;
 
+  const handleOpenViewModal = () => {
+    setOpenViewModal(true);
+  };
+  const handleCloseViewModal = () => setOpenViewModal(false);
+
     const handleAdd = () => {
         navigate('Ajouter');
   };
-
-    const openViewPage = (row) => navigate(`Voir/id=${row.id.toString()}`);
   
     const openModifyPage = (row) => navigate(`Modifier/id=${row.id.toString()}`);
   
@@ -220,7 +225,7 @@ function Tests() {
                           <CreateRoundedIcon color='primary' />
                         </IconButton>
                         <IconButton
-                          onClick={()=> openViewPage(test)}
+                          onClick={() => handleOpenViewModal()}
                           aria-label="View"
                         >
                           <VisibilityRoundedIcon color='blue' />
@@ -233,6 +238,7 @@ function Tests() {
           </TableBody>
         </Table>
       </TableContainer>
+      <ViewTest open={openViewModal} handleClose={handleCloseViewModal} />
     </Box>
   );
 }

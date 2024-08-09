@@ -43,7 +43,8 @@ function SideBar({ SideBarLinks, location, drawerWidth }) {
         </Box>
         <List
             sx={{
-                mt: '20px'
+                    mt: 5,
+                    mr: 1,
             }}
         >
             {SideBarLinks.map((link)=>(
@@ -52,9 +53,9 @@ function SideBar({ SideBarLinks, location, drawerWidth }) {
                 component={NavLink}
                 to={link.path}
                 sx={{
-                        borderRadius: '20px 0 0 20px',
+                    borderRadius: '0 10px 10px 0',
                         '&.active': {
-                            bgcolor: 'grey.light',
+                            bgcolor: 'primary.main',
                         }
                     }}
                 className={location.pathname === link.path ? 'active' : ''}>
@@ -63,7 +64,7 @@ function SideBar({ SideBarLinks, location, drawerWidth }) {
                         primary={link.name}
                         primaryTypographyProps={{
                             fontWeight: 600,
-                            color: isActiveLink(link.path, location.pathname) ? 'primary' : 'grey',
+                            color: isActiveLink(link.path, location.pathname) ? 'white.main' : 'primary',
                         }}
                         />
                 </ListItem>
