@@ -12,7 +12,6 @@ import Dashboard from '../../modules/admin/ui/dashboard';
 import Candidates from '../../modules/admin/ui/candidates';
 import Tests from '../../modules/admin/ui/tests';
 import AddTest from "../../modules/admin/ui/addTest";
-import ViewTest from "../../modules/admin/ui/viewTest";
 import ModifyTest from "../../modules/admin/ui/modifyTest";
 import Questions from '../../modules/admin/ui/questions';
 import Quiz from '../../modules/admin/ui/quiz';
@@ -43,7 +42,6 @@ const routes = (
 
                 <Route path="Tests" element={<Tests />} />
                 <Route path="Tests/Ajouter" element={<AddTest/>} />
-                <Route path="Tests/Voir/id=:id" element={<ViewTest/>} />
                 <Route path="Tests/Modifier/id=:id" element={<ModifyTest/>} />
 
                 <Route path="Questions" element={<Questions />} />
@@ -93,5 +91,4 @@ export const locationNames = {
 export const dynamicPaths = [
     { pattern: /^\/Quiz\/id=\d+$/, name: "Gestion des Quizzes / Quiz " },
     { pattern: /^\/Tests\/Modifier\/id=\d+$/, name: "Gestion des Tests / Modifier / Test " },
-    { pattern: /^\/Tests\/Voir\/id=\d+$/, name: "Gestion des Tests / Voir / Test " },
 ];

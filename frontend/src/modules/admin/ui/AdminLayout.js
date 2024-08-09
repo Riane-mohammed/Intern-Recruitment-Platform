@@ -34,32 +34,32 @@ function AdminLayout() {
     const SideBarLinks = [
         {
             name: "Tableau de Bord",
-            icon: <HomeOutlinedIcon color='secondary.main' />,
-            activeIcon: <HomeIcon color='primary' />,
+            icon: <HomeOutlinedIcon color='primary' />,
+            activeIcon: <HomeIcon color='white' />,
             path: "/",
         },
         {
             name: "Candidats",
-            icon: <PersonOutlineOutlinedIcon color='secondary.main' />,
-            activeIcon: <PersonIcon color='primary' />,
+            icon: <PersonOutlineOutlinedIcon color='primary' />,
+            activeIcon: <PersonIcon color='white' />,
             path: "/Candidats",
         },
         {
             name: "Tests",
-            icon: <FeaturedPlayListOutlinedIcon color='secondary.main' />,
-            activeIcon: <FeaturedPlayListIcon color='primary' />,
+            icon: <FeaturedPlayListOutlinedIcon color='primary' />,
+            activeIcon: <FeaturedPlayListIcon color='white' />,
             path: "/Tests",
         },
         {
             name: "Questions",
-            icon: <ContactSupportOutlinedIcon color='secondary.main' />,
-            activeIcon: <ContactSupportIcon color='primary' />,
+            icon: <ContactSupportOutlinedIcon color='primary' />,
+            activeIcon: <ContactSupportIcon color='white' />,
             path: "/Questions",
         },
         {
             name: "Quiz",
-            icon: <QuizOutlinedIcon color='secondary.main' />,
-            activeIcon: <QuizIcon color='primary' />,
+            icon: <QuizOutlinedIcon color='primary' />,
+            activeIcon: <QuizIcon color='white' />,
             path: "/Quiz",
         },
     ];
