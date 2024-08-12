@@ -2,10 +2,8 @@ import { createBrowserRouter, createRoutesFromElements, Route } from "react-rout
 
 //Layouts
 import AdminLayout from '../../modules/admin/ui/AdminLayout'; 
+import MainLayout from "../../modules/main/ui/mainLayout";
 import QuizLayout from "../../modules/quiz/ui/quizLayout";
-
-//login page
-import LoginForm from "../../modules/admin/ui/LoginForm";
 
 //admin Pages
 import Dashboard from '../../modules/admin/ui/dashboard';
@@ -21,6 +19,12 @@ import Profile from '../../modules/admin/ui/profile';
 import Settings from '../../modules/admin/ui/settings';
 import AddAdmin from '../../modules/admin/ui/addAdmin';
 
+//main pages
+import Home from "../../modules/main/ui/home";
+import Apply from "../../modules/main/ui/InternApply";
+import ContactUs from "../../modules/main/ui/contact";
+import Login from "../../modules/main/ui/login";
+
 //quiz Pages
 import QuizHome from "../../modules/quiz/ui/home";
 import QuizTests from "../../modules/quiz/ui/tests";
@@ -34,15 +38,15 @@ const user = 1;
 
 const routes = (
     <>
-        {user ? (
+        {user &&
             //Admin Routes 
-            <Route path="/" element={<AdminLayout />}>
-                <Route index element={<Dashboard /> } />
+            <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<Dashboard />} />
                 <Route path="Candidats" element={<Candidates />} />
 
                 <Route path="Tests" element={<Tests />} />
-                <Route path="Tests/Ajouter" element={<AddTest/>} />
-                <Route path="Tests/Modifier/id=:id" element={<ModifyTest/>} />
+                <Route path="Tests/Ajouter" element={<AddTest />} />
+                <Route path="Tests/Modifier/id=:id" element={<ModifyTest />} />
 
                 <Route path="Questions" element={<Questions />} />
                 
@@ -55,9 +59,16 @@ const routes = (
                 <Route path="Ajouter-Admin" element={<AddAdmin />} />
                 <Route path="*" element={<AdminNotFound />} />
             </Route>
-        ) : (
-            <Route path="/" element={<LoginForm /> } />
-        )}
+        }
+        
+            {/* Main routes */}
+            <Route path="/" element={<MainLayout />}>
+                <Route index element={<Home />} /> 
+                <Route path="Postuler" element={<Apply />} /> 
+                <Route path="Contactez-nous" element={<ContactUs />} /> 
+                <Route path="Connexion" element={<Login />} />
+                <Route path="*" element={<NotFound />} /> 
+            </Route>
 
         {/* Quiz Routes */}
         <Route path="/Espace-quiz/token=:token" element={<QuizLayout />} >
@@ -76,19 +87,19 @@ export const router = createBrowserRouter(
 );
 
 export const locationNames = {
-    "/": "Tableau de Bord",
-    "/Candidats": "Gestion des Candidats",
-    "/Tests": "Gestion des Tests",
-    "/Tests/Ajouter": "Gestion des Tests / Ajouter",
-    "/Questions": "Gestion des Questions",
-    "/Quiz": "Gestion des Quiz",
-    "/Quiz/Ajouter": "Gestion des Quiz / Ajouter",
-    "/Profil": "Profil",
-    "/Param%C3%A8tres": "Paramètres",
-    "/Ajouter-Admin": "Ajouter un nouveau compte",
+    "/admin": "Tableau de Bord",
+    "/admin/Candidats": "Gestion des Candidats",
+    "/admin/Tests": "Gestion des Tests",
+    "/admin/Tests/Ajouter": "Gestion des Tests / Ajouter",
+    "/admin/Questions": "Gestion des Questions",
+    "/admin/Quiz": "Gestion des Quiz",
+    "/admin/Quiz/Ajouter": "Gestion des Quiz / Ajouter",
+    "/admin/Profil": "Profil",
+    "/admin/Param%C3%A8tres": "Paramètres",
+    "/admin/Ajouter-Admin": "Ajouter un nouveau compte",
 };
 
 export const dynamicPaths = [
-    { pattern: /^\/Quiz\/id=\d+$/, name: "Gestion des Quizzes / Quiz " },
-    { pattern: /^\/Tests\/Modifier\/id=\d+$/, name: "Gestion des Tests / Modifier / Test " },
+    { pattern: /^\/admin\/Quiz\/id=\d+$/, name: "Gestion des Quizzes / Quiz " },
+    { pattern: /^\/admin\/Tests\/Modifier\/id=\d+$/, name: "Gestion des Tests / Modifier / Test " },
 ];

@@ -20,6 +20,9 @@ import FeaturedPlayListIcon from '@mui/icons-material/FeaturedPlayList';
 import FeaturedPlayListOutlinedIcon from '@mui/icons-material/FeaturedPlayListOutlined';
 import { PersonAdd, Settings } from '@mui/icons-material';
 
+//image
+// import bg from '../../../assets/images/bg.svg';
+
 const drawerWidth = 240;
 const admin ={
     name : "Administrateur",
@@ -27,88 +30,85 @@ const admin ={
 
 function AdminLayout() {
     const location = useLocation();
-    // const excludedPaths = ['/'];
-
-    // const isExcludedPath = excludedPaths.includes(location.pathname);
 
     const SideBarLinks = [
         {
             name: "Tableau de Bord",
             icon: <HomeOutlinedIcon color='primary' />,
-            activeIcon: <HomeIcon color='white' />,
-            path: "/",
+            activeIcon: <HomeIcon color='blanc' />,
+            path: "/admin",
         },
         {
             name: "Candidats",
             icon: <PersonOutlineOutlinedIcon color='primary' />,
-            activeIcon: <PersonIcon color='white' />,
-            path: "/Candidats",
+            activeIcon: <PersonIcon color='blanc' />,
+            path: "/admin/Candidats",
         },
         {
             name: "Tests",
             icon: <FeaturedPlayListOutlinedIcon color='primary' />,
-            activeIcon: <FeaturedPlayListIcon color='white' />,
-            path: "/Tests",
+            activeIcon: <FeaturedPlayListIcon color='blanc' />,
+            path: "/admin/Tests",
         },
         {
             name: "Questions",
             icon: <ContactSupportOutlinedIcon color='primary' />,
-            activeIcon: <ContactSupportIcon color='white' />,
-            path: "/Questions",
+            activeIcon: <ContactSupportIcon color='blanc' />,
+            path: "/admin/Questions",
         },
         {
             name: "Quiz",
             icon: <QuizOutlinedIcon color='primary' />,
-            activeIcon: <QuizIcon color='white' />,
-            path: "/Quiz",
+            activeIcon: <QuizIcon color='blanc' />,
+            path: "/admin/Quiz",
         },
     ];
 
-    const accountItems =[
+    const accountItems = [
         {
             name: "Ajouter un autre compte",
             icon: <PersonAdd fontSize="small" />,
-            path: "/Ajouter-Admin"
+            path: "/admin/Ajouter-Admin"
         },
         {
             name: "Paramètres",
             icon: <Settings fontSize="small" />,
-            path: "/Paramètres"
+            path: "/admin/Paramètres"
         },
     ];
 
-    return (  
-        <Box 
-        sx={{
-            display: 'flex',
-            bgcolor: 'blue.light',
-        }}>
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                bgcolor: 'blue.light',
+                // backgroundImage: `url(${bg})`, 
+                // backgroundSize: 'cover',
+            }}>
 
-        <TopBar location={location} drawerWidth={drawerWidth} admin={admin} accountItems={accountItems} />
+            <TopBar location={location} drawerWidth={drawerWidth} admin={admin} accountItems={accountItems} />
 
-        <SideBar SideBarLinks={SideBarLinks} location={location} drawerWidth={drawerWidth} />
+            <SideBar SideBarLinks={SideBarLinks} location={location} drawerWidth={drawerWidth} />
 
             <Box
-            sx={{
-                width: '100%',
-                minHeight: '100vh',
-            }}>
-                <Box 
+                sx={{
+                    width: '100%',
+                    minHeight: '100vh',
+                }}>
+                <Box
                     sx={{
                         ...theme.mixins.toolbar,
                     }}>
                 </Box>
-                <Box 
+                <Box
                     sx={{
                         mx: 1,
-                        // borderRadius: 5,
-                        // border: isExcludedPath ? 'none' : '1px solid rgba(0, 0, 0, 0.12)',
-                        // bgcolor: isExcludedPath ? '' : '#fff',
                         minHeight: `calc( 100vh - ( ${theme.mixins.toolbar.minHeight}px + 15px ) )`,
                     }}
                 >
                     <Outlet />
                 </Box>
+
             </Box>
         </Box>
     )
