@@ -3,7 +3,7 @@ import { Grid, Box, TextField, Button, Typography, InputAdornment, IconButton, F
 import { theme } from '../../../common/utils/theme';
 
 //login img
-import logo from '../../../assets/images/Login.svg';
+import logo from '../../../Assets/images/Login.svg';
 
 //icons
 import { Visibility, VisibilityOff, Email, Lock } from '@mui/icons-material';
