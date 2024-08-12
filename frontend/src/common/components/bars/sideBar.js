@@ -9,12 +9,12 @@ import LogoutIcon from '@mui/icons-material/Logout';
 
 function SideBar({ SideBarLinks, location, drawerWidth }) {
 
-    const isActiveLink = (path, currentPath) => {
-        if (path === '/') {
-            return currentPath === path;
-        }
-        return currentPath.startsWith(path);
+    const isActive = (path) => {
+        const currentPath = location.pathname;
+        return currentPath === path || (currentPath.startsWith(path) && path !== '/admin');
     };
+
+
 
     return (
         <Drawer
@@ -67,24 +67,22 @@ function SideBar({ SideBarLinks, location, drawerWidth }) {
                         to={link.path}
                         sx={{
                             borderRadius: '0 10px 10px 0',
-                            '&.active': {
-                                bgcolor: 'primary.main',
-                            },
+                            bgcolor: isActive(link.path) ? 'primary.main' : '',
                             '&:hover': {
-                                bgcolor: location.pathname === link.path ? '' : 'grey.light',
+                                bgcolor: isActive(link.path) ? '' : 'grey.light',
                             }
                         }}
-                        className={location.pathname === link.path ? 'active' : ''}
                     >
-                        <ListItemIcon>{isActiveLink(link.path, location.pathname) ? link.activeIcon : link.icon}</ListItemIcon>
+                        <ListItemIcon>{isActive(link.path) ? link.activeIcon : link.icon}</ListItemIcon>
                         <ListItemText
                             primary={link.name}
                             primaryTypographyProps={{
                                 fontWeight: 600,
-                                color: isActiveLink(link.path, location.pathname) ? 'blanc.main' : 'primary',
+                                color: isActive(link.path) ? 'white' : 'primary',
                             }}
                         />
                     </ListItem>
+
                 ))}
             </List>
 
@@ -116,7 +114,7 @@ function SideBar({ SideBarLinks, location, drawerWidth }) {
                         }}
                     />
                 </ListItem>
-            </Box>
+            </Box>  
         </Drawer>
     )
 }

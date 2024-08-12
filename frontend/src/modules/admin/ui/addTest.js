@@ -89,7 +89,7 @@ const AddTest = () => {
         <Box>
             <Box sx={{ p: '15px 20px', borderRadius: 5, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff', minHeight: `calc( 100vh - ( ${theme.mixins.toolbar.minHeight}px) - 15px )` }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                    <Link to='/Tests'>
+                    <Link to='/admin/Tests'>
                         <IconButton aria-label="back">
                             <ArrowBackIcon />
                         </IconButton>
