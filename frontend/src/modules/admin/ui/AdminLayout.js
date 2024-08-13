@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
-import React from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { theme } from '../../../common/utils/theme';
 
 //components
@@ -19,17 +19,26 @@ import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 import FeaturedPlayListIcon from '@mui/icons-material/FeaturedPlayList';
 import FeaturedPlayListOutlinedIcon from '@mui/icons-material/FeaturedPlayListOutlined';
 import { PersonAdd, Settings } from '@mui/icons-material';
+import { useSelector } from 'react-redux';
 
 //image
 // import bg from '../../../assets/images/bg.svg';
 
 const drawerWidth = 240;
-const admin ={
-    name : "Administrateur",
-}
 
 function AdminLayout() {
+    const navigate = useNavigate();
     const location = useLocation();
+
+    const admin = useSelector(state => state.user.user);
+    const isAuthenticated = useSelector(state => state.user.isAuthenticated);
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/Connexion');
+        }
+    }, [isAuthenticated, navigate]);
+
 
     const SideBarLinks = [
         {

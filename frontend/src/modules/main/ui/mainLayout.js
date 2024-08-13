@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { Box } from "@mui/material";
 import MainNavBar from "../../../common/components/bars/mainNavBar";
+import { theme } from '../../../common/utils/theme';
 
 function MainLayout() {
     const navItems = [
@@ -15,7 +16,12 @@ function MainLayout() {
     return (
         <Box>
             <MainNavBar navItems={navItems}  location={location}/>
-            <Box>
+            <Box
+                sx={{
+                    mx: 1,
+                    minHeight: `calc( 100vh - ( ${theme.mixins.toolbar.minHeight}px + 15px ) )`,
+                }}
+            >
                 <Outlet />
             </Box>
         </Box>

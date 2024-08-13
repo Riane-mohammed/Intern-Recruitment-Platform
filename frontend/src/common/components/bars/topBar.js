@@ -1,30 +1,35 @@
 import { AppBar, Avatar, Divider, IconButton, ListItemIcon, Menu, MenuItem, Toolbar, Typography } from '@mui/material'
 import { useState } from "react";
-import { Logout } from '@mui/icons-material';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { dynamicPaths, locationNames } from '../../routers/routes';
 
 //icons
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
-import { NavLink } from 'react-router-dom';
+import { Logout } from '@mui/icons-material';
+
+//actions
+import { removeUser, setAuthenticated } from '../../../modules/admin/actions/userActions';
 
 const getLocationName = (pathname) => {
-    // Vérifier les chemins statiques
     if (locationNames[pathname]) {
         return locationNames[pathname];
     }
 
-    // Vérifier les chemins dynamiques
     for (const { pattern, name } of dynamicPaths) {
         if (pattern.test(pathname)) {
             return name + pathname.split('=')[1];
         }
     }
 
-    return "Chemin inconnu"; // Valeur par défaut si aucun match n'est trouvé
+    return "Chemin inconnu";
 };
 
 
 function TopBar({ drawerWidth, admin, location, accountItems }) {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
@@ -34,6 +39,13 @@ function TopBar({ drawerWidth, admin, location, accountItems }) {
 
     const handleClose = () => {
         setAnchorEl(null);
+    };
+
+    const handleLogout = () => {
+        setAnchorEl(null);
+        dispatch(removeUser());
+        dispatch(setAuthenticated(false));
+        navigate('/');
     };
 
     return (
@@ -55,7 +67,7 @@ function TopBar({ drawerWidth, admin, location, accountItems }) {
                         flexGrow: 1,
                     }}
                 >
-                    {admin.name} / {getLocationName(location.pathname)}
+                    {admin ? admin.username : 'Administrateur' } / {getLocationName(location.pathname)}
                 </Typography>
                 <IconButton
                     onClick={handleClick}
@@ -122,7 +134,7 @@ function TopBar({ drawerWidth, admin, location, accountItems }) {
                             {item.name}
                         </MenuItem>
                     ))}
-                    <MenuItem onClick={handleClose}>
+                    <MenuItem onClick={handleLogout}>
                         <ListItemIcon>
                             <Logout fontSize="small" />
                         </ListItemIcon>

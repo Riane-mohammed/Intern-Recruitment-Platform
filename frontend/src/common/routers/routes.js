@@ -34,12 +34,13 @@ import AdminNotFound from "../errorPages/adminNotFound";
 import NotFound from "../errorPages/notFound";
 import QuizErrorPage from "../errorPages/quizError";
 
-const user = 1;
+// const savedState = JSON.parse(localStorage.getItem('userState'));
+// const isAuthenticated = savedState?.isAuthenticated;
 
 const routes = (
     <>
-        {user &&
-            //Admin Routes 
+        {/* {isAuthenticated &&
+            //Admin Routes  */}
             <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<Dashboard />} />
                 <Route path="Candidats" element={<Candidates />} />
@@ -59,7 +60,7 @@ const routes = (
                 <Route path="Ajouter-Admin" element={<AddAdmin />} />
                 <Route path="*" element={<AdminNotFound />} />
             </Route>
-        }
+        {/* } */}
         
             {/* Main routes */}
             <Route path="/" element={<MainLayout />}>

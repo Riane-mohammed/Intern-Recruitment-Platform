@@ -1,25 +1,55 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { Grid, Box, TextField, Button, Typography, InputAdornment, IconButton, FormControlLabel, Checkbox, Link } from '@mui/material';
-import { theme } from '../../../common/utils/theme';
 
-//login img
-import logo from '../../../assets/images/Login.svg';
+// API
+import { login } from '../../../common/api/auth';  
 
-//icons
-import { Visibility, VisibilityOff, Email, Lock } from '@mui/icons-material';
+//actions
+import { setAuthenticated, setUser } from '../../admin/actions/userActions';
+
+// Login Image
+import logo from '../../../assets/images/Login.svg';  
+
+// Icons
+import { Visibility, VisibilityOff, Email, Lock } from '@mui/icons-material';  
 
 const LoginPage = () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const [showPassword, setShowPassword] = React.useState(false);
+    const isAuthenticated = useSelector(state => state.user.isAuthenticated);
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState(null);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/admin');
+        }
+    }, [isAuthenticated, navigate]);
+    
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        const credentials = { email: email, password: password };
+        try {
+            const response = await login(credentials);
+            setError(null);
+            dispatch(setUser(response));
+            dispatch(setAuthenticated(true));
+        } catch (error) {
+            console.error('Login failed:', error);
+            setError(true);
+        }
+    };
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
     return (
-        <Grid container
-            sx={{
-                minHeight: `calc( 100vh - ( ${theme.mixins.toolbar.minHeight}px) - 15px )`,
-            }}
-        >
+        <Grid container>
             {/* SVG */}
             <Grid item xs={12} md={6}>
                 <Box
@@ -46,24 +76,31 @@ const LoginPage = () => {
                 }}
             >
                 <Box
+                    component="form"
+                    onSubmit={handleLogin}
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'center',
                         alignItems: 'center',
                         padding: 3,
-                        minWidth: '400px',
+                        minWidth: '500px',
                         border: '1px solid',
                         borderColor: 'grey.light'
                     }}
                 >
-<Typography variant="h5" align="center" fontWeight={600} color='primary' gutterBottom>
+                    <Typography variant="h5" align="center" fontWeight={600} color='primary' gutterBottom>
                         Connexion
                     </Typography>
+                    {error &&
+                        <Typography fontWeight={600} color='red.main' fontSize={13}>
+                            * Erreur : Nom d'utilisateur ou mot de passe incorrect.
+                        </Typography>
+                    }
                     <TextField
                         label="Adresse e-mail"
                         variant="outlined"
-                        fullWidth
+                        onChange={(e) => setEmail(e.target.value)}
                         margin="normal"
                         size="small"
                         InputProps={{
@@ -75,13 +112,14 @@ const LoginPage = () => {
                         }}
                         sx={{
                             borderRadius: '8px',
+                            width: '90%'
                         }}
                     />
 
                     <TextField
                         label="Mot de passe"
                         variant="outlined"
-                        fullWidth
+                        onChange={(e) => setPassword(e.target.value)}
                         margin="normal"
                         size="small"
                         type={showPassword ? 'text' : 'password'}
@@ -105,6 +143,7 @@ const LoginPage = () => {
                         }}
                         sx={{
                             borderRadius: '8px',
+                            width: '90%'
                         }}
                     />
 
@@ -112,7 +151,7 @@ const LoginPage = () => {
                     <Box
                         sx={{
                             display: 'flex',
-                            justifyContent: 'space-between',
+                            justifyContent: 'space-around',
                             alignItems: 'center',
                             width: '100%',
                             mt: 2
@@ -127,7 +166,7 @@ const LoginPage = () => {
                         </Link>
                     </Box>
 
-                    <Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+                    <Button variant="contained" color="primary" fullWidth sx={{ mt: 2, width: '75%' }} type="submit">
                         Se connecter
                     </Button>
                 </Box>
