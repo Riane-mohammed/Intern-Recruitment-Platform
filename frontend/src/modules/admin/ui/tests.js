@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Box, IconButton, Checkbox, MenuItem, Select, FormControl, InputLabel, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,71 +11,88 @@ import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 
-const tests = [
-  { id: 1, name: 'Math Test 1', category: 'Mathematics', level: 'Beginner' },
-  { id: 2, name: 'Science Test 1', category: 'Science', level: 'Intermediate' },
-  { id: 3, name: 'History Test 1', category: 'History', level: 'Advanced' },
-  { id: 4, name: 'Math Test 2', category: 'Mathematics', level: 'Intermediate' },
-  { id: 5, name: 'Science Test 2', category: 'Science', level: 'Beginner' },
-  { id: 6, name: 'History Test 2', category: 'History', level: 'Intermediate' },
-  { id: 7, name: 'Math Test 3', category: 'Mathematics', level: 'Advanced' },
-  { id: 8, name: 'Science Test 3', category: 'Science', level: 'Advanced' },
-  { id: 9, name: 'History Test 3', category: 'History', level: 'Beginner' },
-  { id: 10, name: 'Math Test 4', category: 'Mathematics', level: 'Intermediate' },
-];
+// API
+import { getAllTests } from '../../../common/api/admin';
 
 function Tests() {
   const navigate = useNavigate();
 
+  // State variables
+  const [tests, setTests] = useState([]);
   const [page, setPage] = useState(0);
-  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedTests, setSelectedTests] = useState([]);
+  const [selectedTest, setSelectedTest] = useState([]);
   const [openViewModal, setOpenViewModal] = useState(false);
   const [category, setCategory] = useState('');
   const [level, setLevel] = useState('');
   const rowsPerPage = 8;
 
-  const handleOpenViewModal = () => {
+  // Fetch all tests on component mount
+  useEffect(() => {
+    const getTests = async () => {
+      try {
+        const TestsData = await getAllTests();
+        setTests(TestsData);
+      } catch (error) {
+        console.error("Failed to fetch Tests:", error);
+      }
+    };
+
+    getTests();
+  }, []);
+
+  // Open the modal to view a test
+  const handleOpenViewModal = (test) => {
+    setSelectedTest(test);
     setOpenViewModal(true);
   };
+
+  // Close the view test modal
   const handleCloseViewModal = () => setOpenViewModal(false);
 
-    const handleAdd = () => {
-        navigate('Ajouter');
+  // Navigate to the add test page
+  const handleAdd = () => {
+    navigate('Ajouter');
   };
   
-    const openModifyPage = (row) => navigate(`Modifier/id=${row.id.toString()}`);
+  // Navigate to the modify test page
+  const openModifyPage = (row) => navigate(`Modifier/id=${row.id.toString()}`);
   
+  // Handle page change in pagination
   const handleChangePage = (event, newPage) => setPage(newPage);
 
-  const handleDelete = () => console.log(selectedRows);
+  // Handle delete action (currently logs selected rows)
+  const handleDelete = () => console.log(selectedTests);
 
+  // Handle selecting or deselecting all rows
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = tests.map((row) => row.id);
-      setSelectedRows(newSelecteds);
+      setSelectedTests(newSelecteds);
     } else {
-      setSelectedRows([]);
+      setSelectedTests([]);
     }
   };
 
+  // Handle row selection
   const handleClick = (id) => {
-    const selectedIndex = selectedRows.indexOf(id);
+    const selectedIndex = selectedTests.indexOf(id);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selectedRows, id);
+      newSelected = newSelected.concat(selectedTests, id);
     } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selectedRows.slice(1));
-    } else if (selectedIndex === selectedRows.length - 1) {
-      newSelected = newSelected.concat(selectedRows.slice(0, -1));
+      newSelected = newSelected.concat(selectedTests.slice(1));
+    } else if (selectedIndex === selectedTests.length - 1) {
+      newSelected = newSelected.concat(selectedTests.slice(0, -1));
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
-        selectedRows.slice(0, selectedIndex),
-        selectedRows.slice(selectedIndex + 1),
+        selectedTests.slice(0, selectedIndex),
+        selectedTests.slice(selectedIndex + 1),
       );
     }
 
-    setSelectedRows(newSelected);
+    setSelectedTests(newSelected);
   };
 
   return (
@@ -129,15 +146,17 @@ function Tests() {
       </Box>
       {/* Table */}
       <TableContainer sx={{ maxWidth: '100%', minHeight: '480px', my: 2, p: '15px 20px', borderRadius: 5, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff' }}>
+        {tests &&
+        <>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography variant='h6' fontWeight={500} color='primary'>
             {tests.length} Tests
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            {selectedRows.length > 0 && (
+            {selectedTests.length > 0 && (
               <>
                 <Typography fontWeight={500} color='primary'>
-                  sélectionné : {selectedRows.length}
+                  sélectionné : {selectedTests.length}
                 </Typography>
                 <IconButton sx={{ width: '45px', height: '45px' }} onClick={handleDelete} aria-label="delete">
                   <DeleteRoundedIcon color='error' />
@@ -174,71 +193,72 @@ function Tests() {
                 }}
               >
                 <Checkbox
-                  indeterminate={selectedRows.length > 0 && selectedRows.length < tests.length}
-                  checked={tests.length > 0 && selectedRows.length === tests.length}
+                  indeterminate={selectedTests.length > 0 && selectedTests.length < tests.length}
+                  checked={tests.length > 0 && selectedTests.length === tests.length}
                   onChange={handleSelectAllClick}
                   inputProps={{
                     'aria-label': 'Select all candidates'
                   }}
                 />
               </TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>Test Name</TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>Category</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Nom Du Test</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Catégorie</TableCell>
               <TableCell sx={{ textAlign: 'center', fontWeight: 600 }}>
-                Level
+                Niveau
               </TableCell>
               <TableCell sx={{ textAlign: 'center', fontWeight: 600 }}>
                 Actions
               </TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {tests
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((test) => {
-                const isItemSelected = selectedRows.indexOf(test.id) !== -1;
-                return (
-                  <TableRow
-                    key={test.id}
-                    selected={isItemSelected}
-                  >
-                    <TableCell sx={{ p: 0, pl: 2 }}>
-                      <Checkbox
-                        checked={isItemSelected}
-                        onChange={() => handleClick(test.id)}
-                        inputProps={{
-                          'aria-label': `select row ${test.id}`
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell sx={{ py: 0  }} >{test.name}</TableCell>
-                    <TableCell sx={{ py: 0  }} >{test.category}</TableCell>
-                    <TableCell sx={{ textAlign: 'center', py: 0 }}>
-                      {test.level}
-                    </TableCell>
-                    <TableCell sx={{ p: 0 }}>
-                      <Box sx={{ textAlign: 'center' }}>
-                        <IconButton
-                          onClick={()=> openModifyPage(test)}
-                          aria-label="Modify"
-                        >
-                          <CreateRoundedIcon color='primary' />
-                        </IconButton>
-                        <IconButton
-                          onClick={() => handleOpenViewModal()}
-                          aria-label="View"
-                        >
-                          <VisibilityRoundedIcon color='blue' />
-                        </IconButton>
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-          </TableBody>
+            <TableBody>
+              {tests
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((test) => {
+                  const isItemSelected = selectedTests.indexOf(test.id) !== -1;
+                  return (
+                    <TableRow
+                      key={test.id}
+                      selected={isItemSelected}
+                    >
+                      <TableCell sx={{ p: 0, pl: 2 }}>
+                        <Checkbox
+                          checked={isItemSelected}
+                          onChange={() => handleClick(test.id)}
+                          inputProps={{
+                            'aria-label': `select row ${test.id}`
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell sx={{ py: 0 }} >{test.title}</TableCell>
+                      <TableCell sx={{ py: 0 }} >{test.section.name}</TableCell>
+                      <TableCell sx={{ textAlign: 'center', py: 0 }}>
+                        {test.level.name}
+                      </TableCell>
+                      <TableCell sx={{ p: 0 }}>
+                        <Box sx={{ textAlign: 'center' }}>
+                          <IconButton
+                            onClick={() => openModifyPage(test)}
+                            aria-label="Modify"
+                          >
+                            <CreateRoundedIcon color='primary' />
+                          </IconButton>
+                          <IconButton
+                            onClick={() => handleOpenViewModal(test)}
+                            aria-label="View"
+                          >
+                            <VisibilityRoundedIcon color='blue' />
+                          </IconButton>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
         </Table>
+        </>}
       </TableContainer>
-      <ViewTest open={openViewModal} handleClose={handleCloseViewModal} />
+      <ViewTest open={openViewModal} handleClose={handleCloseViewModal} selectedTest={selectedTest} />
     </Box>
   );
 }
