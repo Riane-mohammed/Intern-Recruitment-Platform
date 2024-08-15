@@ -2,6 +2,8 @@
 export const SET_USER = 'SET USER';
 export const REMOVE_USER = 'REMOVE USER';
 
+export const SET_AUTHENTICATED = 'SET AUTHENTICATED';
+
 //candidate Actions
 export const SET_CANDIDATE = 'SET CANDIDATE';
 export const SET_CANDIDATE_EMAIL = 'SET CANDIDATE EMAIL';
