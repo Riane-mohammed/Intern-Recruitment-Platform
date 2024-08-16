@@ -1,10 +1,15 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, Fragment, useEffect } from 'react';
 import {
     Box, IconButton, Typography, TextField, RadioGroup, FormControlLabel, Radio, Checkbox, Grid, Button, Select, MenuItem, InputLabel, FormControl,
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { theme } from '../../../common/utils/theme';
+
+//icon
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
+//api
+import { getTestById } from '../../../common/api/admin';
 
 const Testt = {
     "id": "1",
@@ -313,10 +318,27 @@ const RenderAnswers = ({ answerType, activeQuestion, test }) => {
 };
 
 const AddTest = () => {
+    const { id } = useParams();
+    const [test, setTest] = useState(Testt);
+    console.log(id)
+
+    useEffect(() => {
+        const getTest = async () => {
+            try {
+                const CandidatesData = await getTestById(id);
+                setTest(CandidatesData);
+            } catch (error) {
+                console.error("Failed to fetch Candidates:", error);
+            }
+        };
+
+        getTest(id);
+    }, [id]);
+    
     const [activeQuestion, setActiveQuestion] = useState(null);
     const [isActive, setActive] = useState(false);
-    const [section, setSection] = useState(Testt.section);
-    const test = Testt;
+    const [level, setLevel] = useState(test.level);
+    const [section, setSection] = useState(test.section);
     const [answerType, setAnswerType] = useState('');
     const [numQuestions, setNumQuestions] = useState(test.questions.length || 0);
 
@@ -389,7 +411,7 @@ const AddTest = () => {
                         {/* Niveau Buttons */}
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                             <Typography fontWeight={500} width={250}>Niveau</Typography>
-                            <RadioGroup row aria-labelledby="niveau-label" name="niveau" value={test.level}>
+                            <RadioGroup row aria-labelledby="niveau-label" name="niveau" value={level} onChange={(e) => setLevel(e.target.value)}>
                                 <FormControlLabel value="beginner" control={<Radio />} label="Débutant" />
                                 <FormControlLabel value="intermediate" control={<Radio />} label="Intermédiaire" />
                                 <FormControlLabel value="advanced" control={<Radio />} label="Avancée" />

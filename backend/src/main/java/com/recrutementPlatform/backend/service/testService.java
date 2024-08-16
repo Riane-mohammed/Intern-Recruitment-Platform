@@ -1,6 +1,7 @@
 package com.recrutementPlatform.backend.service;
 
 import com.recrutementPlatform.backend.dto.testDTO;
+import com.recrutementPlatform.backend.model.level;
 import com.recrutementPlatform.backend.model.test;
 import com.recrutementPlatform.backend.model.testSection;
 import com.recrutementPlatform.backend.repository.sectionRepository;
@@ -26,6 +27,12 @@ public class testService {
         return testRepo.findAll();
     }
 
+    public test getTestById(Long id) {
+        test testById = testRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Test not found"));
+        return testById;
+    }
+
     @Transactional
     public test addTest(testDTO test){
         Optional<testSection> optionalTestSection = sectionRepo.findById(test.getSectionId());
@@ -34,7 +41,6 @@ public class testService {
 
             test newTest= new test();
             newTest.setTitle(test.getTitle());
-            newTest.setDuration(test.getDuration());
             newTest.setNbrQst(test.getNbrQst());
             newTest.setSection(section);
 

@@ -52,12 +52,13 @@ public class candidate {
     @JsonBackReference
     private List<quiz> quizzes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "candidate")
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.REMOVE)
+    @JsonManagedReference
+    private List<result> results;
+
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private List<token> tokens;
 
-    @OneToMany(mappedBy = "candidate")
-    @JsonManagedReference
-    private List<result> results;
 
 }

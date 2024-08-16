@@ -22,7 +22,7 @@ public class quiz {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique=true, nullable=false)
+    @Column(unique = true, nullable = false)
     private String title;
 
     @Column
@@ -35,17 +35,8 @@ public class quiz {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
-    @ManyToMany
-    @JoinTable(
-            name = "quiz_test",
-            joinColumns = @JoinColumn(name = "quiz_id"),
-            inverseJoinColumns = @JoinColumn(name = "test_id"))
-    private List<test> tests;
-
-
-    @ManyToMany(mappedBy = "quizzes")
-    @JsonManagedReference
-    private List<candidate> candidates = new ArrayList<>();
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<quizTest> quizTests = new ArrayList<>();
 
     @OneToMany(mappedBy = "quiz")
     @JsonBackReference
@@ -55,8 +46,14 @@ public class quiz {
     @JsonBackReference
     private List<token> tokens;
 
+    @ManyToMany(mappedBy = "quizzes")
+    @JsonManagedReference
+    private List<candidate> candidates = new ArrayList<>();
+
+
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();
     }
 }
+

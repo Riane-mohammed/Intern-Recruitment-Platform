@@ -4,14 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class testDTO {
 
-    private String title;
-    private int nbrQst;
-    private Long levelId;
-    private Long sectionId;
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class authDTO {
+
+    private String email;
+    private String password;
 
 }
+

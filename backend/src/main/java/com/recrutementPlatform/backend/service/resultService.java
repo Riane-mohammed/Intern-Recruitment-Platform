@@ -1,10 +1,7 @@
 package com.recrutementPlatform.backend.service;
 
 import com.recrutementPlatform.backend.dto.resultDTO;
-import com.recrutementPlatform.backend.model.candidate;
-import com.recrutementPlatform.backend.model.quiz;
-import com.recrutementPlatform.backend.model.result;
-import com.recrutementPlatform.backend.model.test;
+import com.recrutementPlatform.backend.model.*;
 import com.recrutementPlatform.backend.repository.candidateRepository;
 import com.recrutementPlatform.backend.repository.quizRepository;
 import com.recrutementPlatform.backend.repository.resultRepository;
@@ -44,25 +41,27 @@ public class resultService {
         candidate candidate = candidateRepo.findById(resultInfo.getCandidateId())
                 .orElseThrow(() -> new RuntimeException("Candidate not found"));
 
-        if(quiz.getTests().contains(test)) {
+        // Check if the test is part of the quiz using the QuizTest relationship
+        Optional<quizTest> quizTestOpt = quiz.getQuizTests().stream()
+                .filter(quizTest -> quizTest.getTest().equals(test))
+                .findFirst();
+
+        if (quizTestOpt.isPresent()) {
             Optional<result> optionalResult = resultRepo.findByQuizAndTestAndCandidate(quiz, test, candidate);
 
-            if(optionalResult.isPresent()) {
+            if (optionalResult.isPresent()) {
                 throw new RuntimeException("Result already exists");
             }
 
             result result = new result();
-
             result.setScore(resultInfo.getScore());
             result.setQuiz(quiz);
             result.setTest(test);
             result.setCandidate(candidate);
             return resultRepo.save(result);
-
-        }else{
+        } else {
             throw new RuntimeException("Test is not in this Quiz");
         }
-
-
     }
+
 }

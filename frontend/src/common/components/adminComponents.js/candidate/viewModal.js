@@ -4,7 +4,7 @@ import { Box, Typography, Modal, Button, Divider } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 
-function ViewModal({ open, handleClose, selectedRowData }) {
+function ViewModal({ open, handleClose, selectedCandidateData }) {
     const labels = [
         "Nom Complet",
         "Email",
@@ -79,28 +79,28 @@ function ViewModal({ open, handleClose, selectedRowData }) {
                                 ))}
                             </Box>
                             <Box>
-                                {selectedRowData && (
+                                {selectedCandidateData && (
                                     <>
                                         <Typography>
-                                            {selectedRowData.name}
+                                            {selectedCandidateData.firstName} {selectedCandidateData.lastName}
                                         </Typography>
                                         <Typography sx={{ mt: 2 }}>
-                                            {selectedRowData.email}
+                                            {selectedCandidateData.email}
                                         </Typography>
                                         <Typography sx={{ mt: 2 }}>
-                                            {selectedRowData.phone}
+                                            {selectedCandidateData.phone}
                                         </Typography>
                                         <Typography sx={{ mt: 2 }}>
-                                            Casa port
+                                            {selectedCandidateData.address}
                                         </Typography>
                                         <Typography sx={{ mt: 2 }}>
-                                            AZ546235
+                                            {selectedCandidateData.cin}
                                         </Typography>
                                         <Typography sx={{ mt: 2 }}>
-                                            Homme
+                                            {selectedCandidateData.gender}
                                         </Typography>
                                         <Typography sx={{ mt: 2 }}>
-                                            16 janvier 2000
+                                            {selectedCandidateData.birthday}
                                         </Typography>
                                     </>
                                 )}
