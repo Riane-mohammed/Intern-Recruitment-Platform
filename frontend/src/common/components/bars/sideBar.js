@@ -2,7 +2,7 @@ import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, Divider } from
 import { NavLink } from 'react-router-dom'
 
 //logo
-import logo from '../../../Assets/images/logoPortNetWeb.png';
+import logo from '../../../assets/images/logoPortNetWeb.png';
 
 //icon
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -10,10 +10,9 @@ import LogoutIcon from '@mui/icons-material/Logout';
 function SideBar({ SideBarLinks, location, drawerWidth }) {
 
     const isActive = (path) => {
-        const currentPath = location.pathname;
+        const currentPath = decodeURIComponent(location.pathname);
         return currentPath === path || (currentPath.startsWith(path) && path !== '/admin');
     };
-
 
 
     return (

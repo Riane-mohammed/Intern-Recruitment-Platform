@@ -15,13 +15,14 @@ import Questions from '../../modules/admin/ui/questions';
 import Quiz from '../../modules/admin/ui/quiz';
 import AddQuiz from "../../modules/admin/ui/addQuiz";
 import QuizById from "../../modules/admin/ui/quizById";
+import Options from "../../modules/admin/ui/options";
+import Contact from "../../modules/admin/ui/contact";
 import Profile from '../../modules/admin/ui/profile';
 import Settings from '../../modules/admin/ui/settings';
 import AddAdmin from '../../modules/admin/ui/addAdmin';
 
 //main pages
 import Home from "../../modules/main/ui/home";
-import Apply from "../../modules/main/ui/InternApply";
 import ContactUs from "../../modules/main/ui/contact";
 import Login from "../../modules/main/ui/login";
 
@@ -34,42 +35,39 @@ import AdminNotFound from "../errorPages/adminNotFound";
 import NotFound from "../errorPages/notFound";
 import QuizErrorPage from "../errorPages/quizError";
 
-// const savedState = JSON.parse(localStorage.getItem('userState'));
-// const isAuthenticated = savedState?.isAuthenticated;
-
 const routes = (
     <>
-        {/* {isAuthenticated &&
-            //Admin Routes  */}
-            <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<Dashboard />} />
-                <Route path="Candidats" element={<Candidates />} />
+        <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="Candidats" element={<Candidates />} />
 
-                <Route path="Tests" element={<Tests />} />
-                <Route path="Tests/Ajouter" element={<AddTest />} />
-                <Route path="Tests/Modifier/id=:id" element={<ModifyTest />} />
+            <Route path="Tests" element={<Tests />} />
+            <Route path="Tests/Ajouter" element={<AddTest />} />
+            <Route path="Tests/Modifier/id=:id" element={<ModifyTest />} />
 
-                <Route path="Questions" element={<Questions />} />
-                
-                <Route path="Quiz" element={<Quiz />} />
-                <Route path="Quiz/Ajouter" element={<AddQuiz />} />
-                <Route path="Quiz/id=:id" element={<QuizById />} />
+            <Route path="Questions" element={<Questions />} />
+            
+            <Route path="Quiz" element={<Quiz />} />
+            <Route path="Quiz/Ajouter" element={<AddQuiz />} />
+            <Route path="Quiz/id=:id" element={<QuizById />} />
 
-                <Route path="Profil" element={<Profile />} />
-                <Route path="Paramètres" element={<Settings />} />
-                <Route path="Ajouter-Admin" element={<AddAdmin />} />
-                <Route path="*" element={<AdminNotFound />} />
-            </Route>
-        {/* } */}
-        
-            {/* Main routes */}
-            <Route path="/" element={<MainLayout />}>
-                <Route index element={<Home />} /> 
-                <Route path="Postuler" element={<Apply />} /> 
-                <Route path="Contactez-nous" element={<ContactUs />} /> 
-                <Route path="Connexion" element={<Login />} />
-                <Route path="*" element={<NotFound />} /> 
-            </Route>
+            <Route path="Options" element={<Options />} />
+            
+            <Route path="Réclamation" element={<Contact />} />
+    
+            <Route path="Profil" element={<Profile />} />
+            <Route path="Paramètres" element={<Settings />} />
+            <Route path="Ajouter-Admin" element={<AddAdmin />} />
+            <Route path="*" element={<AdminNotFound />} />
+        </Route>
+    
+        {/* Main routes */}
+        <Route path="/" element={<MainLayout />}>
+            <Route index element={<Home />} /> 
+            <Route path="Contactez-nous" element={<ContactUs />} /> 
+            <Route path="Connexion" element={<Login />} />
+            <Route path="*" element={<NotFound />} /> 
+        </Route>
 
         {/* Quiz Routes */}
         <Route path="/Espace-quiz/token=:token" element={<QuizLayout />} >
@@ -96,6 +94,8 @@ export const locationNames = {
     "/admin/Quiz": "Gestion des Quiz",
     "/admin/Quiz/Ajouter": "Gestion des Quiz / Ajouter",
     "/admin/Profil": "Profil",
+    "/admin/Options": "Options",
+    "/admin/R%C3%A9clamation": "Réclamation",
     "/admin/Param%C3%A8tres": "Paramètres",
     "/admin/Ajouter-Admin": "Ajouter un nouveau compte",
 };

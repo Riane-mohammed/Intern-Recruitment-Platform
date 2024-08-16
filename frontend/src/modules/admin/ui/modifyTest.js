@@ -4,271 +4,8 @@ import {
 } from '@mui/material';
 import { Link, useParams } from 'react-router-dom';
 import { theme } from '../../../common/utils/theme';
-
-//icon
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-
-//api
 import { getTestById } from '../../../common/api/admin';
-
-const Testt = {
-    "id": "1",
-    "title": "Science",
-    "section": "Technical",
-    "level": "beginner",
-    "questions": [
-        {
-            "id": "q1",
-            "questionText": "What is the boiling point of water?",
-            "image": null,
-            "answerType": "SINGLE_CHOICE",
-            "answers": [
-                {
-                    "id": "a1",
-                    "answerText": "100°C",
-                    "isCorrect": true
-                },
-                {
-                    "id": "a2",
-                    "answerText": "90°C",
-                    "isCorrect": false
-                },
-                {
-                    "id": "a3",
-                    "answerText": "110°C",
-                    "isCorrect": false
-                },
-                {
-                    "id": "a4",
-                    "answerText": "120°C",
-                    "isCorrect": false
-                }
-            ]
-        },
-        {
-            "id": "q2",
-            "questionText": "Which of the following are planets in our solar system?",
-            "image": null,
-            "answerType": "MULTIPLE_CHOICE",
-            "answers": [
-                {
-                    "id": "a5",
-                    "answerText": "Earth",
-                    "isCorrect": true
-                },
-                {
-                    "id": "a6",
-                    "answerText": "Mars",
-                    "isCorrect": true
-                },
-                {
-                    "id": "a7",
-                    "answerText": "Pluto",
-                    "isCorrect": true
-                },
-                {
-                    "id": "a8",
-                    "answerText": "Moon",
-                    "isCorrect": false
-                }
-            ]
-        },
-        {
-            "id": "q3",
-            "questionText": "The Earth is flat.",
-            "image": null,
-            "answerType": "BOOLEAN",
-            "answers": [
-                {
-                    "id": "a9",
-                    "answerText": "Vraie",
-                    "isCorrect": false
-                },
-                {
-                    "id": "a10",
-                    "answerText": "Faux",
-                    "isCorrect": true
-                }
-            ]
-        },
-        {
-            "id": "q4",
-            "questionText": "Which element has the chemical symbol 'O'?",
-            "image": null,
-            "answerType": "SINGLE_CHOICE",
-            "answers": [
-                {
-                    "id": "a11",
-                    "answerText": "Oxygen",
-                    "isCorrect": true
-                },
-                {
-                    "id": "a12",
-                    "answerText": "Gold",
-                    "isCorrect": false
-                },
-                {
-                    "id": "a13",
-                    "answerText": "Silver",
-                    "isCorrect": false
-                },
-                {
-                    "id": "a14",
-                    "answerText": "Osmium",
-                    "isCorrect": false
-                }
-            ]
-        },
-        {
-            "id": "q5",
-            "questionText": "Which of the following are types of energy?",
-            "image": null,
-            "answerType": "MULTIPLE_CHOICE",
-            "answers": [
-                {
-                    "id": "a15",
-                    "answerText": "Kinetic",
-                    "isCorrect": true
-                },
-                {
-                    "id": "a16",
-                    "answerText": "Potential",
-                    "isCorrect": true
-                },
-                {
-                    "id": "a17",
-                    "answerText": "Thermal",
-                    "isCorrect": true
-                },
-                {
-                    "id": "a18",
-                    "answerText": "Elastic",
-                    "isCorrect": false
-                }
-            ]
-        },
-        {
-            "id": "q6",
-            "questionText": "Sound travels faster in water than in air.",
-            "image": null,
-            "answerType": "BOOLEAN",
-            "answers": [
-                {
-                    "id": "a19",
-                    "answerText": "Vraie",
-                    "isCorrect": true
-                },
-                {
-                    "id": "a20",
-                    "answerText": "Faux",
-                    "isCorrect": false
-                }
-            ]
-        },
-        {
-            "id": "q7",
-            "questionText": "What is the main gas found in the air we breathe?",
-            "image": null,
-            "answerType": "SINGLE_CHOICE",
-            "answers": [
-                {
-                    "id": "a21",
-                    "answerText": "Nitrogen",
-                    "isCorrect": true
-                },
-                {
-                    "id": "a22",
-                    "answerText": "Oxygen",
-                    "isCorrect": false
-                },
-                {
-                    "id": "a23",
-                    "answerText": "Carbon Dioxide",
-                    "isCorrect": false
-                },
-                {
-                    "id": "a24",
-                    "answerText": "Hydrogen",
-                    "isCorrect": false
-                }
-            ]
-        },
-        {
-            "id": "q8",
-            "questionText": "Which of the following are states of matter?",
-            "image": null,
-            "answerType": "MULTIPLE_CHOICE",
-            "answers": [
-                {
-                    "id": "a25",
-                    "answerText": "Solid",
-                    "isCorrect": true
-                },
-                {
-                    "id": "a26",
-                    "answerText": "Liquid",
-                    "isCorrect": true
-                },
-                {
-                    "id": "a27",
-                    "answerText": "Gas",
-                    "isCorrect": true
-                },
-                {
-                    "id": "a28",
-                    "answerText": "Plasma",
-                    "isCorrect": true
-                }
-            ]
-        },
-        {
-            "id": "q9",
-            "questionText": "Which planet is known as the Red Planet?",
-            "image": null,
-            "answerType": "SINGLE_CHOICE",
-            "answers": [
-                {
-                    "id": "a29",
-                    "answerText": "Mars",
-                    "isCorrect": true
-                },
-                {
-                    "id": "a30",
-                    "answerText": "Jupiter",
-                    "isCorrect": false
-                },
-                {
-                    "id": "a31",
-                    "answerText": "Saturn",
-                    "isCorrect": false
-                },
-                {
-                    "id": "a32",
-                    "answerText": "Venus",
-                    "isCorrect": false
-                }
-            ]
-        },
-        {
-            "id": "q10",
-            "questionText": "Is photosynthesis a process used by plants to convert sunlight into food?",
-            "image": null,
-            "answerType": "BOOLEAN",
-            "answers": [
-                {
-                    "id": "a33",
-                    "answerText": "Vraie",
-                    "isCorrect": true
-                },
-                {
-                    "id": "a34",
-                    "answerText": "Faux",
-                    "isCorrect": false
-                }
-            ]
-        }
-    ]
-};
 
 const SaveButton = () => (
     <Box sx={{ display: 'flex', justifyContent: 'end' }}>
@@ -291,11 +28,20 @@ const RenderAnswers = ({ answerType, activeQuestion, test }) => {
                                 <TextField
                                     label={`Réponse ${index + 1}`}
                                     sx={{ width: '100%' }}
-                                    value={answer.answerText}
+                                    value={answer.answer}
+                                    size="small"
                                 />
                             </Grid>
                             <Grid item xs={1}>
-                                {isCheckbox ? <Checkbox checked={answer.isCorrect} /> : <Radio value={`answer-${index}`} inputProps={{ 'aria-label': `Réponse ${index + 1}` }} checked={answer.isCorrect} />}
+                                {isCheckbox ? (
+                                    <Checkbox checked={answer.isCorrect} />
+                                ) : (
+                                    <Radio
+                                        value={`answer-${index}`}
+                                        inputProps={{ 'aria-label': `Réponse ${index + 1}` }}
+                                        checked={answer.isCorrect}
+                                    />
+                                )}
                             </Grid>
                         </Fragment>
                     ))}
@@ -317,30 +63,31 @@ const RenderAnswers = ({ answerType, activeQuestion, test }) => {
     }
 };
 
-const AddTest = () => {
+const ModifyTest = () => {
     const { id } = useParams();
-    const [test, setTest] = useState(Testt);
-    console.log(id)
+    const [test, setTest] = useState(null);
+    const [activeQuestion, setActiveQuestion] = useState(null);
+    const [isActive, setActive] = useState(false);
+    const [level, setLevel] = useState('beginner'); // Default to 'beginner'
+    const [section, setSection] = useState('Technical'); // Default to 'Technical'
+    const [answerType, setAnswerType] = useState('SINGLE_CHOICE'); // Default to 'SINGLE_CHOICE'
+    const [numQuestions, setNumQuestions] = useState(0);
 
     useEffect(() => {
         const getTest = async () => {
             try {
-                const CandidatesData = await getTestById(id);
-                setTest(CandidatesData);
+                const testData = await getTestById(id);
+                setTest(testData);
+                setLevel(testData.level.name || 'beginner');
+                setSection(testData.section.name || 'Technical');
+                setNumQuestions(testData.questions.length || 0);
             } catch (error) {
-                console.error("Failed to fetch Candidates:", error);
+                console.error("Failed to fetch test:", error);
             }
         };
 
-        getTest(id);
+        getTest();
     }, [id]);
-    
-    const [activeQuestion, setActiveQuestion] = useState(null);
-    const [isActive, setActive] = useState(false);
-    const [level, setLevel] = useState(test.level);
-    const [section, setSection] = useState(test.section);
-    const [answerType, setAnswerType] = useState('');
-    const [numQuestions, setNumQuestions] = useState(test.questions.length || 0);
 
     const handleNumQuestionsChange = (event) => {
         const value = parseInt(event.target.value, 10);
@@ -356,7 +103,7 @@ const AddTest = () => {
                 return null;
             } else {
                 setActive(true);
-                setAnswerType(test.questions[index].answerType);
+                setAnswerType(test.questions[index].type || 'SINGLE_CHOICE');
                 return index;
             }
         });
@@ -368,7 +115,15 @@ const AddTest = () => {
 
     return (
         <Box>
-            <Box sx={{ p: '15px 20px', borderRadius: 5, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff', minHeight: `calc( 100vh - ( ${theme.mixins.toolbar.minHeight}px) - 15px )` }}>
+            <Box
+                sx={{
+                    p: '15px 20px',
+                    borderRadius: 5,
+                    border: '1px solid rgba(0, 0, 0, 0.12)',
+                    bgcolor: '#fff',
+                    minHeight: `calc( 100vh - ( ${theme.mixins.toolbar.minHeight}px) - 15px )`
+                }}
+            >
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
                     <Link to='/admin/Tests'>
                         <IconButton aria-label="back">
@@ -379,7 +134,7 @@ const AddTest = () => {
                         Modifier le Test
                     </Button>
                 </Box>
-                {test &&
+                {test && (
                     <Box sx={{ mt: 2, px: 5 }}>
                         {/* Nom */}
                         <Grid container spacing={4} sx={{ mb: 2 }}>
@@ -398,10 +153,7 @@ const AddTest = () => {
                                         value={section}
                                         onChange={(e) => setSection(e.target.value)}
                                     >
-                                        <MenuItem value="">
-                                            <em>Aucun</em>
-                                        </MenuItem>
-                                        <MenuItem value="Technical">Technique</MenuItem>
+                                        <MenuItem value="Technique">Technique</MenuItem>
                                         <MenuItem value="Psychotechnique">Psychotechnique</MenuItem>
                                     </Select>
                                 </FormControl>
@@ -411,10 +163,16 @@ const AddTest = () => {
                         {/* Niveau Buttons */}
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                             <Typography fontWeight={500} width={250}>Niveau</Typography>
-                            <RadioGroup row aria-labelledby="niveau-label" name="niveau" value={level} onChange={(e) => setLevel(e.target.value)}>
-                                <FormControlLabel value="beginner" control={<Radio />} label="Débutant" />
-                                <FormControlLabel value="intermediate" control={<Radio />} label="Intermédiaire" />
-                                <FormControlLabel value="advanced" control={<Radio />} label="Avancée" />
+                            <RadioGroup
+                                row
+                                aria-labelledby="niveau-label"
+                                name="niveau"
+                                value={level}
+                                onChange={(e) => setLevel(e.target.value)}
+                            >
+                                <FormControlLabel value="Débutant" control={<Radio />} label="Débutant" />
+                                <FormControlLabel value="Intermédiaire" control={<Radio />} label="Intermédiaire" />
+                                <FormControlLabel value="Avancée" control={<Radio />} label="Avancée" />
                             </RadioGroup>
                         </Box>
 
@@ -470,35 +228,39 @@ const AddTest = () => {
                                                     rows={1}
                                                     variant="outlined"
                                                     size="small"
-                                                    sx={{ width: '100%' }}
-                                                    value={test.questions[activeQuestion].questionText}
+                                                    sx={{ width: 300 }}
+                                                    value={test.questions[activeQuestion].question}
                                                 />
                                             </Box>
-                                            {/* Type Buttons */}
                                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                                                <Typography fontWeight={500} width={200}>Type des Réponses</Typography>
-                                                <RadioGroup
-                                                    row
-                                                    aria-labelledby="answer-type-label"
-                                                    name="answer-type"
-                                                    value={answerType}
-                                                    onChange={handleAnswerTypeChange}
-                                                >
-                                                    <FormControlLabel value="MULTIPLE_CHOICE" control={<Radio />} label="Choix Multiple" />
-                                                    <FormControlLabel value="SINGLE_CHOICE" control={<Radio />} label="Choix Simple" />
-                                                    <FormControlLabel value="BOOLEAN" control={<Radio />} label="Boolean" />
-                                                </RadioGroup>
+                                                <Typography fontWeight={500} width={250}>Type de réponse</Typography>
+                                                <FormControl sx={{ width: '50%' }}>
+                                                    <InputLabel id="select-small">Type</InputLabel>
+                                                    <Select
+                                                        labelId="select-small"
+                                                        id="select-small"
+                                                        value={answerType}
+                                                        label="Type"
+                                                        onChange={handleAnswerTypeChange}
+                                                        size="small"
+                                                    >
+                                                        <MenuItem value="SINGLE_CHOICE">Choix simple</MenuItem>
+                                                        <MenuItem value="MULTIPLE_CHOICE">Choix multiple</MenuItem>
+                                                        <MenuItem value="BOOLEAN">Oui/Non</MenuItem>
+                                                    </Select>
+                                                </FormControl>
                                             </Box>
+                                            <RenderAnswers answerType={answerType} activeQuestion={activeQuestion} test={test} />
                                         </Box>
                                     </Box>
-                                    <RenderAnswers answerType={answerType} activeQuestion={activeQuestion} test={test} />
                                 </>
                             )}
                         </Box>
-                    </Box>}
+                    </Box>
+                )}
             </Box>
         </Box>
     );
 };
 
-export default AddTest;
+export default ModifyTest;

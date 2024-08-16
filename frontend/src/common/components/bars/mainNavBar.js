@@ -3,7 +3,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 //logo
-import logo from '../../../Assets/images/logoPortNetWeb.png';
+import logo from '../../../assets/images/logoPortNetWeb.png';
 
 const MainNavBar = ({ navItems, location }) => {
     return (
