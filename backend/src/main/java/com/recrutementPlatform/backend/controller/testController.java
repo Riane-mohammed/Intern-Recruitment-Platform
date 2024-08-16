@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/test")
+@CrossOrigin(origins = "http://localhost:3000")
 public class testController {
 
     @Autowired
@@ -18,6 +19,14 @@ public class testController {
     @GetMapping
     public List<test> getAllTests(){
         return service.getAllTests();
+    }
+
+    @GetMapping("/{id}")
+    public test getTestById(@PathVariable Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("id data is required");
+        }
+        return service.getTestById(id);
     }
 
     @PostMapping("/addTest")

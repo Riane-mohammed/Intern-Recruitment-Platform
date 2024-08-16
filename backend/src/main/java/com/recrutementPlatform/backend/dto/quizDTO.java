@@ -14,6 +14,13 @@ public class quizDTO {
     private String title;
     private String description;
     private String emails;
-    private List<Long> testIds;
+    private List<TestPercentageDTO> tests;
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TestPercentageDTO {
+        private Long testId;
+        private double percentage;
+    }
 }

@@ -20,11 +20,8 @@ public class test {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique=true, nullable=false)
+    @Column(unique = true, nullable = false)
     private String title;
-
-    @Column(nullable = false)
-    private int duration;
 
     @Column(name = "question_nbr", nullable = false)
     private int nbrQst;
@@ -37,9 +34,9 @@ public class test {
     @JoinColumn(name = "section_id")
     private testSection section;
 
-    @ManyToMany(mappedBy = "tests")
+    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<quiz> quizzes;
+    private List<quizTest> quizTests;
 
     @OneToMany(mappedBy = "test")
     @JsonIgnore

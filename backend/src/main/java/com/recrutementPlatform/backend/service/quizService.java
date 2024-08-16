@@ -1,6 +1,7 @@
 package com.recrutementPlatform.backend.service;
 
 import com.recrutementPlatform.backend.dto.quizDTO;
+import com.recrutementPlatform.backend.model.quizTest;
 import com.recrutementPlatform.backend.util.stringUtil;
 import com.recrutementPlatform.backend.model.quiz;
 import com.recrutementPlatform.backend.model.test;
@@ -39,27 +40,35 @@ public class quizService {
         }
 
         quiz newQuiz = new quiz();
-
         newQuiz.setTitle(quizDTO.getTitle());
         newQuiz.setDescription(quizDTO.getDescription());
         newQuiz.setEmails(quizDTO.getEmails());
 
-        List<test> testList = quizDTO.getTestIds()
-                .stream()
-                .map(testId -> testRepo.findById(testId)
-                        .orElseThrow(() -> new IllegalArgumentException("Test with ID " + testId + " not found")))
-                        .collect(Collectors.toList());
+        // Iterate over test IDs and percentages from quizDTO
+        List<quizTest> quizTests = quizDTO.getTests().stream()
+                .map(testDTO -> {
+                    test foundTest = testRepo.findById(testDTO.getTestId())
+                            .orElseThrow(() -> new IllegalArgumentException("Test with ID " + testDTO.getTestId() + " not found"));
 
-        newQuiz.setTests(testList);
+                    quizTest quizTest = new quizTest();
+                    quizTest.setTest(foundTest);
+                    quizTest.setQuiz(newQuiz);
+                    quizTest.setPercentage(testDTO.getPercentage()); // Assuming quizDTO contains percentage for each test
+
+                    return quizTest;
+                })
+                .collect(Collectors.toList());
+
+        newQuiz.setQuizTests(quizTests);
 
         List<String> emails = stringUtil.splitEmails(quizDTO.getEmails());
-
         emails.forEach(email -> sendTokenLink(email));
 
         quizRepo.save(newQuiz);
 
         return newQuiz;
     }
+
 
     public String generateLink() {
         return "google.com";
