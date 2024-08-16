@@ -1,6 +1,6 @@
 import { Box, Button, Grid, TextField, Typography, Card, CardContent, IconButton } from "@mui/material";
 import { theme } from '../../../common/utils/theme';
-import { ReactComponent as ContactIcon } from '../../../assets/images/Contact.svg'; 
+import { ReactComponent as ContactIcon } from '../../../Assets/images/Contact.svg'; 
 
 // Icons
 import FaxIcon from '@mui/icons-material/Fax';

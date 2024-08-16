@@ -19,7 +19,7 @@ import Options from "../../modules/admin/ui/options";
 import Contact from "../../modules/admin/ui/contact";
 import Profile from '../../modules/admin/ui/profile';
 import Settings from '../../modules/admin/ui/settings';
-import AddAdmin from '../../modules/admin/ui/addAdmin';
+
 
 //main pages
 import Home from "../../modules/main/ui/home";
@@ -57,7 +57,7 @@ const routes = (
     
             <Route path="Profil" element={<Profile />} />
             <Route path="Paramètres" element={<Settings />} />
-            <Route path="Ajouter-Admin" element={<AddAdmin />} />
+            
             <Route path="*" element={<AdminNotFound />} />
         </Route>
     
@@ -97,7 +97,7 @@ export const locationNames = {
     "/admin/Options": "Options",
     "/admin/R%C3%A9clamation": "Réclamation",
     "/admin/Param%C3%A8tres": "Paramètres",
-    "/admin/Ajouter-Admin": "Ajouter un nouveau compte",
+    
 };
 
 export const dynamicPaths = [
