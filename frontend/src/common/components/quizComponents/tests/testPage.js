@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 //actions
 import { increment, incrementQuestionNumber, setFinished, setQuestionNumber, setStarted, updatePoints } from '../../../../modules/quiz/actions/candidateActions';
-import logo from '../../../../Assets/images/logoPortNetWeb.png';
+import logo from '../../../../assets/images/logoPortNetWeb.png';
 
 //helper functions
 import { formatTime } from '../../../utils/helpers';

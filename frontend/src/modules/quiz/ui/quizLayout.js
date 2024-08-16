@@ -7,7 +7,7 @@ import { Outlet, useLocation, useParams } from 'react-router-dom'
 import { setCandidateEmail, setDisqualified, setExpired, setPreviousPath, setValid } from '../actions/candidateActions';
 
 //logo
-import logo from '../../../Assets/images/logoPortNetWeb.png';
+import logo from '../../../assets/images/logoPortNetWeb.png';
 
 //componenets
 import Loding from '../../../common/components/loding';

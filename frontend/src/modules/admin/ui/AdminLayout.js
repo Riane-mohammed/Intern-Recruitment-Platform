@@ -2,6 +2,7 @@ import { Box } from '@mui/material'
 import React, { useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { theme } from '../../../common/utils/theme';
+import { useSelector } from 'react-redux';
 
 //components
 import SideBar from '../../../common/components/bars/sideBar';
@@ -9,17 +10,26 @@ import TopBar from '../../../common/components/bars/topBar';
 
 //icons 
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import HomeIcon from '@mui/icons-material/Home';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import PersonIcon from '@mui/icons-material/Person';
-import QuizIcon from '@mui/icons-material/Quiz';
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
+
 import QuizOutlinedIcon from '@mui/icons-material/QuizOutlined';
+import QuizRoundedIcon from '@mui/icons-material/QuizRounded';
+
 import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
 import ContactSupportIcon from '@mui/icons-material/ContactSupport';
-import FeaturedPlayListIcon from '@mui/icons-material/FeaturedPlayList';
-import FeaturedPlayListOutlinedIcon from '@mui/icons-material/FeaturedPlayListOutlined';
+
+import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
+import FeedRoundedIcon from '@mui/icons-material/FeedRounded';
+
 import { PersonAdd, Settings } from '@mui/icons-material';
-import { useSelector } from 'react-redux';
+
+import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
+
+import QuestionAnswerRoundedIcon from '@mui/icons-material/QuestionAnswerRounded';
+import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
 
 //image
 // import bg from '../../../assets/images/bg.svg';
@@ -44,19 +54,19 @@ function AdminLayout() {
         {
             name: "Tableau de Bord",
             icon: <HomeOutlinedIcon color='primary' />,
-            activeIcon: <HomeIcon color='blanc' />,
+            activeIcon: <HomeRoundedIcon color='blanc' />,
             path: "/admin",
         },
         {
             name: "Candidats",
             icon: <PersonOutlineOutlinedIcon color='primary' />,
-            activeIcon: <PersonIcon color='blanc' />,
+            activeIcon: <PersonRoundedIcon color='blanc' />,
             path: "/admin/Candidats",
         },
         {
             name: "Tests",
-            icon: <FeaturedPlayListOutlinedIcon color='primary' />,
-            activeIcon: <FeaturedPlayListIcon color='blanc' />,
+            icon: <FeedOutlinedIcon color='primary' />,
+            activeIcon: <FeedRoundedIcon color='blanc' />,
             path: "/admin/Tests",
         },
         {
@@ -68,8 +78,20 @@ function AdminLayout() {
         {
             name: "Quiz",
             icon: <QuizOutlinedIcon color='primary' />,
-            activeIcon: <QuizIcon color='blanc' />,
+            activeIcon: <QuizRoundedIcon color='blanc' />,
             path: "/admin/Quiz",
+        },
+        {
+            name: "Options",
+            icon: <TuneRoundedIcon color='primary' />,
+            activeIcon: <TuneRoundedIcon color='blanc' />,
+            path: "/admin/Options",
+        },
+        {
+            name: "Réclamation",
+            icon: <QuestionAnswerOutlinedIcon color='primary' />,
+            activeIcon: <QuestionAnswerRoundedIcon color='blanc' />,
+            path: "/admin/Réclamation",
         },
     ];
 
@@ -94,31 +116,34 @@ function AdminLayout() {
                 // backgroundImage: `url(${bg})`, 
                 // backgroundSize: 'cover',
             }}>
+            {isAuthenticated &&
+                <>
 
-            <TopBar location={location} drawerWidth={drawerWidth} admin={admin} accountItems={accountItems} />
+                    <TopBar location={location} drawerWidth={drawerWidth} admin={admin} accountItems={accountItems} />
 
-            <SideBar SideBarLinks={SideBarLinks} location={location} drawerWidth={drawerWidth} />
+                    <SideBar SideBarLinks={SideBarLinks} location={location} drawerWidth={drawerWidth} />
 
-            <Box
-                sx={{
-                    width: '100%',
-                    minHeight: '100vh',
-                }}>
-                <Box
-                    sx={{
-                        ...theme.mixins.toolbar,
-                    }}>
-                </Box>
-                <Box
-                    sx={{
-                        mx: 1,
-                        minHeight: `calc( 100vh - ( ${theme.mixins.toolbar.minHeight}px + 15px ) )`,
-                    }}
-                >
-                    <Outlet />
-                </Box>
+                    <Box
+                        sx={{
+                            width: '100%',
+                            minHeight: '100vh',
+                        }}>
+                        <Box
+                            sx={{
+                                ...theme.mixins.toolbar,
+                            }}>
+                        </Box>
+                        <Box
+                            sx={{
+                                mx: 1,
+                                minHeight: `calc( 100vh - ( ${theme.mixins.toolbar.minHeight}px + 15px ) )`,
+                            }}
+                        >
+                            <Outlet />
+                        </Box>
 
-            </Box>
+                    </Box>
+                </>}
         </Box>
     )
 }
