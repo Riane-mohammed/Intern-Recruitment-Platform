@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class answerDTO {
 
     private String answer;
-    private Boolean isCorrect;
-    private Long questionId;
+    private String image;
+    private boolean isCorrect;
 
 }

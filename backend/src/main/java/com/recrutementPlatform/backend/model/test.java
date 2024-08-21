@@ -2,12 +2,14 @@ package com.recrutementPlatform.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,9 +24,6 @@ public class test {
 
     @Column(unique = true, nullable = false)
     private String title;
-
-    @Column(name = "question_nbr", nullable = false)
-    private int nbrQst;
 
     @ManyToOne
     @JoinColumn(name = "level_id")
@@ -42,8 +41,8 @@ public class test {
     @JsonIgnore
     private List<result> results;
 
-    @OneToMany(mappedBy = "test")
-    @JsonManagedReference
-    private List<question> questions;
+    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("test")
+    private List<question> questions = new ArrayList<>();
 
 }

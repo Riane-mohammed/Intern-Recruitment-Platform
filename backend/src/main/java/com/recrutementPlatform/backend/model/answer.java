@@ -18,11 +18,14 @@ public class answer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String answer;
 
+    @Column(nullable = true)
+    private String image;
+
     @Column(nullable = false)
-    private Boolean isCorrect;
+    private boolean isCorrect;
 
     @ManyToOne
     @JoinColumn(name = "question_id")
