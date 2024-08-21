@@ -1,7 +1,7 @@
-import { Typography, Button, Box, Card, CardContent, IconButton, InputAdornment } from '@mui/material';
+import { Typography, Button, Box, Card, CardContent } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import logo from "../../../Assets/images/profile.svg";
 
 function Profile() {
     const navigate = useNavigate();
@@ -9,10 +9,6 @@ function Profile() {
 
     const handleEditClick = () => {
         navigate('/admin/Paramètres');
-    };
-
-    const handleClickShowPassword = () => {
-        setShowPassword(!showPassword);
     };
 
     return (
@@ -25,6 +21,11 @@ function Profile() {
                 padding: 2 
             }}
         >
+            {/* Image Section */}
+            <Box sx={{ marginRight: 4 }}>
+                <img src={logo} alt="Profile" style={{ width: '400px', height: 'auto' }} />
+            </Box>
+            
             <Card 
                 sx={{ 
                     maxWidth: 600, 
@@ -50,9 +51,7 @@ function Profile() {
                     <Box display="flex" alignItems="center">
                         <Typography variant="h6" component="p" marginY={1} flexGrow={1}>
                             <strong>Mot de passe:</strong> admin123
-                            
                         </Typography>
-                        
                     </Box>
 
                     <Box textAlign="center" marginTop={2}>
