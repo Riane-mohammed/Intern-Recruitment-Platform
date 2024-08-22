@@ -89,19 +89,18 @@ function QuizLayout() {
                 bgcolor: 'grey.light',
                 minHeight: '100vh',
                 display: 'flex',
-                justifyContent: 'center',
+                flexDirection: 'column',
                 alignItems: 'center',
-                position: 'relative'
                 }}
         >
+            <Box
+                sx={{width : '100%'}}
+            >
             <Box
                 sx={{
                     width: '240px',
                     display: 'flex',
-                    justifyContent: 'center',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0
+                    justifyContent: 'start',
                 }}
             >
                 <img 
@@ -111,6 +110,7 @@ function QuizLayout() {
                     maxWidth: '80%',
                     }}
                 />
+                </Box>
             </Box>
             {isDisqualified && <DisqualifiedPage />}
             {isFinished && !isDisqualified && <FinishedPage />}

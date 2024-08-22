@@ -16,3 +16,18 @@ export const calculateAge = (birthday) => {
     }
     return age;
 };
+
+//Question Type 
+export const questionTypes = {
+    'MULTIPLE_CHOICE': 'Choix Multiple',
+    'SINGLE_CHOICE': 'Choix Simple',
+    'BOOLEAN': 'Oui/Non',
+}
+
+//Truncate Text
+export const truncateText = (text, maxLength) => {
+    if (text.length > maxLength) {
+        return `${text.substring(0, maxLength)}...`;
+    }
+    return text;
+};

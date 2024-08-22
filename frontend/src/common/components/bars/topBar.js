@@ -117,7 +117,7 @@ function TopBar({ drawerWidth, admin, location, accountItems }) {
                 >
                     <MenuItem
                         component={NavLink}
-                        to="/Profil"
+                        to="/admin/Profil"
                         onClick={handleClose}>
                         <Avatar /> Profil
                     </MenuItem>

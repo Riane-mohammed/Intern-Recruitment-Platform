@@ -4,10 +4,78 @@ import { useDispatch, useSelector } from 'react-redux';
 
 //actions
 import { increment, incrementQuestionNumber, setFinished, setQuestionNumber, setStarted, updatePoints } from '../../../../modules/quiz/actions/candidateActions';
-import logo from '../../../../assets/images/logoPortNetWeb.png';
 
 //helper functions
 import { formatTime } from '../../../utils/helpers';
+
+// Function to render answers based on the question type
+const renderAnswers = (question, selectedAnswers, handleAnswer) => {
+    switch (question.answerType) {
+        case 'MULTIPLE_CHOICE':
+            return question.answers.map((answer) => (
+                <Grid
+                    item xs={question.image ? 12 : 6}
+                    key={answer.id}
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        pt: '0 !important',
+                        pb: 1,
+                    }}
+                >
+                    <Box
+                        sx={{
+                            minWidth: '40%',
+                            maxHeight: '100px',
+                            display: 'flex',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Checkbox
+                            checked={selectedAnswers.includes(answer)}
+                            onChange={handleAnswer(answer)}
+                        />
+                        {answer.image ? (
+                            <Box
+                                component="img"
+                                src={answer.image}
+                                alt="answer"
+                                sx={{
+                                    maxWidth: '300px',
+                                    maxHeight: '100px', 
+                                    objectFit: 'contain',
+                                    display: 'block',
+                                }}
+                                onError={(e) => {
+                                    e.target.src = 'path_to_default_image'; 
+                                }}
+                            />
+                        ) : (
+                            answer.answerText
+                        )}
+                    </Box>
+                </Grid>
+            ));
+
+        default:
+            return question.answers.map((answer) => (
+                <Grid item xs={question.image ? 12 : 6} key={answer.id} >
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}
+                    >
+                        <Button variant='contained' color='secondary' sx={{ width: '75%' }} onClick={handleAnswer(answer)}>
+                            {answer.answerText}
+                        </Button>
+                    </Box>
+                </Grid>
+            ));
+    }
+};
 
 function TestPage({ test, time, quizLength }) {
     const dispatch = useDispatch(); 
@@ -61,8 +129,6 @@ function TestPage({ test, time, quizLength }) {
             dispatch(increment(quizLength)); // Increment the page number
             return;
         }
-        console.log(quizLength)
-        console.log(currentPage)
         dispatch(incrementQuestionNumber(questionsLength - 1)); // Move to the next question
         setSelectedAnswers([]); // Reset selected answers
     };
@@ -79,9 +145,9 @@ function TestPage({ test, time, quizLength }) {
             });
         } else {
             if (answer.isCorrect) {
-                dispatch(updatePoints(test.id, 1)); // Update points for correct answer
+                dispatch(updatePoints(test.id, currentQuestion.point)); // Update points for correct answer
             } else {
-                dispatch(updatePoints(test.id, -0.5)); // Deduct points for incorrect answer
+                dispatch(updatePoints(test.id, currentQuestion.point / 2 )); // Deduct points for incorrect answer
             }
             setTimeout(nextQuestion, 0); // Move to the next question after current render cycle
         }
@@ -115,52 +181,6 @@ function TestPage({ test, time, quizLength }) {
         setTimeout(nextQuestion, 0);
     };
 
-    // Function to render answers based on the question type
-    const renderAnswers = (question) => {
-        switch (question.answerType) {
-            case 'MULTIPLE_CHOICE':
-                return question.answers.map((answer) => (
-                    <Grid
-                        item xs={6}
-                        key={answer.id}
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                minWidth: '40%',
-                            }}
-                        >
-                            <Checkbox
-                                checked={selectedAnswers.includes(answer)}
-                                onChange={handleAnswer(answer)}
-                            />
-                            {answer.answerText}
-                        </Box>
-                    </Grid>
-                ));
-            default:
-                return question.answers.map((answer) => (
-                    <Grid item xs={6} key={answer.id} >
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center'
-                            }}
-                        >
-                            <Button variant='contained' color='secondary' sx={{ width: '75%' }} onClick={handleAnswer(answer)}>
-                                {answer.answerText}
-                            </Button>
-                        </Box>
-                    </Grid>
-                ));
-        }
-    };
-
     return (
         <Box>
             <Box display="flex" alignItems="center" justifyContent="center" position="relative" pt={4}>
@@ -183,32 +203,76 @@ function TestPage({ test, time, quizLength }) {
                     {formatTime(remainingTime)}
                 </Typography>
             </Box>
-            <Box
-                sx={{
-                    pb: currentQuestion.image ? 1 : 4,
-                    pt: currentQuestion.image ? 0 : 8,
-                }}
-            >
+            <Box>
                 <Box
                     sx={{
                         display: 'flex',
                         justifyContent: 'center',
-                        height: currentQuestion.image ? '150px' : 0,
                     }}
                 >
-                    {currentQuestion.image && <img src={logo} alt='question' />}
                 </Box>
-                <Typography align='center' fontWeight={600}>
-                    {currentQuestion.questionText}
-                </Typography>
-                <Grid container spacing={4} sx={{ py: 5 }}>
-                    {renderAnswers(currentQuestion)}
-                </Grid>
+                {currentQuestion.image ?
+                    <>
+                        <Grid
+                            container
+                            spacing={4}
+                            sx={{
+                                py: 2,
+                                display: 'flex',
+                                alignItems: 'center'
+                            }}>
+                            <Grid
+                                item
+                                xs={6}
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    pt: currentQuestion.answerType !== 'BOOLEAN' ? '0 !important' : undefined,
+                                    pb: currentQuestion.answerType !== 'BOOLEAN' ? undefined : '25px !important',
+                                }}
+                            
+                            >
+                                <Typography fontWeight={600} color='primary' gutterBottom>{currentQuestion.questionText}</Typography>
+                                <Box
+                                    component="img"
+                                    src={currentQuestion.image}
+                                    alt="question-image"
+                                    sx={{
+                                        width: '100%',
+                                        height: 'auto',
+                                        maxHeight: '400px',
+                                        objectFit: 'contain',
+                                        display: 'block',
+                                        margin: '0 auto',
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={6} sx={{ py: '0 !important' }}>
+                                <Grid container spacing={4} sx={{ py: 5 }}>
+                                    {renderAnswers(currentQuestion, selectedAnswers, handleAnswer)}
+                                </Grid>
+                            </Grid>
+                        </Grid>
+
+                    </>
+                    :
+                    <Box sx={{pt: 5}}>
+                        <Typography align='center' fontWeight={600}>
+                            {currentQuestion.questionText}
+                        </Typography>
+                        <Grid container spacing={4} sx={{ py: 5 }}>
+                            {renderAnswers(currentQuestion, selectedAnswers, handleAnswer)}
+                        </Grid>
+                    </Box>
+                }
                 <Box
                     sx={{
                         display: 'flex',
                         justifyContent: 'center',
-                        alignItems: 'center'
+                        alignItems: 'center',
+                        mb: 2 
                     }}
                 >
                     {currentQuestion.answerType === 'MULTIPLE_CHOICE' && (
@@ -216,7 +280,7 @@ function TestPage({ test, time, quizLength }) {
                             Submit
                         </Button>
                     )}
-                    <Button variant='contained' sx={{ width: '40%', backgroundColor: 'red', color: 'white' }} onClick={handlePass}>
+                    <Button variant='contained' sx={{ width: '40%', backgroundColor: 'red', color: 'white'}} onClick={handlePass}>
                         Pass
                     </Button>
                 </Box>
