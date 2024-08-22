@@ -56,9 +56,4 @@ public class candidate {
     @JsonManagedReference
     private List<result> results;
 
-    @OneToMany(mappedBy = "candidate", cascade = CascadeType.REMOVE)
-    @JsonManagedReference
-    private List<token> tokens;
-
-
 }

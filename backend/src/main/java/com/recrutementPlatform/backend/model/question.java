@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,12 +22,18 @@ public class question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String question;
+
+    @Column(nullable = true)
+    private String image;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private questionType type;
+
+    @Column(nullable = false)
+    private int point;
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -37,9 +44,19 @@ public class question {
     @JsonBackReference
     private test test;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<answer> answers;
+    private List<answer> answers = new ArrayList<>();
+
+    @Transient
+    private Long testId;
+
+    @PostLoad
+    private void setTestId() {
+        if (this.test != null) {
+            this.testId = this.test.getId();
+        }
+    }
 
     //Constructor
     public question(String question, questionType type) {

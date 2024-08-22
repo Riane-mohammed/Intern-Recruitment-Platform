@@ -11,6 +11,10 @@ import AlertModal from '../../../common/components/quizComponents/tests/alertMod
 //icons
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 
+import answer from '../../../assets/images/questions/qst.png';
+
+import qst from '../../../assets/images/questions/qst.png';
+
 //data
 const quiz = [
     {
@@ -19,27 +23,32 @@ const quiz = [
         "questions": [
             {
                 "id": "q1",
-                "questionText": "What is the boiling point of water?",
-                "image": null,
+                "questionText": "Quelle est la différence entre == et === en JavaScript ?",
+                "point" : 1,
+                "image": qst,
                 "answerType": "SINGLE_CHOICE",
                 "answers": [
                     {
                         "id": "a1",
+                        "image": answer,
                         "answerText": "100°C",
                         "isCorrect": true
                     },
                     {
                         "id": "a2",
+                        "image": answer,
                         "answerText": "90°C",
                         "isCorrect": false
                     },
                     {
                         "id": "a3",
+                        "image": answer,
                         "answerText": "110°C",
                         "isCorrect": false
                     },
                     {
                         "id": "a4",
+                        "image": answer,
                         "answerText": "120°C",
                         "isCorrect": false
                     }
@@ -48,26 +57,31 @@ const quiz = [
             {
                 "id": "q2",
                 "questionText": "Which of the following are planets in our solar system?",
+                "point" : 1,
                 "image": null,
                 "answerType": "MULTIPLE_CHOICE",
                 "answers": [
                     {
                         "id": "a5",
+                        "image": answer,
                         "answerText": "Earth",
                         "isCorrect": true
                     },
                     {
                         "id": "a6",
+                        "image": answer,
                         "answerText": "Mars",
                         "isCorrect": true
                     },
                     {
                         "id": "a7",
+                        "image": answer,
                         "answerText": "Pluto",
                         "isCorrect": true
                     },
                     {
                         "id": "a8",
+                        "image": answer,
                         "answerText": "Moon",
                         "isCorrect": false
                     }
@@ -76,44 +90,52 @@ const quiz = [
             {
                 "id": "q3",
                 "questionText": "The Earth is flat.",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "BOOLEAN",
                 "answers": [
                     {
                         "id": "a9",
+                        "image": answer,
                         "answerText": "Vraie",
                         "isCorrect": false
                     },
                     {
                         "id": "a10",
+                        "image": answer,
                         "answerText": "Faux",
                         "isCorrect": true
                     }
-                ]
-            },
+                ]},
+
             {
                 "id": "q4",
                 "questionText": "Which element has the chemical symbol 'O'?",
+                "point" : 1,
                 "image": null,
                 "answerType": "SINGLE_CHOICE",
                 "answers": [
                     {
                         "id": "a11",
+                        "image": answer,
                         "answerText": "Oxygen",
                         "isCorrect": true
                     },
                     {
                         "id": "a12",
+                        "image": answer,
                         "answerText": "Gold",
                         "isCorrect": false
                     },
                     {
                         "id": "a13",
+                        "image": answer,
                         "answerText": "Silver",
                         "isCorrect": false
                     },
                     {
                         "id": "a14",
+                        "image": answer,
                         "answerText": "Osmium",
                         "isCorrect": false
                     }
@@ -122,26 +144,31 @@ const quiz = [
             {
                 "id": "q5",
                 "questionText": "Which of the following are types of energy?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "MULTIPLE_CHOICE",
                 "answers": [
                     {
                         "id": "a15",
+                        "image": answer,
                         "answerText": "Kinetic",
                         "isCorrect": true
                     },
                     {
                         "id": "a16",
+                        "image": answer,
                         "answerText": "Potential",
                         "isCorrect": true
                     },
                     {
                         "id": "a17",
+                        "image": answer,
                         "answerText": "Thermal",
                         "isCorrect": true
                     },
                     {
                         "id": "a18",
+                        "image": answer,
                         "answerText": "Elastic",
                         "isCorrect": false
                     }
@@ -150,44 +177,53 @@ const quiz = [
             {
                 "id": "q6",
                 "questionText": "Sound travels faster in water than in air.",
+                "point" : 1,
                 "image": null,
                 "answerType": "BOOLEAN",
                 "answers": [
                     {
                         "id": "a19",
+                        "image": answer,
                         "answerText": "Vraie",
                         "isCorrect": true
                     },
                     {
                         "id": "a20",
+                        "image": answer,
                         "answerText": "Faux",
                         "isCorrect": false
                     }
-                ]
-            },
+                ]},
+
             {
+                
                 "id": "q7",
                 "questionText": "What is the main gas found in the air we breathe?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "SINGLE_CHOICE",
                 "answers": [
                     {
                         "id": "a21",
+                        "image": answer,
                         "answerText": "Nitrogen",
                         "isCorrect": true
                     },
                     {
                         "id": "a22",
+                        "image": answer,
                         "answerText": "Oxygen",
                         "isCorrect": false
                     },
                     {
                         "id": "a23",
+                        "image": answer,
                         "answerText": "Carbon Dioxide",
                         "isCorrect": false
                     },
                     {
                         "id": "a24",
+                        "image": answer,
                         "answerText": "Hydrogen",
                         "isCorrect": false
                     }
@@ -196,26 +232,31 @@ const quiz = [
             {
                 "id": "q8",
                 "questionText": "Which of the following are states of matter?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "MULTIPLE_CHOICE",
                 "answers": [
                     {
                         "id": "a25",
+                        "image": answer,
                         "answerText": "Solid",
                         "isCorrect": true
                     },
                     {
                         "id": "a26",
+                        "image": answer,
                         "answerText": "Liquid",
                         "isCorrect": true
                     },
                     {
                         "id": "a27",
+                        "image": answer,
                         "answerText": "Gas",
                         "isCorrect": true
                     },
                     {
                         "id": "a28",
+                        "image": answer,
                         "answerText": "Plasma",
                         "isCorrect": true
                     }
@@ -224,26 +265,31 @@ const quiz = [
             {
                 "id": "q9",
                 "questionText": "Which planet is known as the Red Planet?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "SINGLE_CHOICE",
                 "answers": [
                     {
                         "id": "a29",
+                        "image": answer,
                         "answerText": "Mars",
                         "isCorrect": true
                     },
                     {
                         "id": "a30",
+                        "image": answer,
                         "answerText": "Jupiter",
                         "isCorrect": false
                     },
                     {
                         "id": "a31",
+                        "image": answer,
                         "answerText": "Saturn",
                         "isCorrect": false
                     },
                     {
                         "id": "a32",
+                        "image": answer,
                         "answerText": "Venus",
                         "isCorrect": false
                     }
@@ -252,50 +298,58 @@ const quiz = [
             {
                 "id": "q10",
                 "questionText": "Is photosynthesis a process used by plants to convert sunlight into food?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "BOOLEAN",
                 "answers": [
                     {
                         "id": "a33",
+                        "image": answer,
                         "answerText": "Vraie",
                         "isCorrect": true
                     },
                     {
                         "id": "a34",
+                        "image": answer,
                         "answerText": "Faux",
                         "isCorrect": false
                     }
-                ]
-            }
-        ]
+                ]}]
+        
     },
     {
         "id": "2",
         "title": "History",
+        "image": answer,
         "questions": [
             {
                 "id": "q11",
                 "questionText": "Who was the first President of the United States?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "SINGLE_CHOICE",
                 "answers": [
                     {
                         "id": "a35",
+                        "image": answer,
                         "answerText": "George Washington",
                         "isCorrect": true
                     },
                     {
                         "id": "a36",
+                        "image": answer,
                         "answerText": "Thomas Jefferson",
                         "isCorrect": false
                     },
                     {
                         "id": "a37",
+                        "image": answer,
                         "answerText": "John Adams",
                         "isCorrect": false
                     },
                     {
                         "id": "a38",
+                        "image": answer,
                         "answerText": "Abraham Lincoln",
                         "isCorrect": false
                     }
@@ -304,26 +358,31 @@ const quiz = [
             {
                 "id": "q12",
                 "questionText": "Which of the following were causes of World War I?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "MULTIPLE_CHOICE",
                 "answers": [
                     {
                         "id": "a39",
+                        "image": answer,
                         "answerText": "Assassination of Archduke Franz Ferdinand",
                         "isCorrect": true
                     },
                     {
                         "id": "a40",
+                        "image": answer,
                         "answerText": "Rise of fascism",
                         "isCorrect": false
                     },
                     {
                         "id": "a41",
+                        "image": answer,
                         "answerText": "Militarism",
                         "isCorrect": true
                     },
                     {
                         "id": "a42",
+                        "image": answer,
                         "answerText": "Formation of alliances",
                         "isCorrect": true
                     }
@@ -332,44 +391,53 @@ const quiz = [
             {
                 "id": "q13",
                 "questionText": "The Berlin Wall fell in 1989.",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "BOOLEAN",
                 "answers": [
                     {
                         "id": "a43",
+                        "image": answer,
                         "answerText": "Vraie",
                         "isCorrect": true
                     },
                     {
                         "id": "a44",
+                        "image": answer,
                         "answerText": "Faux",
                         "isCorrect": false
                     }
-                ]
-            },
+                ]},
+
             {
+                
                 "id": "q14",
                 "questionText": "In which year did the American Civil War begin?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "SINGLE_CHOICE",
                 "answers": [
                     {
                         "id": "a45",
+                        "image": answer,
                         "answerText": "1861",
                         "isCorrect": true
                     },
                     {
                         "id": "a46",
+                        "image": answer,
                         "answerText": "1776",
                         "isCorrect": false
                     },
                     {
                         "id": "a47",
+                        "image": answer,
                         "answerText": "1812",
                         "isCorrect": false
                     },
                     {
                         "id": "a48",
+                        "image": answer,
                         "answerText": "1865",
                         "isCorrect": false
                     }
@@ -378,26 +446,31 @@ const quiz = [
             {
                 "id": "q15",
                 "questionText": "Which of the following were ancient civilizations?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "MULTIPLE_CHOICE",
                 "answers": [
                     {
                         "id": "a49",
+                        "image": answer,
                         "answerText": "Egyptians",
                         "isCorrect": true
                     },
                     {
                         "id": "a50",
+                        "image": answer,
                         "answerText": "Romans",
                         "isCorrect": true
                     },
                     {
                         "id": "a51",
+                        "image": answer,
                         "answerText": "Aztecs",
                         "isCorrect": true
                     },
                     {
                         "id": "a52",
+                        "image": answer,
                         "answerText": "Vikings",
                         "isCorrect": true
                     }
@@ -406,44 +479,53 @@ const quiz = [
             {
                 "id": "q16",
                 "questionText": "The Great Wall of China was built to protect against invasions from the north.",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "BOOLEAN",
                 "answers": [
                     {
                         "id": "a53",
+                        "image": answer,
                         "answerText": "Vraie",
                         "isCorrect": true
                     },
                     {
                         "id": "a54",
+                        "image": answer,
                         "answerText": "Faux",
                         "isCorrect": false
                     }
-                ]
-            },
+                ]},
+
             {
+                
                 "id": "q17",
                 "questionText": "Who was the first female Prime Minister of the United Kingdom?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "SINGLE_CHOICE",
                 "answers": [
                     {
                         "id": "a55",
+                        "image": answer,
                         "answerText": "Margaret Thatcher",
                         "isCorrect": true
                     },
                     {
                         "id": "a56",
+                        "image": answer,
                         "answerText": "Theresa May",
                         "isCorrect": false
                     },
                     {
                         "id": "a57",
+                        "image": answer,
                         "answerText": "Angela Merkel",
                         "isCorrect": false
                     },
                     {
                         "id": "a58",
+                        "image": answer,
                         "answerText": "Indira Gandhi",
                         "isCorrect": false
                     }
@@ -452,26 +534,31 @@ const quiz = [
             {
                 "id": "q18",
                 "questionText": "Which of the following events are associated with World War II?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "MULTIPLE_CHOICE",
                 "answers": [
                     {
                         "id": "a59",
+                        "image": answer,
                         "answerText": "D-Day",
                         "isCorrect": true
                     },
                     {
                         "id": "a60",
+                        "image": answer,
                         "answerText": "Pearl Harbor",
                         "isCorrect": true
                     },
                     {
                         "id": "a61",
+                        "image": answer,
                         "answerText": "Treaty of Versailles",
                         "isCorrect": false
                     },
                     {
                         "id": "a62",
+                        "image": answer,
                         "answerText": "Battle of Midway",
                         "isCorrect": true
                     }
@@ -480,44 +567,53 @@ const quiz = [
             {
                 "id": "q19",
                 "questionText": "The Roman Empire was primarily based around the Mediterranean Sea.",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "BOOLEAN",
                 "answers": [
                     {
                         "id": "a63",
+                        "image": answer,
                         "answerText": "Vraie",
                         "isCorrect": true
                     },
                     {
                         "id": "a64",
+                        "image": answer,
                         "answerText": "Faux",
                         "isCorrect": false
                     }
-                ]
-            },
+                ]},
+
             {
+                
                 "id": "q20",
                 "questionText": "Who discovered America in 1492?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "SINGLE_CHOICE",
                 "answers": [
                     {
                         "id": "a65",
+                        "image": answer,
                         "answerText": "Christopher Columbus",
                         "isCorrect": true
                     },
                     {
                         "id": "a66",
+                        "image": answer,
                         "answerText": "Leif Erikson",
                         "isCorrect": false
                     },
                     {
                         "id": "a67",
+                        "image": answer,
                         "answerText": "Amerigo Vespucci",
                         "isCorrect": false
                     },
                     {
                         "id": "a68",
+                        "image": answer,
                         "answerText": "Marco Polo",
                         "isCorrect": false
                     }
@@ -532,26 +628,31 @@ const quiz = [
             {
                 "id": "q21",
                 "questionText": "What is the capital of France?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "SINGLE_CHOICE",
                 "answers": [
                     {
                         "id": "a69",
+                        "image": answer,
                         "answerText": "Paris",
                         "isCorrect": true
                     },
                     {
                         "id": "a70",
+                        "image": answer,
                         "answerText": "Lyon",
                         "isCorrect": false
                     },
                     {
                         "id": "a71",
+                        "image": answer,
                         "answerText": "Marseille",
                         "isCorrect": false
                     },
                     {
                         "id": "a72",
+                        "image": answer,
                         "answerText": "Nice",
                         "isCorrect": false
                     }
@@ -560,26 +661,31 @@ const quiz = [
             {
                 "id": "q22",
                 "questionText": "Which of the following are continents?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "MULTIPLE_CHOICE",
                 "answers": [
                     {
                         "id": "a73",
+                        "image": answer,
                         "answerText": "Asia",
                         "isCorrect": true
                     },
                     {
                         "id": "a74",
+                        "image": answer,
                         "answerText": "Africa",
                         "isCorrect": true
                     },
                     {
                         "id": "a75",
+                        "image": answer,
                         "answerText": "Europe",
                         "isCorrect": true
                     },
                     {
                         "id": "a76",
+                        "image": answer,
                         "answerText": "Greenland",
                         "isCorrect": false
                     }
@@ -588,44 +694,53 @@ const quiz = [
             {
                 "id": "q23",
                 "questionText": "The Sahara Desert is located in Africa.",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "BOOLEAN",
                 "answers": [
                     {
                         "id": "a77",
+                        "image": answer,
                         "answerText": "Vraie",
                         "isCorrect": true
                     },
                     {
                         "id": "a78",
+                        "image": answer,
                         "answerText": "Faux",
                         "isCorrect": false
                     }
-                ]
-            },
+                ]},
+
             {
+                
                 "id": "q24",
                 "questionText": "Which is the largest ocean on Earth?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "SINGLE_CHOICE",
                 "answers": [
                     {
                         "id": "a79",
+                        "image": answer,
                         "answerText": "Pacific Ocean",
                         "isCorrect": true
                     },
                     {
                         "id": "a80",
+                        "image": answer,
                         "answerText": "Atlantic Ocean",
                         "isCorrect": false
                     },
                     {
                         "id": "a81",
+                        "image": answer,
                         "answerText": "Indian Ocean",
                         "isCorrect": false
                     },
                     {
                         "id": "a82",
+                        "image": answer,
                         "answerText": "Arctic Ocean",
                         "isCorrect": false
                     }
@@ -634,26 +749,31 @@ const quiz = [
             {
                 "id": "q25",
                 "questionText": "Which of the following countries are in South America?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "MULTIPLE_CHOICE",
                 "answers": [
                     {
                         "id": "a83",
+                        "image": answer,
                         "answerText": "Brazil",
                         "isCorrect": true
                     },
                     {
                         "id": "a84",
+                        "image": answer,
                         "answerText": "Argentina",
                         "isCorrect": true
                     },
                     {
                         "id": "a85",
+                        "image": answer,
                         "answerText": "Chile",
                         "isCorrect": true
                     },
                     {
                         "id": "a86",
+                        "image": answer,
                         "answerText": "Mexico",
                         "isCorrect": false
                     }
@@ -662,44 +782,53 @@ const quiz = [
             {
                 "id": "q26",
                 "questionText": "Mount Everest is the highest mountain in the world.",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "BOOLEAN",
                 "answers": [
                     {
                         "id": "a87",
+                        "image": answer,
                         "answerText": "Vraie",
                         "isCorrect": true
                     },
                     {
                         "id": "a88",
+                        "image": answer,
                         "answerText": "Faux",
                         "isCorrect": false
                     }
-                ]
-            },
+                ]},
+
             {
+                
                 "id": "q27",
                 "questionText": "Which river is the longest in the world?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "SINGLE_CHOICE",
                 "answers": [
                     {
                         "id": "a89",
+                        "image": answer,
                         "answerText": "Nile",
                         "isCorrect": true
                     },
                     {
                         "id": "a90",
+                        "image": answer,
                         "answerText": "Amazon",
                         "isCorrect": false
                     },
                     {
                         "id": "a91",
+                        "image": answer,
                         "answerText": "Yangtze",
                         "isCorrect": false
                     },
                     {
                         "id": "a92",
+                        "image": answer,
                         "answerText": "Mississippi",
                         "isCorrect": false
                     }
@@ -708,26 +837,31 @@ const quiz = [
             {
                 "id": "q28",
                 "questionText": "Which of the following are island nations?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "MULTIPLE_CHOICE",
                 "answers": [
                     {
                         "id": "a93",
+                        "image": answer,
                         "answerText": "Japan",
                         "isCorrect": true
                     },
                     {
                         "id": "a94",
+                        "image": answer,
                         "answerText": "Madagascar",
                         "isCorrect": true
                     },
                     {
                         "id": "a95",
+                        "image": answer,
                         "answerText": "United Kingdom",
                         "isCorrect": true
                     },
                     {
                         "id": "a96",
+                        "image": answer,
                         "answerText": "Brazil",
                         "isCorrect": false
                     }
@@ -736,26 +870,31 @@ const quiz = [
             {
                 "id": "q29",
                 "questionText": "Which country is the largest by land area?",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "SINGLE_CHOICE",
                 "answers": [
                     {
                         "id": "a97",
+                        "image": answer,
                         "answerText": "Russia",
                         "isCorrect": true
                     },
                     {
                         "id": "a98",
+                        "image": answer,
                         "answerText": "Canada",
                         "isCorrect": false
                     },
                     {
                         "id": "a99",
+                        "image": answer,
                         "answerText": "China",
                         "isCorrect": false
                     },
                     {
                         "id": "a100",
+                        "image": answer,
                         "answerText": "United States",
                         "isCorrect": false
                     }
@@ -764,26 +903,26 @@ const quiz = [
             {
                 "id": "q30",
                 "questionText": "The Great Barrier Reef is located in Australia.",
-                "image": null,
+                "point" : 1,
+                "image": qst,
                 "answerType": "BOOLEAN",
                 "answers": [
                     {
                         "id": "a101",
+                        "image": answer,
                         "answerText": "Vraie",
                         "isCorrect": true
                     },
                     {
                         "id": "a102",
+                        "image": answer,
                         "answerText": "Faux",
                         "isCorrect": false
                     }
-                ]
-            }
-        ]
+                ]}]
+        
     }
 ];
-
-
 
 
 
@@ -820,7 +959,7 @@ function QuizTests() {
             component='div'
             sx={{
                 width: '85vw',
-                height: '80vh',
+                mb: 2
             }}
         >
             <ProgressBar currentPageNumber={currentPage} pageNames={testNames} />
@@ -831,7 +970,7 @@ function QuizTests() {
                     borderRadius: 5,
                     minHeight: '70vh',
                     boxShadow: 2,
-                    p: "10px"
+                    p: "10px",
                 }}
             >
                 {!isStarted && <HomeTest title={currentTest.title} time={currentTest.questions.length * 20} numberOfQuestions={currentTest.questions.length} /> }

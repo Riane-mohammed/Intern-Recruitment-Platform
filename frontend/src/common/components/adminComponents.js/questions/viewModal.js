@@ -2,9 +2,11 @@ import { Box, Typography, Modal, Button, Grid } from '@mui/material';
 
 //icons
 import InfoIcon from '@mui/icons-material/Info';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import DisabledByDefaultRoundedIcon from '@mui/icons-material/DisabledByDefaultRounded';
 
-function ViewModal({ open, handleClose, selectedRowData }) {
-
+function ViewModal({ open, handleClose, selectedQuestionData }) {
+    
     return (
         <Modal
             open={open}
@@ -34,46 +36,80 @@ function ViewModal({ open, handleClose, selectedRowData }) {
                         display='flex'
                         alignItems='center'
                         color='grey.main'>
-                        <InfoIcon color='grey.main' sx={{ mr: '5px' }} /> Question {selectedRowData ? selectedRowData.id : ''}
+                        <InfoIcon color='grey.main' sx={{ mr: '5px' }} /> Question {selectedQuestionData ? selectedQuestionData.id : ''}
                     </Typography>
-                    {selectedRowData &&
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                pt: 5,
-                            }}
-                        >
-                            <Typography fontWeight={500}>
-                                {selectedRowData.questionText}
-                            </Typography>
-                            <Grid container spacing={4} sx={{ py: 5 }}>
-                                {selectedRowData.answers.map((answer) => (
-                                    <Grid item xs={6} key={answer.id} >
-                                        <Box
-                                            sx={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center'
-                                            }}
-                                        >
-                                            <Button
-                                                disabled
+                    {selectedQuestionData &&
+                        <Grid container spacing={4} sx={{ py: 3 }}>
+                            <Grid item xs={selectedQuestionData.image ? 6 : 12} sx={{display: 'flex',flexDirection: 'column' , justifyContent: 'center', alignItems: 'center'}}>
+                                { selectedQuestionData.question &&
+                                <Typography fontWeight={500} textAlign='center'>
+                                    {selectedQuestionData.question}
+                                </Typography>
+                                }
+                                {selectedQuestionData.image &&
+                                    <Box
+                                        component="img"
+                                        src={selectedQuestionData.image}
+                                        alt={`question-${selectedQuestionData.id}`}
+                                        sx={{
+                                            width: '100%',
+                                            height: 'auto',
+                                            maxHeight: '400px',
+                                            objectFit: 'contain',
+                                            display: 'block',
+                                            margin: '0 auto',
+                                        }}
+                                    />
+                                }
+                            </Grid>
+                            <Grid item xs={selectedQuestionData.image ? 6 : 12} sx={{ display: 'flex', alignItems: 'cneter'}}>
+                                <Grid container spacing={4} sx={{ py: 5 }}>
+                                    {selectedQuestionData.answers.map((answer) => (
+                                        <Grid item xs={selectedQuestionData.image ? 12 : 6} key={answer.id} >
+                                            <Box
                                                 sx={{
-                                                    width: '75%',
-                                                    backgroundColor: answer.isCorrect ? '#06d00169' : '#ff000045',
-                                                    color: 'white !important'
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center'
                                                 }}
                                             >
-                                                {answer.answerText}
-                                            </Button>
+                                                {answer.image ? (
+                                                    <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                                                    <Box
+                                                        component="img"
+                                                        src={answer.image}
+                                                        alt="answer"
+                                                        sx={{
+                                                            maxWidth: '300px',
+                                                            maxHeight: '80px',
+                                                            objectFit: 'contain',
+                                                            display: 'block',
+                                                        }}
+                                                        />
+                                                        {answer.isCorrect ?
+                                                            <CheckBoxIcon sx={{ color: '#06d00169' }} />
+                                                            :
+                                                            <DisabledByDefaultRoundedIcon sx={{ color: '#ff000045' }} />}
+                                                    </Box>
+                                                ) : (
+                                                    <Button
+                                                        disabled
+                                                        sx={{
+                                                            width: '75%',
+                                                            backgroundColor: answer.isCorrect ? '#06d00169' : '#ff000045',
+                                                            color: 'white !important'
+                                                        }}
+                                                    >
+                                                        {answer.answer}
+                                                    </Button>
+                                                )}
 
-                                        </Box>
-                                    </Grid>
-                                ))}
+                                            </Box>
+                                        </Grid>
+                                    ))}
+                                </Grid>
                             </Grid>
-                        </Box>
+                        </Grid>
                     }
                 </Box>
                 <Box

@@ -15,7 +15,7 @@ const SaveButton = () => (
     </Box>
 );
 
-const RenderAnswers = ({ answerType, activeQuestion, test }) => {
+const RenderAnswers = ({ answerType, activeQuestion, test, handleAnswerChange }) => {
     const question = test.questions[activeQuestion];
 
     const renderOptions = (count, isCheckbox) => (
@@ -30,16 +30,21 @@ const RenderAnswers = ({ answerType, activeQuestion, test }) => {
                                     sx={{ width: '100%' }}
                                     value={answer.answer}
                                     size="small"
+                                    onChange={(e) => handleAnswerChange(e, index)}
                                 />
                             </Grid>
                             <Grid item xs={1}>
                                 {isCheckbox ? (
-                                    <Checkbox checked={answer.isCorrect} />
+                                    <Checkbox
+                                        checked={answer.isCorrect}
+                                        onChange={() => handleAnswerChange({ target: { checked: !answer.isCorrect } }, index, true)}
+                                    />
                                 ) : (
                                     <Radio
                                         value={`answer-${index}`}
                                         inputProps={{ 'aria-label': `Réponse ${index + 1}` }}
                                         checked={answer.isCorrect}
+                                        onChange={() => handleAnswerChange({ target: { checked: true } }, index, true)}
                                     />
                                 )}
                             </Grid>
@@ -106,6 +111,29 @@ const ModifyTest = () => {
                 setAnswerType(test.questions[index].type || 'SINGLE_CHOICE');
                 return index;
             }
+        });
+    };
+
+    const handleAnswerChange = (e, answerIndex, isCorrectToggle = false) => {
+        setTest(prevTest => {
+            const newQuestions = [...prevTest.questions];
+            const newAnswers = [...newQuestions[activeQuestion].answers];
+            if (isCorrectToggle) {
+                newAnswers.forEach((answer, index) => {
+                    answer.isCorrect = index === answerIndex;
+                });
+            } else {
+                newAnswers[answerIndex] = {
+                    ...newAnswers[answerIndex],
+                    answer: e.target.value,
+                    isCorrect: e.target.checked !== undefined ? e.target.checked : newAnswers[answerIndex].isCorrect,
+                };
+            }
+            newQuestions[activeQuestion] = {
+                ...newQuestions[activeQuestion],
+                answers: newAnswers
+            };
+            return { ...prevTest, questions: newQuestions };
         });
     };
 
@@ -250,7 +278,12 @@ const ModifyTest = () => {
                                                     </Select>
                                                 </FormControl>
                                             </Box>
-                                            <RenderAnswers answerType={answerType} activeQuestion={activeQuestion} test={test} />
+                                            <RenderAnswers
+                                                answerType={answerType}
+                                                activeQuestion={activeQuestion}
+                                                test={test}
+                                                handleAnswerChange={handleAnswerChange}
+                                            />
                                         </Box>
                                     </Box>
                                 </>

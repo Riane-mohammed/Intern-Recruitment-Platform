@@ -1,5 +1,15 @@
 import { apiRequest } from './api';
 
+//section
+export const getAllSections = async () => {
+    return await apiRequest("api/section");
+};
+
+//level
+export const getAllLevels = async () => {
+    return await apiRequest("api/level");
+};
+
 //candidate
 export const getAllCandidates = async () => {
     return await apiRequest("api/candidate");
@@ -22,3 +32,8 @@ export const getAllTests = async () => {
 export const getTestById = async (id) => {
     return await apiRequest(`api/test/${id}`);
 }
+
+//question 
+export const getAllQuestions = async () => {
+    return await apiRequest("api/question");
+};

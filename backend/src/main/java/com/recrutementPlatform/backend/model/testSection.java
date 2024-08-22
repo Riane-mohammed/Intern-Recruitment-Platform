@@ -1,12 +1,12 @@
 package com.recrutementPlatform.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,7 +28,7 @@ public class testSection {
 
     @OneToMany(mappedBy = "section")
     @JsonIgnore
-    private List<test> tests;
+    private List<test> tests = new ArrayList<>();
 
 }
 
