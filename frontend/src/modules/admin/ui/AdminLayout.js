@@ -32,7 +32,7 @@ import QuestionAnswerRoundedIcon from '@mui/icons-material/QuestionAnswerRounded
 import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
 
 //image
-// import bg from '../../../assets/images/bg.svg';
+// import bg from '../../../Assets/images/bg.svg';
 
 const drawerWidth = 240;
 
@@ -96,11 +96,7 @@ function AdminLayout() {
     ];
 
     const accountItems = [
-        {
-            name: "Ajouter un autre compte",
-            icon: <PersonAdd fontSize="small" />,
-            path: "/admin/Ajouter-Admin"
-        },
+      
         {
             name: "Paramètres",
             icon: <Settings fontSize="small" />,
