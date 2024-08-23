@@ -1,33 +1,29 @@
 package com.recrutementPlatform.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class level {
+public class reclamation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique=true)
+    @Column
     private String name;
 
-    @OneToMany(mappedBy = "level")
-    @JsonIgnore
-    private List<test> tests = new ArrayList<>();
+    @Column
+    private String email;
 
-    //constuctor
-    public level(String name) {
-        this.name = name;
-    }
+    @Column
+    private boolean status;
+
+    @Column
+    private String message;
 }

@@ -36,6 +36,7 @@ public class quiz {
     private Date createdAt;
 
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<quizTest> quizTests = new ArrayList<>();
 
     @OneToMany(mappedBy = "quiz")
@@ -49,7 +50,6 @@ public class quiz {
     @ManyToMany(mappedBy = "quizzes")
     @JsonManagedReference
     private List<candidate> candidates = new ArrayList<>();
-
 
     @PrePersist
     protected void onCreate() {

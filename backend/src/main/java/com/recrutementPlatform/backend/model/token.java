@@ -22,15 +22,13 @@ public class token {
     @Column(nullable = false, unique = true)
     private String value;
 
+    @Column(nullable = false)
+    private String email;
+
     @ManyToOne
     @JoinColumn(name = "quiz_id")
     @JsonManagedReference
     private quiz quiz;
-
-    @ManyToOne
-    @JoinColumn(name = "candidate_id")
-    @JsonBackReference
-    private candidate candidate;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date expirationDate;
