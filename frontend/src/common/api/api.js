@@ -4,13 +4,17 @@ export const apiRequest = async (endpoint, method = "GET", payload = null) => {
     try {
         const options = {
             method,
-            headers: {
-                "Content-Type": "application/json",
-            },
         };
 
         if (payload) {
-            options.body = JSON.stringify(payload);
+            if (payload instanceof FormData) {
+                options.body = payload;
+            } else {
+                options.headers = {
+                    "Content-Type": "application/json",
+                };
+                options.body = JSON.stringify(payload);
+            }
         }
 
         const response = await fetch(`${BASE_URL}/${endpoint}`, options);
@@ -27,4 +31,5 @@ export const apiRequest = async (endpoint, method = "GET", payload = null) => {
         throw error;
     }
 };
+
 

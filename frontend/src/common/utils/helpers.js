@@ -17,6 +17,25 @@ export const calculateAge = (birthday) => {
     return age;
 };
 
+//Converts a timestamp to a formatted date string (DD-MM-YYYY).
+export const formatTimestampToDate = (timestamp) => {
+    const date = new Date(timestamp);
+    
+    const day = String(date.getDate()).padStart(2, '0'); 
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const year = date.getFullYear();
+    
+    return `${day}-${month}-${year}`;
+};
+
+//Converts a comma-separated string of emails into an array of email addresses.
+export const parseEmailString = (emailString) => {
+    return emailString
+        .split(',')
+        .map(email => email.trim())  
+        .filter(email => email !== ''); 
+};
+
 //Question Type 
 export const questionTypes = {
     'MULTIPLE_CHOICE': 'Choix Multiple',
@@ -31,3 +50,11 @@ export const truncateText = (text, maxLength) => {
     }
     return text;
 };
+
+export const extractFilePath = (url) => {
+    const baseUrl = 'http://localhost:8080/files/';
+    if (url.startsWith(baseUrl)) {
+        return url.substring(baseUrl.length);
+    }
+    return null;
+}

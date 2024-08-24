@@ -7,10 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/quiz")
+@CrossOrigin(origins = "http://localhost:3000")
 public class quizController {
 
     @Autowired
@@ -28,9 +31,12 @@ public class quizController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteQuizzes(@RequestBody List<Long> quizIds) {
+    public ResponseEntity<Map<String, Object>> deleteQuizzes(@RequestBody List<Long> quizIds) {
         service.deleteQuizzesByIds(quizIds);
-        return ResponseEntity.ok("Successfully deleted quizzes with ids: " + quizIds);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Successfully deleted quizzes");
+        response.put("ids", quizIds);
+        return ResponseEntity.ok(response);
     }
 
 }

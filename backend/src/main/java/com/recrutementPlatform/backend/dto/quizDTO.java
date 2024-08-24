@@ -14,5 +14,7 @@ public class quizDTO {
     private String title;
     private String description;
     private String emails;
+    private int duration;
     private List<quizTestDTO> quizTests;
+
 }

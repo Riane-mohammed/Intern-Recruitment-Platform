@@ -1,11 +1,9 @@
 import { Typography, Button, Box, Card, CardContent } from '@mui/material';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import logo from "../../../Assets/images/profile.svg";
+import logo from "../../../assets/images/profile.svg";
 
 function Profile() {
     const navigate = useNavigate();
-    const [showPassword, setShowPassword] = useState(false);
 
     const handleEditClick = () => {
         navigate('/admin/Paramètres');

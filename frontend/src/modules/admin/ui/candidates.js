@@ -52,7 +52,7 @@ function Candidates() {
   const handleCloseViewModal = () => setOpenViewModal(false);
   const handleCloseModifyModal = () => setOpenModifyModal(false);
 
-  const handleChangePage = (newPage) => setPage(newPage);
+  const handleChangePage = (event, newPage) => setPage(newPage);
 
   const handleDelete = async () => {
     try {

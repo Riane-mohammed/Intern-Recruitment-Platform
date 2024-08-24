@@ -3,6 +3,7 @@ package com.recrutementPlatform.backend.util;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,6 +32,11 @@ public class FileUploadUtil {
 
         // Return the path of the uploaded file relative to the base directory
         return "/files/" + subFolder + "/" + uniqueFilename;
+    }
+
+    public static boolean deleteFile(String filePath) {
+        File file = new File(filePath);
+        return file.delete();
     }
 
     // Function to create directory if it does not exist

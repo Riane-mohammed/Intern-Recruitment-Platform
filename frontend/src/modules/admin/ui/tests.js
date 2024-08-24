@@ -12,7 +12,7 @@ import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 
 // API
-import { getAllTests } from '../../../common/api/admin';
+import { deleteTests, getAllTests } from '../../../common/api/admin';
 
 function Tests() {
   const navigate = useNavigate();
@@ -62,8 +62,16 @@ function Tests() {
   const handleChangePage = (event, newPage) => setPage(newPage);
 
   // Handle delete action (currently logs selected rows)
-  const handleDelete = () => console.log(selectedTests);
-
+  const handleDelete = async () => {
+      try {
+          await deleteTests(selectedTests);
+          setSelectedTests([]);
+          const TestsData = await getAllTests();
+          setTests(TestsData);
+      } catch (error) {
+          console.error("Failed to delete Tests:", error);
+      }
+  };
   // Handle selecting or deselecting all rows
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {

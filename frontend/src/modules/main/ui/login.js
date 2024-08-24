@@ -10,7 +10,7 @@ import { login } from '../../../common/api/auth';
 import { setAuthenticated, setUser } from '../../admin/actions/userActions';
 
 // Login Image
-import logo from '../../../Assets/images/Login.svg';  
+import logo from '../../../assets/images/Login.svg';  
 
 // Icons
 import { Visibility, VisibilityOff, Email, Lock } from '@mui/icons-material';  

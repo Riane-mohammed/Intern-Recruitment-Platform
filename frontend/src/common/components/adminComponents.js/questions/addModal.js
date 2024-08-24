@@ -1,24 +1,45 @@
-import { Box, Button, Checkbox, Grid, IconButton, Modal, Radio, RadioGroup, TextField, Typography, FormControlLabel, FormControl } from "@mui/material";
-import { useState, useEffect } from "react";
+import { Box, Button,Checkbox, Grid, IconButton, Modal, Radio, RadioGroup, TextField, Typography, FormControlLabel, FormControl, Autocomplete } from "@mui/material";
+import { useEffect, useState } from "react";
 
 //icons
 import CreateIcon from '@mui/icons-material/Create';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { addOrUpdateQuestion, deleteImage, uploadAnswerImage, uploadQuestionImage } from "../../../api/admin";
+import { addOrUpdateQuestion, deleteImage, getAllTests, uploadAnswerImage, uploadQuestionImage } from "../../../api/admin";
 import { extractFilePath } from "../../../utils/helpers";
 
-function ModifyModal({ open, handleClose, selectedQuestionData, handleSave }) {
-    const [formData, setFormData] = useState({});
+function AddModal({ open, handleClose, handleSave }) {
+    const [tests, setTests] = useState([]);
+    const [formData, setFormData] = useState({
+        id: null,
+        question: '',
+        image: '',
+        type: '',
+        point: 2,
+        answers: [
+            {
+                answer: '',
+                correct: false,
+                image: ''
+            }
+        ],
+        testId: 1
+    });
+
     const [answerType, setAnswerType] = useState('text');
     const [questionType, setQuestionType] = useState('MULTIPLE_CHOICE');
 
     useEffect(() => {
-        if (selectedQuestionData) {
-            setFormData({ ...selectedQuestionData });
-            setAnswerType(selectedQuestionData.answers?.[0]?.image ? 'image' : 'text');
-            setQuestionType(selectedQuestionData.type || 'MULTIPLE_CHOICE');
-        }
-    }, [selectedQuestionData]);
+        const getTests = async () => {
+            try {
+                const TestsData = await getAllTests();
+                setTests(TestsData);
+            } catch (error) {
+                console.error("Failed to fetch Tests:", error);
+            }
+        };
+
+        getTests();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -64,7 +85,6 @@ function ModifyModal({ open, handleClose, selectedQuestionData, handleSave }) {
         const newAnswerType = e.target.value;
         setAnswerType(newAnswerType);
 
-        // Update answers based on the selected answer type
         const updatedAnswers = formData.answers.map(answer => {
             if (newAnswerType === 'image') {
                 return { ...answer, answer: '' };
@@ -153,21 +173,8 @@ function ModifyModal({ open, handleClose, selectedQuestionData, handleSave }) {
     };
 
     const handleSubmit = async () => {
-        const updatedFormData = { ...formData };
-
-        delete updatedFormData.created_at;
-        delete updatedFormData.testLevel;
-        delete updatedFormData.testSection;
-
-        if (updatedFormData.answers) {
-            updatedFormData.answers = updatedFormData.answers.map(answer => {
-                const { id, ...rest } = answer;
-                return rest;
-            });
-        }
-
         try {
-            await addOrUpdateQuestion(updatedFormData);
+            await addOrUpdateQuestion(formData);
         } catch (error) {
             console.error("Error updating candidate:", error);
         }
@@ -176,11 +183,18 @@ function ModifyModal({ open, handleClose, selectedQuestionData, handleSave }) {
         handleClose();
     };
 
+    const handleTestSelectionChange = (event, value) => {
+        if (value) {
+            setFormData({ ...formData, testId: value.id });
+        } else {
+            setFormData({ ...formData, testId: null });
+        }
+    };
 
     const RenderAnswers = ({ answerType, questionType }) => {
         const renderOptions = (count, isCheckbox) => (
             formData.answers.slice(0, count).map((answer, index) => (
-                <Grid container spacing={4} key={answer.id || index} sx={{ mb: 2 }}>
+                <Grid container spacing={4} key={index} sx={{ mb: 2 }}>
                     {answerType === 'image' ? (
                         <>
                             <Grid item xs={8} sx={{ display: 'flex', alignItems: 'center' }}>
@@ -202,12 +216,12 @@ function ModifyModal({ open, handleClose, selectedQuestionData, handleSave }) {
                                 <input
                                     type="file"
                                     accept="image/*"
-                                    id={`file-upload-${answer.id || index}`}
+                                    id={`file-upload-${index}`}
                                     style={{ display: 'none' }}
                                     onChange={(e) => handleAnswerChange(index, 'image', e.target.files[0])}
                                 />
 
-                                <label htmlFor={`file-upload-${answer.id || index}`}>
+                                <label htmlFor={`file-upload-${index}`}>
                                     <IconButton
                                         variant="contained"
                                         component="span"
@@ -305,6 +319,21 @@ function ModifyModal({ open, handleClose, selectedQuestionData, handleSave }) {
                     }}
                 >
                     <Grid item xs={6} sx={{ borderRight: '1px solid ', borderColor: 'grey.light', pr: 1 }}>
+                        {tests &&
+                            <Autocomplete
+                                options={tests}
+                                getOptionLabel={(option) => option.title}
+                                onChange={handleTestSelectionChange}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Test"
+                                        variant="outlined"
+                                        fullWidth
+                                    />
+                                )}
+                            />
+                        }
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <TextField
                                 name="question"
@@ -312,7 +341,7 @@ function ModifyModal({ open, handleClose, selectedQuestionData, handleSave }) {
                                 value={formData.question || ''}
                                 onChange={handleChange}
                                 fullWidth
-                                sx={{ mr: 2 }}
+                                sx={{ mr: 2, mt: 2 }}
                             />
                             <input
                                 type="file"
@@ -415,4 +444,4 @@ function ModifyModal({ open, handleClose, selectedQuestionData, handleSave }) {
     );
 }
 
-export default ModifyModal;
+export default AddModal;

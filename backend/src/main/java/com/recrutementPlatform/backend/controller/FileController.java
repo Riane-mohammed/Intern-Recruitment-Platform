@@ -7,31 +7,71 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/file")
+@CrossOrigin(origins = "http://localhost:3000")
 public class FileController {
 
     @PostMapping("/uploadQuestion")
-    public ResponseEntity<String> uploadQuestionImage(@RequestParam("image") MultipartFile file) {
+    public ResponseEntity<Map<String, String>> uploadQuestionImage(@RequestParam("image") MultipartFile file) {
         try {
             String fileUrl = FileUploadUtil.saveFile(file, "questions");
-            return new ResponseEntity<>(fileUrl, HttpStatus.OK);
+
+            // Create a JSON-like response
+            Map<String, String> response = new HashMap<>();
+            response.put("path", fileUrl);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();
-            return new ResponseEntity<>("File upload failed!", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/uploadAnswer")
-    public ResponseEntity<String> uploadAnswerImage(@RequestParam("image") MultipartFile file) {
+    public ResponseEntity<Map<String, String>> uploadAnswerImage(@RequestParam("image") MultipartFile file) {
         try {
             String fileUrl = FileUploadUtil.saveFile(file, "answers");
-            return new ResponseEntity<>(fileUrl, HttpStatus.OK);
+
+            // Create a JSON-like response
+            Map<String, String> response = new HashMap<>();
+            response.put("path", fileUrl);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();
-            return new ResponseEntity<>("File upload failed!", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<Map<String, Object>> deleteImage(@RequestParam("path") String filePath) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // Assuming the path is relative to the root directory of your application
+            String fullPath = "C:/Users/user/Desktop/Intern Recruitment Platform/uploads/" + filePath;
+            boolean isDeleted = FileUploadUtil.deleteFile(fullPath);
+
+            if (isDeleted) {
+                response.put("status", "success");
+                response.put("message", "File deleted successfully");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                response.put("status", "failure");
+                response.put("message", "File not found or could not be deleted");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("status", "error");
+            response.put("message", "Error deleting file");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
 
