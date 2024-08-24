@@ -1,7 +1,7 @@
 package com.recrutementPlatform.backend.service;
 
-import com.recrutementPlatform.backend.dto.quizDTO;
 import com.recrutementPlatform.backend.dto.quizTestDTO;
+import com.recrutementPlatform.backend.dto.quizDTO;
 import com.recrutementPlatform.backend.model.quizTest;
 import com.recrutementPlatform.backend.model.quiz;
 import com.recrutementPlatform.backend.model.test;
@@ -76,14 +76,14 @@ public class quizService {
             newToken.setValue(UUID.randomUUID().toString());
             newToken.setEmail(email);
             newToken.setQuiz(newQuiz);
-            newToken.setExpirationDate(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000));
+            newToken.setExpirationDate(new Date(System.currentTimeMillis() + 24L * 60 * 60 * 1000 * quizDTO.getDuration()));
 
             // Save token in the database
             token savedToken = tokenRepo.save(newToken);
 
             // Send email with token link
             String tokenLink = generateLink() + savedToken.getValue();
-            sendTokenLink(email, tokenLink);
+            sendTokenLink(email, tokenLink, quizDTO.getDuration());
         }
 
         return newQuiz;
@@ -114,11 +114,11 @@ public class quizService {
         return "http://localhost:3000/espace-quiz/token=";
     }
 
-    public void sendTokenLink(String to, String link) {
+    public void sendTokenLink(String to, String link, int duration) {
         String subject = "Invitation à passer un test de recrutement";
         String body = "Bonjour,\n\n" +
                 "Vous avez été sélectionné pour passer un test de recrutement dans le cadre de notre processus de sélection. " +
-                "Veuillez cliquer sur le lien ci-dessous pour accéder au test. Ce lien est valable pendant 24 heures.\n\n" +
+                "Veuillez cliquer sur le lien ci-dessous pour accéder au test. Ce lien est valable pendant "+ duration +" jours.\n\n" +
                 link + "\n\n" +
                 "Nous vous remercions de l'intérêt que vous portez à notre entreprise et nous vous souhaitons bonne chance pour votre test.\n\n" +
                 "Cordialement,\n" +

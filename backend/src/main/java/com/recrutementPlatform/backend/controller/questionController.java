@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/question")
@@ -31,13 +33,13 @@ public class questionController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteQuestionsByIds(@RequestBody List<Long> ids) {
-        try{
-            service.deleteQuestionsByIds(ids);
-            return ResponseEntity.ok("Successfully deleted questions with ids: " + ids);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete ids: " + e.getMessage());
-        }
+    public ResponseEntity<Map<String, Object>> deleteQuestionsByIds(@RequestBody List<Long> ids) {
+        service.deleteQuestionsByIds(ids);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Successfully deleted questions");
+        response.put("ids", ids);
+        return ResponseEntity.ok(response);
     }
+
 
 }

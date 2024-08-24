@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/test")
@@ -38,13 +40,11 @@ public class testController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteTests(@RequestBody List<Long> ids) {
-        try{
-            service.deleteTestsByIds(ids);
-            return ResponseEntity.ok("Successfully deleted tests with ids: " + ids);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete tests with ids: " + e.getMessage());
-        }
+    public ResponseEntity<Map<String, Object>> deleteTests(@RequestBody List<Long> ids) {
+        service.deleteTestsByIds(ids);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Successfully deleted tests");
+        response.put("ids", ids);
+        return ResponseEntity.ok(response);
     }
-
 }
