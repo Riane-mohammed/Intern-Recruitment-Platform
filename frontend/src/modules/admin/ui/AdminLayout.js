@@ -24,7 +24,7 @@ import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
 import FeedRoundedIcon from '@mui/icons-material/FeedRounded';
 
-import { PersonAdd, Settings } from '@mui/icons-material';
+import { Settings } from '@mui/icons-material';
 
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 
@@ -32,7 +32,7 @@ import QuestionAnswerRoundedIcon from '@mui/icons-material/QuestionAnswerRounded
 import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
 
 //image
-// import bg from '../../../Assets/images/bg.svg';
+// import bg from '../../../assets/images/bg.svg';
 
 const drawerWidth = 240;
 

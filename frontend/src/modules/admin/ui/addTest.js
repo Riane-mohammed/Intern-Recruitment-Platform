@@ -2,7 +2,7 @@ import React, { useState, Fragment, useEffect, useRef } from 'react';
 import {
     Box, IconButton, Typography, TextField, RadioGroup, FormControlLabel, Radio, Checkbox, Grid, Button, Select, MenuItem, InputLabel, FormControl,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { theme } from '../../../common/utils/theme';
 
 //icons
@@ -13,9 +13,10 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import EditQuestionModal from '../../../common/components/adminComponents.js/tests/EditQuestionModal';
 
 //api
-import { getAllLevels, getAllSections } from '../../../common/api/admin';
+import { addOrUpdateTest, deleteImage, getAllLevels, getAllSections, uploadAnswerImage, uploadQuestionImage } from '../../../common/api/admin';
+import { extractFilePath, truncateText } from '../../../common/utils/helpers';
 
-const RenderAnswers = ({ answerType, activeQuestion, handleAnswerChange, newTest, contentType }) => {
+const RenderAnswers = ({ answerType, activeQuestion, handleAnswerChange, newTest, contentType, localImages }) => {
     const renderOptions = (count, isCheckbox) => (
         <RadioGroup name={`question-${activeQuestion}`} aria-labelledby={`choix-label-${activeQuestion}`}>
             <Grid container spacing={4}>
@@ -48,12 +49,13 @@ const RenderAnswers = ({ answerType, activeQuestion, handleAnswerChange, newTest
                                             <CloudUploadIcon />
                                         </IconButton>
                                     </label>
-                                    {newTest.questions[activeQuestion]?.answers[index]?.image && (
+                                    
+                                    {(localImages[index] || newTest.questions[activeQuestion]?.answers[index]?.image) && (
                                         <Typography
                                             variant="body2"
                                             sx={{ ml: 1, color: 'text.secondary' }}
                                         >
-                                            {newTest.questions[activeQuestion]?.answers[index]?.image.split('/').pop()}
+                                            {(localImages[index] || newTest.questions[activeQuestion]?.answers[index]?.image).split('/').pop()}
                                         </Typography>
                                     )}
                                 </Box>
@@ -62,7 +64,7 @@ const RenderAnswers = ({ answerType, activeQuestion, handleAnswerChange, newTest
                                     label={`Réponse ${index + 1}`}
                                     id={`answer-text-${activeQuestion}-${index}`} // Unique ID
                                     sx={{ width: '100%' }}
-                                    value={newTest.questions[activeQuestion]?.answers[index]?.text || ''}
+                                    value={newTest.questions[activeQuestion]?.answers[index]?.answer || ''}
                                     onChange={(e) => handleAnswerChange(e, activeQuestion, index, false, 'text')}
                                 />
                             )}
@@ -104,12 +106,16 @@ const RenderAnswers = ({ answerType, activeQuestion, handleAnswerChange, newTest
 
 
 const AddTest = () => {
+    const navigate = useNavigate();
+
+    const [localImages, setLocalImages] = useState({});
     const [sections, setSections] = useState([]);
     const [levels, setLevels] = useState([]);
     const [newTest, setNewTest] = useState({
-        name: '',
-        section: '',
-        level: '',
+        id : null,
+        title: '',
+        sectionId: '',
+        levelId: '',
         questions: [],
     });
     const [numQuestions, setNumQuestions] = useState(0);
@@ -158,11 +164,10 @@ const AddTest = () => {
         setNewTest((prevTest) => ({
             ...prevTest,
             questions: Array.from({ length: value }, (_, index) => ({
-                text: '',
+                question: '',
                 image: '',
                 type: '',
                 point: 0,
-                contentType: '',
                 answers: [],
             })),
         }));
@@ -195,59 +200,128 @@ const AddTest = () => {
         });
     };
 
-    const handleAnswerChange = (e, questionIndex, answerIndex, isCorrectField = false, contentType = 'text') => {
+    const handleAnswerChange = async (e, questionIndex, answerIndex, isCorrectField = false, contentType = 'text') => {
         const { value, checked, files } = e.target;
+
+        // Use a callback for updating state
         setNewTest((prevTest) => {
+            // Create a copy of the questions and answers arrays
             const updatedQuestions = [...prevTest.questions];
-            const updatedAnswers = [...updatedQuestions[questionIndex].answers];
+            const updatedAnswers = [...(updatedQuestions[questionIndex]?.answers || [])];
+
+            // Ensure that the answer object exists
             if (!updatedAnswers[answerIndex]) {
-                updatedAnswers[answerIndex] = { text: '', image: '', correct: false };
+                updatedAnswers[answerIndex] = { answer: '', image: '', correct: false };
             }
+
+            // Update the correct field if needed
             if (isCorrectField) {
                 updatedAnswers[answerIndex].correct = checked;
             } else {
                 if (contentType === 'text') {
-                    updatedAnswers[answerIndex].text = value;
-                } else if (contentType === 'image' && files.length > 0) {
-                    const file = files[0];
-                    const imagePath = `/assets/answers/${file.name}`;
-                    updatedAnswers[answerIndex].image = imagePath;
+                    updatedAnswers[answerIndex].answer = value;
+                } else if (contentType === 'image' && files?.length > 0) {
+                    (async () => {
+                        try {
+                            const file = files[0];
+
+                                            const tempImages = { ...localImages };
+                            tempImages[answerIndex] = file.name;
+                            setLocalImages(tempImages);
+
+                            // Delete old image if it exists
+                            if (updatedAnswers[answerIndex].image) {
+                                await deleteImg(extractFilePath(updatedAnswers[answerIndex].image));
+                            }
+
+                            // Upload new image and update path
+                            const path = await uploadAnswerImg(file);
+                            updatedAnswers[answerIndex].image = path;
+                        } catch (error) {
+                            console.error("Error uploading answer image:", error);
+                        }
+                    })();
                 }
             }
+
+            // Update the questions array
             updatedQuestions[questionIndex].answers = updatedAnswers;
             return { ...prevTest, questions: updatedQuestions };
         });
     };
 
 
-    const handleFileChange = (e, questionIndex) => {
+
+    const handleQstImgChange = async (e, questionIndex) => {
         const file = e.target.files[0];
         if (file) {
-            const imagePath = `/assets/questions/${file.name}`;
-            setNewTest((prevTest) => {
-                const updatedQuestions = [...prevTest.questions];
-                updatedQuestions[questionIndex].image = imagePath; // Store filename or path
-                return { ...prevTest, questions: updatedQuestions };
-            });
+            try {
+                if (newTest.questions[questionIndex].image) {
+                    await deleteImg(extractFilePath(newTest.questions[questionIndex].image));
+                }
+
+                const imagePath = await uploadQstImg(file);
+                setNewTest((prevTest) => {
+                    const updatedQuestions = [...prevTest.questions];
+                    updatedQuestions[questionIndex].image = imagePath;
+                    return { ...prevTest, questions: updatedQuestions };
+                });
+
+            } catch (error) {
+                console.error("Error handling question image:", error);
+            }
+        }
+    };
+
+    const deleteImg = async (path) => {
+        try {
+            const formData = new FormData();
+            formData.append('path', path);
+
+            const result = await deleteImage(formData);
+            return result;
+        } catch (error) {
+            console.error('Error deleting image:', error);
+        };
+    }
+
+    const uploadQstImg = async (file) => {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        const response = await uploadQuestionImage(formData);
+        return `http://localhost:8080${response.path}`;
+    }
+
+    const uploadAnswerImg = async (file) => {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        const response = await uploadAnswerImage(formData);
+
+        if (response && response.path) {
+            return `http://localhost:8080${response.path}`;
+        } else {
+            throw new Error("Path not found in response");
         }
     };
 
     const handleContentTypeChange = (event) => {
-        const value = event.target.value;
-        setContentType(value);
-        setNewTest((prevTest) => {
-            const updatedQuestions = [...prevTest.questions];
-            updatedQuestions[activeQuestion].contentType = value;
-            return { ...prevTest, questions: updatedQuestions };
-        });
+        setContentType(event.target.value);
     };
 
-    const handleAdd = () => {
-        console.log(newTest);
+    const handleAdd = async () => {
+        try {
+            await addOrUpdateTest(newTest);
+        } catch (error) {
+            console.error("Error adding new Test:", error);
+        }
+        
+        navigate('/admin/Tests');
     };
 
     const openModal = () => {
-        setCurrentText(newTest.questions[activeQuestion]?.text || '');
+        setCurrentText(newTest.questions[activeQuestion]?.question || '');
         setModalOpen(true);
     };
 
@@ -255,20 +329,13 @@ const AddTest = () => {
         setModalOpen(false);
         setNewTest((prevTest) => {
             const updatedQuestions = [...prevTest.questions];
-            updatedQuestions[activeQuestion].text = currentText;
+            updatedQuestions[activeQuestion].question = currentText;
             return { ...prevTest, questions: updatedQuestions };
         });
     };
 
     const handleQuestionTextChange = (e) => {
         setCurrentText(e.target.value);
-    };
-
-    const truncateText = (text, maxLength) => {
-        if (text.length > maxLength) {
-            return `${text.substring(0, maxLength)}...`;
-        }
-        return text;
     };
 
     return (
@@ -293,7 +360,7 @@ const AddTest = () => {
                                 id="nom"
                                 variant="outlined"
                                 size="small"
-                                onChange={(e) => setNewTest({ ...newTest, name: e.target.value })}
+                                onChange={(e) => setNewTest({ ...newTest, title: e.target.value })}
                             />
                         </Grid>
                         <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center' }}>
@@ -304,8 +371,8 @@ const AddTest = () => {
                                     labelId="section-select-label"
                                     id="section-select"
                                     label="Section"
-                                    value={newTest.section}
-                                    onChange={(e) => setNewTest({ ...newTest, section: e.target.value })}
+                                    value={newTest.sectionId}
+                                    onChange={(e) => setNewTest({ ...newTest, sectionId: e.target.value })}
                                 >
                                     <MenuItem value="">
                                         <em>Aucun</em>
@@ -325,7 +392,7 @@ const AddTest = () => {
                             row
                             aria-labelledby="niveau-label"
                             name="Niveau"
-                            onChange={(e) => setNewTest({ ...newTest, level: e.target.value })}
+                            onChange={(e) => setNewTest({ ...newTest, levelId: parseInt(e.target.value) })}
                         >
                             {levels.map((level) => (
                                 <FormControlLabel key={level.id} value={level.id} control={<Radio />} label={level.name} />
@@ -387,7 +454,7 @@ const AddTest = () => {
                                                         variant="outlined"
                                                         size="small"
                                                         sx={{ width: '100%', cursor: 'pointer' }}
-                                                        value={truncateText(newTest.questions[activeQuestion]?.text || '', 20)}
+                                                        value={truncateText(newTest.questions[activeQuestion]?.question || '', 20)}
                                                         onClick={openModal}
                                                         readOnly
                                                     />
@@ -399,7 +466,7 @@ const AddTest = () => {
                                                             accept="image/*"
                                                             id="file-upload"
                                                             style={{ display: 'none' }}
-                                                            onChange={(e) => handleFileChange(e, activeQuestion)}
+                                                            onChange={(e) => handleQstImgChange(e, activeQuestion)}
                                                         />
                                                         <label htmlFor="file-upload">
                                                             <IconButton
@@ -485,7 +552,7 @@ const AddTest = () => {
                                         row
                                         aria-labelledby="answer-content-label"
                                         name="answer-content"
-                                        value={newTest.questions[activeQuestion]?.contentType || contentType}
+                                        value={contentType}
                                         onChange={handleContentTypeChange}
                                     >
                                         <FormControlLabel value="image" control={<Radio />} label="Image" />
@@ -501,7 +568,8 @@ const AddTest = () => {
                                         activeQuestion={activeQuestion}
                                         handleAnswerChange={handleAnswerChange}
                                         newTest={newTest}
-                                        contentType={newTest.questions[activeQuestion]?.contentType || contentType}
+                                        contentType={contentType}
+                                        localImages={localImages}
                                     />
                                 )}
                             </>

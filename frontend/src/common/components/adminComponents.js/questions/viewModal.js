@@ -64,8 +64,8 @@ function ViewModal({ open, handleClose, selectedQuestionData }) {
                             </Grid>
                             <Grid item xs={selectedQuestionData.image ? 6 : 12} sx={{ display: 'flex', alignItems: 'cneter'}}>
                                 <Grid container spacing={4} sx={{ py: 5 }}>
-                                    {selectedQuestionData.answers.map((answer) => (
-                                        <Grid item xs={selectedQuestionData.image ? 12 : 6} key={answer.id} >
+                                    {selectedQuestionData.answers.map((answer, index) => (
+                                        <Grid item xs={selectedQuestionData.image ? 12 : 6} key={answer.id || index} >
                                             <Box
                                                 sx={{
                                                     display: 'flex',
@@ -86,7 +86,7 @@ function ViewModal({ open, handleClose, selectedQuestionData }) {
                                                             display: 'block',
                                                         }}
                                                         />
-                                                        {answer.isCorrect ?
+                                                        {answer.correct ?
                                                             <CheckBoxIcon sx={{ color: '#06d00169' }} />
                                                             :
                                                             <DisabledByDefaultRoundedIcon sx={{ color: '#ff000045' }} />}
@@ -96,7 +96,7 @@ function ViewModal({ open, handleClose, selectedQuestionData }) {
                                                         disabled
                                                         sx={{
                                                             width: '75%',
-                                                            backgroundColor: answer.isCorrect ? '#06d00169' : '#ff000045',
+                                                            backgroundColor: answer.correct ? '#06d00169' : '#ff000045',
                                                             color: 'white !important'
                                                         }}
                                                     >

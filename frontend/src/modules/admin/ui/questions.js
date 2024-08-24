@@ -3,8 +3,9 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Table
 
 //components
 import Search from '../../../common/components/search';
-import ViewModal from '../../../common/components/adminComponents.js/questions/viewModal';
+import AddModal from '../../../common/components/adminComponents.js/questions/addModal';
 import ModifyModal from '../../../common/components/adminComponents.js/questions/modifyModal';
+import ViewModal from '../../../common/components/adminComponents.js/questions/viewModal';
 
 //icons
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
@@ -15,7 +16,7 @@ import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import { questionTypes, truncateText } from '../../../common/utils/helpers';
 
 //api
-import { getAllQuestions, getTestById } from '../../../common/api/admin';
+import { deleteQuestions, getAllQuestions, getTestById } from '../../../common/api/admin';
 
 function Questions() {
     const [page, setPage] = useState(0);
@@ -23,34 +24,40 @@ function Questions() {
     const [questions, setQuestions] = useState([]);
     const [openViewModal, setOpenViewModal] = useState(false);
     const [openModifyModal, setOpenModifyModal] = useState(false);
+    const [openAddModal, setOpenAddModal] = useState(false);
     const [selectedQuestionData, setSelectedQuestionData] = useState(null);
     const [level, setLevel] = useState('');
     const [category, setCategory] = useState('');
     const [type, setType] = useState('');
     const rowsPerPage = 8;
 
-const getQuestions = async () => {
-    try {
-        const QuestionsData = await getAllQuestions();
+    const getQuestions = async () => {
+        try {
+            const QuestionsData = await getAllQuestions();
 
-        // Fetch the test data for each question and add it to the question object
-        const updatedQuestions = await Promise.all(
-            QuestionsData.map(async (question) => {
-                const testData = await getTestById(question.testId);
-                return {
-                    ...question,
-                    testName: testData.title,
-                    testLevel: testData.level,   
-                    testSection: testData.section
-                };
-            })
-        );
+            const updatedQuestions = await Promise.all(
+                QuestionsData.map(async (question) => {
+                    try {
+                        const testData = await getTestById(question.testId);
+                        return {
+                            ...question,
+                            testName: testData.title,
+                            testLevel: testData.level,
+                            testSection: testData.section
+                        };
+                    } catch (error) {
+                        console.error(`Failed to fetch test data for question ${question.id}:`, error);
+                        return question;
+                    }
+                })
+            );
 
-        setQuestions(updatedQuestions);
-    } catch (error) {
-        console.error("Failed to fetch Questions:", error);
-    }
-};
+            setQuestions(updatedQuestions);
+        } catch (error) {
+            console.error("Failed to fetch Questions:", error);
+        }
+    };
+
 
     useEffect(() => {
         getQuestions();
@@ -71,12 +78,25 @@ const getQuestions = async () => {
         setOpenModifyModal(true);
     };
 
+    const handleOpenAddModal = (row) => {
+        setOpenAddModal(true);
+    };
+
     const handleCloseViewModal = () => setOpenViewModal(false);
+    const handleCloseAddModal = () => setOpenAddModal(false);
     const handleCloseModifyModal = () => setOpenModifyModal(false);
 
-    const handleChangePage = (newPage) => setPage(newPage);
+    const handleChangePage = (event, newPage) => setPage(newPage);
 
-    const handleDelete = () => console.log(selectedQuestions);
+    const handleDelete = async () => {
+        try {
+            await deleteQuestions(selectedQuestions);
+            setSelectedQuestions([]);
+            await getQuestions();
+        } catch (error) {
+            console.error("Failed to delete Questions:", error);
+        }
+    };
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
@@ -107,7 +127,13 @@ const getQuestions = async () => {
         setSelectedQuestions(newSelected);
     };
 
-    const handleSave = () => console.log('updated successfully');
+    const handleSave = async () => {
+        try {
+            await getQuestions();
+        } catch (error) {
+            console.error("Failed to delete Questions:", error);
+        }
+    };
 
     return (
         <Box sx={{ p: '10px' }}>
@@ -116,6 +142,7 @@ const getQuestions = async () => {
                 <Typography variant='h5' fontWeight={500} color='primary'>
                     Questions
                 </Typography>
+                <Button variant="contained" onClick={handleOpenAddModal}>+ Ajouter</Button>
             </Box>
             {/* Filter Bar */}
             <Box sx={{ my: 2, p: '15px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: 5, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff' }}>
@@ -191,15 +218,15 @@ const getQuestions = async () => {
                                 </IconButton>
                             </>
                         )}
-                    <TablePagination
-                        component="div"
-                        count={questions.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        rowsPerPageOptions={[rowsPerPage]}
-                        labelDisplayedRows={({ from, to, count }) => `${from}–${to} sur ${count !== -1 ? count : `plus de ${to}`}`}
-                    />
+                        <TablePagination
+                            component="div"
+                            count={questions.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            rowsPerPageOptions={[rowsPerPage]}
+                            labelDisplayedRows={({ from, to, count }) => `${from}–${to} sur ${count !== -1 ? count : `plus de ${to}`}`}
+                        />
                     </Box>
                 </Box>
                 <Table sx={{ border: '1px solid', borderColor: 'grey.200', borderRadius: '10px', overflow: 'hidden', boxShadow: 1 }}>
@@ -257,8 +284,12 @@ const getQuestions = async () => {
                                         <TableCell sx={{ py: 0 }}>{truncateText(question.question, 20)}</TableCell>
                                         <TableCell sx={{ py: 0 }}>{question.testName}</TableCell>
                                         <TableCell sx={{ textAlign: 'center', py: 0 }}>{questionTypes[question.type]}</TableCell>
-                                        <TableCell sx={{ textAlign: 'center', py: 0 }}>{question.testLevel.name}</TableCell>
-                                        <TableCell sx={{ textAlign: 'center', py: 0 }}>{question.testSection.name}</TableCell>
+                                        <TableCell sx={{ textAlign: 'center', py: 0 }}>
+                                            {question.testLevel ? question.testLevel.name : 'N/A'}
+                                        </TableCell>
+                                        <TableCell sx={{ textAlign: 'center', py: 0 }}>
+                                            {question.testSection ? question.testSection.name : 'N/A'}
+                                        </TableCell>
                                         <TableCell sx={{ p: 0 }}>
                                             <Box sx={{ textAlign: 'center', py: 0 }}>
                                                 <IconButton
@@ -282,6 +313,7 @@ const getQuestions = async () => {
                 </Table>
             </TableContainer>
             <ViewModal open={openViewModal} handleClose={handleCloseViewModal} selectedQuestionData={selectedQuestionData} />
+            <AddModal open={openAddModal} handleClose={handleCloseAddModal} handleSave={handleSave}/>
             <ModifyModal open={openModifyModal} handleClose={handleCloseModifyModal} selectedQuestionData={selectedQuestionData} handleSave={handleSave} />
         </Box>
     );
