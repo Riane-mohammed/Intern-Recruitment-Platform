@@ -1,6 +1,7 @@
 package com.recrutementPlatform.backend.controller;
 
 import com.recrutementPlatform.backend.dto.testDTO;
+import com.recrutementPlatform.backend.model.level;
 import com.recrutementPlatform.backend.model.test;
 import com.recrutementPlatform.backend.service.testService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,16 @@ public class testController {
     @GetMapping
     public List<test> getAllTests(){
         return service.getAllTests();
+    }
+
+    @GetMapping("/count")
+    public Long countTests() {
+        return service.getNumberOfTests();
+    }
+
+    @PostMapping("/count/level")
+    public Long countTestsByLevel(@RequestBody level level) {
+        return service.getNumberOfTestsByLevel(level);
     }
 
     @GetMapping("/{id}")

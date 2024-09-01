@@ -40,6 +40,14 @@ public class testService {
         return testById;
     }
 
+    public Long getNumberOfTests(){
+        return testRepo.count();
+    }
+
+    public Long getNumberOfTestsByLevel(level levelEntity){
+        return testRepo.countByLevel(levelEntity);
+    }
+
     @Transactional
     public test addOrUpdateTest(testDTO testDetails){
         // Find or create the test

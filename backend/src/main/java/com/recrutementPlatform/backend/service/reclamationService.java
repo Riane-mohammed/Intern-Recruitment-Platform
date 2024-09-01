@@ -23,6 +23,18 @@ public class reclamationService {
         return reclamationRepo.findAll();
     }
 
+    public Long getNumberOfReclamation() {
+        return reclamationRepo.count();
+    }
+
+    public long countTrueReclamations() {
+        return reclamationRepo.countReclamationByStatus(true);
+    }
+
+    public long countFalseReclamations() {
+        return reclamationRepo.countReclamationByStatus(false);
+    }
+
     @Transactional
     public reclamation addReclamation(reclamationDTO reclamationDTO) {
         reclamation reclamation = new reclamation();

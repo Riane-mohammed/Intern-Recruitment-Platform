@@ -1,51 +1,39 @@
 package com.recrutementPlatform.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class result {
+public class candidateQuizStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal score;
-
-    @Column(name = "taken_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date takenAt;
-
     @ManyToOne
-    @JoinColumn(name = "quiz_id")
-    @JsonManagedReference
+    @JoinColumn(name = "quiz_id", nullable = false)
     @JsonIgnore
     private quiz quiz;
 
     @ManyToOne
-    @JoinColumn(name = "test_id")
+    @JoinColumn(name = "candidate_id", nullable = false)
     @JsonIgnore
-    private test test;
-
-    @ManyToOne
-    @JoinColumn(name = "cadidate_id")
-    @JsonBackReference
     private candidate candidate;
 
-    @Transient
-    private Long testId;
+    @Column(nullable = false)
+    private boolean accepted = false;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "accepted_at")
+    private Date acceptedAt;
 
     @Transient
     private Long quizId;
@@ -55,9 +43,6 @@ public class result {
 
     @PostLoad
     private void setIds() {
-        if (this.test != null) {
-            this.testId = this.test.getId();
-        }
         if (this.candidate != null) {
             this.candidateId = this.candidate.getEmail();
         }
@@ -68,6 +53,12 @@ public class result {
 
     @PrePersist
     protected void onCreate() {
-        takenAt = new Date();
+        acceptedAt = new Date();
+    }
+
+    public candidateQuizStatus(quiz quiz, candidate candidate) {
+        this.quiz = quiz;
+        this.candidate = candidate;
+        this.accepted = false;
     }
 }

@@ -39,15 +39,19 @@ public class quiz {
     @JsonManagedReference
     private List<quizTest> quizTests = new ArrayList<>();
 
-    @OneToMany(mappedBy = "quiz")
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     private List<result> results;
 
-    @OneToMany(mappedBy = "quiz")
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    private List<candidateQuizStatus> status;
+
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     private List<token> tokens;
 
-    @ManyToMany(mappedBy = "quizzes")
+    @ManyToMany(mappedBy = "quizzes", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<candidate> candidates = new ArrayList<>();
 
@@ -56,4 +60,5 @@ public class quiz {
         createdAt = new Date();
     }
 }
+
 

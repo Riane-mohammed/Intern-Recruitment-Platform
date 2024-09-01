@@ -1,6 +1,8 @@
 package com.recrutementPlatform.backend.service;
 
 import com.recrutementPlatform.backend.dto.candidateDTO;
+import com.recrutementPlatform.backend.dto.verificationCodeDTO;
+import com.recrutementPlatform.backend.enums.candidateGender;
 import com.recrutementPlatform.backend.model.candidate;
 import com.recrutementPlatform.backend.model.quiz;
 import com.recrutementPlatform.backend.repository.candidateRepository;
@@ -8,9 +10,14 @@ import com.recrutementPlatform.backend.repository.quizRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
+import java.time.Instant;
 import java.util.Optional;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +29,15 @@ public class candidateService {
     @Autowired
     private quizRepository quizRepo;
 
+    @Autowired
+    private emailService emailService;
+
+    private final Map<String, verificationCodeDTO> verificationCodes = new ConcurrentHashMap<>();
+
+    public Long getNumberOfCandidates(){
+        return candidateRepo.count();
+    }
+
     public List<candidateDTO> getAllCandidates() {
         return candidateRepo.findAll().stream()
                 .map(candidate -> new candidateDTO(
@@ -32,10 +48,42 @@ public class candidateService {
                         candidate.getGender(),
                         candidate.getPhone(),
                         candidate.getCin(),
-                        candidate.getAddress(),
-                        null
+                        candidate.getAddress()
                         ))
                 .collect(Collectors.toList());
+    }
+
+    public void assignQuizToCandidate(String candidateEmail, Long quizId) {
+        candidate candidate = candidateRepo.findByEmail(candidateEmail)
+                .orElseThrow(() -> new RuntimeException("Candidate not found"));
+
+        quiz quiz = quizRepo.findById(quizId)
+                .orElseThrow(() -> new RuntimeException("Quiz not found"));
+
+        // Check if the quiz is already assigned to the candidate
+        if (!candidate.getQuizzes().contains(quiz)) {
+            candidate.getQuizzes().add(quiz);
+            candidateRepo.save(candidate);
+        } else {
+            System.out.println("Quiz is already assigned to the candidate.");
+        }
+    }
+
+    public long countMales() {
+        return candidateRepo.countNumberofgenders(candidateGender.MALE);
+    }
+
+    public long countFemales() {
+        return candidateRepo.countNumberofgenders(candidateGender.FEMALE);
+    }
+
+
+    public boolean hasCandidatePassedQuiz(String candidateEmail, Long quizId) {
+        candidate candidate = candidateRepo.findByEmail(candidateEmail)
+                .orElseThrow(() -> new RuntimeException("Candidate not found"));
+
+        return candidate.getQuizzes().stream()
+                .anyMatch(cq -> cq.getId().equals(quizId));
     }
 
     public candidate updateCandidate(candidateDTO newCandidateDetails) {
@@ -54,40 +102,29 @@ public class candidateService {
     public candidate addCandidate(candidateDTO candidateInfo) {
         Optional<candidate> optionalCandidate = candidateRepo.findById(candidateInfo.getEmail());
 
-        quiz quiz = quizRepo.findById(candidateInfo.getQuizId())
-                .orElseThrow(() -> new RuntimeException("Quiz not found"));
-
-        candidate cand;
-        if(optionalCandidate.isPresent()) {
-            cand = optionalCandidate.get();
-
-            updateCandidateInfo(cand,candidateInfo);
-
-            if(!cand.getQuizzes().contains(quiz)) {
-                cand.getQuizzes().add(quiz);
-            }else {
-                throw new RuntimeException("Quiz already exists for this candidate");
-            }
-
-        }else {
-            cand = new candidate();
-            updateCandidateInfo(cand,candidateInfo);
-            cand.getQuizzes().add(quiz);
-
+        candidate candidate;
+        if (optionalCandidate.isPresent()) {
+            candidate = optionalCandidate.get();
+        } else {
+            candidate = new candidate();
         }
-        return candidateRepo.save(cand);
+
+        updateCandidateInfo(candidate, candidateInfo);
+
+        return candidateRepo.save(candidate);
     }
 
-    private void updateCandidateInfo(candidate cand, candidateDTO candidateInfo) {
-        cand.setEmail(candidateInfo.getEmail());
-        cand.setFirstName(candidateInfo.getFirstName());
-        cand.setLastName(candidateInfo.getLastName());
-        cand.setBirthday(candidateInfo.getBirthday());
-        cand.setGender(candidateInfo.getGender());
-        cand.setPhone(candidateInfo.getPhone());
-        cand.setCin(candidateInfo.getCin());
-        cand.setAddress(candidateInfo.getAddress());
+    private void updateCandidateInfo(candidate candidate, candidateDTO candidateInfo) {
+        candidate.setEmail(candidateInfo.getEmail());
+        candidate.setFirstName(candidateInfo.getFirstName());
+        candidate.setLastName(candidateInfo.getLastName());
+        candidate.setBirthday(candidateInfo.getBirthday());
+        candidate.setGender(candidateInfo.getGender());
+        candidate.setPhone(candidateInfo.getPhone());
+        candidate.setCin(candidateInfo.getCin());
+        candidate.setAddress(candidateInfo.getAddress());
     }
+
 
     @Transactional
     public void deleteCandidatesByEmails(List<String> emails) {
@@ -103,6 +140,39 @@ public class candidateService {
         } else {
             throw new IllegalArgumentException("Email list is null or empty");
         }
+    }
+
+
+    public void sendVerificationCode(String email) {
+        // Generate a six-digit code
+        String code = generateVerificationCode();
+        Instant expiration = Instant.now().plusSeconds(600); // 10 minutes validity
+
+        // Store the code in memory
+        verificationCodeDTO verificationCode = new verificationCodeDTO(email, code, expiration);
+        verificationCodes.put(email, verificationCode);
+
+        // Create email content
+        String subject = "Your Verification Code";
+        String text = "Your verification code is: " + code;
+
+        // Send the email
+        emailService.sendMail(email, subject, text);
+    }
+
+    public boolean verifyCode(String email, String code) {
+        verificationCodeDTO storedCode = verificationCodes.get(email);
+        if (storedCode != null && storedCode.getCode().equals(code) && storedCode.getExpiration().isAfter(Instant.now())) {
+            verificationCodes.remove(email);
+            return true;
+        }
+        return false;
+    }
+
+    private String generateVerificationCode() {
+        Random random = new Random();
+        int code = 100000 + random.nextInt(900000);
+        return String.valueOf(code);
     }
 
 

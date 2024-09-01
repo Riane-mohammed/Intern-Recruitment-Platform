@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/level")
@@ -28,18 +30,16 @@ public class levelController {
 
     @PostMapping("/add")
     public level addLevel(@RequestBody String name) {
-        return service.addLevel(name);
-    }
-
-    @PutMapping("/update/{id}")
-    public level updatelevel(@PathVariable Long id, @RequestBody String name ) {
-        return service.updatelevel(id, name);
+        return service.addLevel(name.substring(1, name.length() - 1));
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteLevels(@RequestBody List<Long> ids) {
-        service.deleteLevelsId(ids);
-        return ResponseEntity.ok("Successfully deleted levels with ids: " + ids);
+    public ResponseEntity<Map<String, Object>> deleteLevel(@RequestBody Long id) {
+        service.deleteLevelId(id);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Successfully deleted level");
+        response.put("ids", id);
+        return ResponseEntity.ok(response);
     }
 
 }

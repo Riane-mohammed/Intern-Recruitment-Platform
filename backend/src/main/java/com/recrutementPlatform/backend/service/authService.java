@@ -17,6 +17,13 @@ public class authService {
     public admin login(authDTO user) {
         admin admin = authRepo.findByEmail(user.getEmail())
                 .orElseThrow(() -> new RuntimeException("Admin with the email: " + user.getEmail() + " is not found"));
+
+        // Check if the account is active
+        if (!admin.isActive()) {
+            throw new RuntimeException("The account is not activated. Please verify your email.");
+        }
+
+        // Validate the password
         if (passwordUtil.matches(user.getPassword(), admin.getPassword())) {
             return admin;
         } else {

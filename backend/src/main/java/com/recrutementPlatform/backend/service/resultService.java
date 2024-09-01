@@ -2,10 +2,7 @@ package com.recrutementPlatform.backend.service;
 
 import com.recrutementPlatform.backend.dto.resultDTO;
 import com.recrutementPlatform.backend.model.*;
-import com.recrutementPlatform.backend.repository.candidateRepository;
-import com.recrutementPlatform.backend.repository.quizRepository;
-import com.recrutementPlatform.backend.repository.resultRepository;
-import com.recrutementPlatform.backend.repository.testRepository;
+import com.recrutementPlatform.backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +24,18 @@ public class resultService {
     @Autowired
     private candidateRepository candidateRepo;
 
+    @Autowired
+    private candQuizStatusRepository candQuizRepo;
+
     public List<result> getAllResults() {
         return resultRepo.findAll();
+    }
+
+    public List<result> getResultByQuizId(Long quizId) {
+        quiz quiz = quizRepo.findById(quizId)
+                .orElseThrow(() -> new RuntimeException("Quiz not found"));
+
+        return resultRepo.findByQuiz(quiz);
     }
 
     public result addResult(resultDTO resultInfo) {
@@ -58,10 +65,33 @@ public class resultService {
             result.setQuiz(quiz);
             result.setTest(test);
             result.setCandidate(candidate);
+
+            candidateQuizStatus candQuiz = new candidateQuizStatus(quiz, candidate);
+            candQuizRepo.save(candQuiz);
+
             return resultRepo.save(result);
         } else {
             throw new RuntimeException("Test is not in this Quiz");
         }
+    }
+
+    public boolean hasResultSaved(String candidateEmail, Long quizId, Long testId) {
+        quiz quiz = quizRepo.findById(quizId)
+                .orElseThrow(() -> new RuntimeException("Quiz not found"));
+
+        test test = testRepo.findById(testId)
+                .orElseThrow(() -> new RuntimeException("Test not found"));
+
+        candidate candidate = candidateRepo.findById(candidateEmail)
+                .orElseThrow(() -> new RuntimeException("Candidate not found"));
+
+        Optional<result> result = resultRepo.findByQuizAndTestAndCandidate(quiz, test, candidate);
+
+        if (result.isPresent()) {
+            return true;
+        }
+
+        return false;
     }
 
 }

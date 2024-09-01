@@ -4,6 +4,7 @@ import com.recrutementPlatform.backend.dto.authDTO;
 import com.recrutementPlatform.backend.model.admin;
 import com.recrutementPlatform.backend.service.authService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,4 +22,5 @@ public class authController {
         }
         return service.login(user);
     }
+
 }

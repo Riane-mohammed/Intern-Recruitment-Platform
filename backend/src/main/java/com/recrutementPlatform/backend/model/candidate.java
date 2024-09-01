@@ -56,4 +56,8 @@ public class candidate {
     @JsonManagedReference
     private List<result> results;
 
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    private List<candidateQuizStatus> status;
+
 }
