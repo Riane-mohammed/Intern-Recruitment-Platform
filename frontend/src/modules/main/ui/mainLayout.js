@@ -8,7 +8,7 @@ import MainNavBar from "../../../common/components/bars/mainNavBar";
 function MainLayout() {
     const navItems = [
         { label: 'Accueil', path: '/' },
-        { label: 'Contact', path: '/Contactez-nous' },
+        { label: 'Réclamation', path: '/Centre-r%C3%A9clamation' },
         { label: 'Connexion', path: '/Connexion' },
     ];
 

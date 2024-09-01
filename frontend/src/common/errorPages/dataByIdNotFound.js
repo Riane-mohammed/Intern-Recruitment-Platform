@@ -1,22 +1,22 @@
-import { Box, Button, Typography } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Box, Button, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 
-function AdminNotFound () {
+const DataByIdNotFound = ({ name }) => {
     return (
         <Box
             sx={{
-                fontFamily: 'poppins',
+                fontFamily: 'Poppins',
                 margin: '100px'
             }}
         >
             <Typography fontWeight='600' textAlign='center' color='primary' fontSize='3rem'>
-                Page introuvable
+                {name} Introuvable
             </Typography>
             <Typography variant='subtitle1' fontWeight='bold' textAlign='center'>
-                Code d'erreur : 404
+                Erreur 404
             </Typography>
             <Typography textAlign='center'>
-                La page que vous cherchez n'existe pas ou a été déplacée.
+                Le {name.toLowerCase()} que vous cherchez n'a pas été trouvé dans notre système.
             </Typography>
             <Box
                 sx={{
@@ -28,10 +28,10 @@ function AdminNotFound () {
                 }}
             >
                 <Typography variant='body1' fontWeight='600'>
-                    Instructions :
+                    Que faire ensuite ?
                 </Typography>
                 <Typography variant='body1'>
-                    Veuillez vérifier l'URL pour vous assurer qu'il n'y a pas d'erreurs. Si vous pensez que c'est une erreur, retournez au tableau de bord pour continuer à gérer vos contenus.
+                    Veuillez vérifier l'URL pour vous assurer qu'il n'y a pas d'erreurs. Si vous avez saisi un mauvais identifiant, essayez de le corriger. Sinon, retournez à la page de {name.toLowerCase()} pour explorer d'autres contenus.
                 </Typography>
                 <Box
                     sx={{
@@ -42,16 +42,16 @@ function AdminNotFound () {
                 >
                     <Button
                         component={Link}
-                        to="/admin"
+                        to={`/admin/${name}${name.toLowerCase() === 'test' ? 's' : ''}`}
                         variant="contained"
                         color="primary"
                         sx={{ mx: 1 }}>
-                            Aller au Tableau de Bord
+                        Retour à la page de {name}
                     </Button>
                 </Box>
             </Box>
         </Box>
-    )
+    );
 }
 
-export default AdminNotFound
+export default DataByIdNotFound;

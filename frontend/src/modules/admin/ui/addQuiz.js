@@ -12,9 +12,11 @@ import CloseIcon from '@mui/icons-material/Close';
 
 //apis
 import { addQuiz, getAllTests } from '../../../common/api/admin';
+import LoadingOverlay from '../../../common/components/loadingOverlay';
 
 const AddQuiz = () => {
     const [tests, setTests] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const [selectedTests, setSelectedTests] = useState([]);
     const [quizTitle, setQuizTitle] = useState('');
     const [quizDescription, setQuizDescription] = useState('');
@@ -73,8 +75,10 @@ const AddQuiz = () => {
             description: quizDescription,
             emails: candidateEmails,
             quizTests,
-            duration: parseInt(quizTime, 10) // Convert duration to integer
+            duration: parseInt(quizTime, 10)
         };
+
+        setIsLoading(true);
 
         try {
             await addQuiz(newQuiz);
@@ -89,136 +93,144 @@ const AddQuiz = () => {
         } catch (error) {
             console.error('Failed adding quiz', error);
             setError('Erreur lors de l\'ajout du quiz.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <Box sx={{ p: 2, borderRadius: 2, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff', minHeight: `calc( 100vh - ( ${theme.mixins.toolbar.minHeight}px) - 15px )` }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Link to='/admin/Quiz'>
-                    <IconButton aria-label="back">
-                        <ArrowBackIcon />
-                    </IconButton>
-                </Link>
-                <Typography variant="h6">
-                    Ajouter un Quiz
-                </Typography>
-            </Box>
-            {tests &&
-                <Grid container spacing={2}>
-                    {/* Title and Description */}
-                    <Grid item xs={12} md={4}>
-                        <TextField
-                            label="Titre du Quiz"
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
-                            value={quizTitle}
-                            onChange={(e) => setQuizTitle(e.target.value)}
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={8}>
-                        <TextField
-                            label="Description du Quiz"
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
-                            multiline
-                            rows={2}
-                            value={quizDescription}
-                            onChange={(e) => setQuizDescription(e.target.value)}
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
-                        <TextField
-                            label="Temps du Quiz (en jours)"
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
-                            value={quizTime}
-                            onChange={(e) => setQuizTime(e.target.value)}
-                            type="number"
-                            inputProps={{ min: 1 }}
-                            sx={{ py: 0 }}
-                        />
-                    </Grid>
-                    {/* Test Search and Selection */}
-                    <Grid item xs={12} md={8}>
-                        <Autocomplete
-                            freeSolo
-                            options={tests}
-                            getOptionLabel={(option) => option.title}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Rechercher un test"
-                                    variant="outlined"
-                                />
-                            )}
-                            onChange={handleAddTest}
-                            isOptionEqualToValue={(option, value) => option.id === value.id}
-                            filterOptions={(options, params) => {
-                                return options.filter(option =>
-                                    option.title.toLowerCase().includes(params.inputValue.toLowerCase())
-                                );
-                            }}
-                        />
-                        <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                            {selectedTests.map((test) => (
-                                <Box key={test.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                                    <Chip
-                                        label={test.title}
-                                        onDelete={() => handleDeleteChip(test.id)}
-                                        deleteIcon={<CloseIcon />}
-                                    />
+        <>
+            {/* Loading Overlay */}
+            <LoadingOverlay isLoading={isLoading} />
+
+            {/* Main Content */}
+            <Box sx={{ p: 2, borderRadius: 2, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff', minHeight: `calc( 100vh - ( ${theme.mixins.toolbar.minHeight}px) - 15px )` }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Link to='/admin/Quiz'>
+                        <IconButton aria-label="back">
+                            <ArrowBackIcon />
+                        </IconButton>
+                    </Link>
+                    <Typography variant="h6">
+                        Ajouter un Quiz
+                    </Typography>
+                </Box>
+                {tests &&
+                    <Grid container spacing={2}>
+                        {/* Title and Description */}
+                        <Grid item xs={12} md={4}>
+                            <TextField
+                                label="Titre du Quiz"
+                                fullWidth
+                                margin="normal"
+                                variant="outlined"
+                                value={quizTitle}
+                                onChange={(e) => setQuizTitle(e.target.value)}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={8}>
+                            <TextField
+                                label="Description du Quiz"
+                                fullWidth
+                                margin="normal"
+                                variant="outlined"
+                                multiline
+                                rows={2}
+                                value={quizDescription}
+                                onChange={(e) => setQuizDescription(e.target.value)}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+                            <TextField
+                                label="Temps du Quiz (en jours)"
+                                fullWidth
+                                margin="normal"
+                                variant="outlined"
+                                value={quizTime}
+                                onChange={(e) => setQuizTime(e.target.value)}
+                                type="number"
+                                inputProps={{ min: 1 }}
+                                sx={{ py: 0 }}
+                            />
+                        </Grid>
+                        {/* Test Search and Selection */}
+                        <Grid item xs={12} md={8}>
+                            <Autocomplete
+                                freeSolo
+                                options={tests}
+                                getOptionLabel={(option) => option.title}
+                                renderInput={(params) => (
                                     <TextField
-                                        label="Pourcentage"
-                                        type="number"
-                                        InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
-                                        value={testPercentages[test.id] || ''}
-                                        onChange={(e) => handlePercentageChange(test.id, e.target.value)}
-                                        sx={{ width: '120px' }}
-                                        size="small"
+                                        {...params}
+                                        label="Rechercher un test"
+                                        variant="outlined"
                                     />
-                                </Box>
-                            ))}
-                        </Box>
+                                )}
+                                onChange={handleAddTest}
+                                isOptionEqualToValue={(option, value) => option.id === value.id}
+                                filterOptions={(options, params) => {
+                                    return options.filter(option =>
+                                        option.title.toLowerCase().includes(params.inputValue.toLowerCase())
+                                    );
+                                }}
+                            />
+                            <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                {selectedTests.map((test) => (
+                                    <Box key={test.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                                        <Chip
+                                            label={test.title}
+                                            onDelete={() => handleDeleteChip(test.id)}
+                                            deleteIcon={<CloseIcon />}
+                                        />
+                                        <TextField
+                                            label="Pourcentage"
+                                            type="number"
+                                            InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
+                                            value={testPercentages[test.id] || ''}
+                                            onChange={(e) => handlePercentageChange(test.id, e.target.value)}
+                                            sx={{ width: '120px' }}
+                                            size="small"
+                                        />
+                                    </Box>
+                                ))}
+                            </Box>
+                        </Grid>
+                        {/* Candidate Emails */}
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Emails des Candidats (séparé par ' , ')"
+                                fullWidth
+                                margin="normal"
+                                variant="outlined"
+                                multiline
+                                rows={5}
+                                value={candidateEmails}
+                                onChange={(e) => setCandidateEmails(e.target.value)}
+                            />
+                        </Grid>
                     </Grid>
-                    {/* Candidate Emails */}
-                    <Grid item xs={12}>
-                        <TextField
-                            label="Emails des Candidats"
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
-                            multiline
-                            rows={5}
-                            value={candidateEmails}
-                            onChange={(e) => setCandidateEmails(e.target.value)}
-                        />
-                    </Grid>
-                </Grid>
-            }
+                }
 
-            {/* Save Button */}
-            <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={handleSave}>
-                Sauvegarder le Quiz
-            </Button>
+                {/* Save Button */}
+                <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={handleSave}>
+                    Sauvegarder le Quiz
+                </Button>
 
-            {/* Error Snackbar */}
-            <Snackbar open={Boolean(error)} autoHideDuration={6000} onClose={() => setError('')}>
-                <Alert onClose={() => setError('')} severity="error">
-                    {error}
-                </Alert>
-            </Snackbar>
+                {/* Error Snackbar */}
+                <Snackbar open={Boolean(error)} autoHideDuration={6000} onClose={() => setError('')} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                    <Alert onClose={() => setError('')} severity="error">
+                        {error}
+                    </Alert>
+                </Snackbar>
 
-            {/* Success Snackbar */}
-            <Snackbar open={Boolean(success)} autoHideDuration={6000} onClose={() => setSuccess('')}>
-                <Alert onClose={() => setSuccess('')} severity="success">
-                    {success}
-                </Alert>
-            </Snackbar>
-        </Box>
+                {/* Success Snackbar */}
+                <Snackbar open={Boolean(success)} autoHideDuration={6000} onClose={() => setSuccess('')} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                    <Alert onClose={() => setSuccess('')} severity="success">
+                        {success}
+                    </Alert>
+                </Snackbar>
+            </Box>
+        </>
     );
 };
 

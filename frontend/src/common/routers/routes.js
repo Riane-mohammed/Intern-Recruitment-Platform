@@ -14,17 +14,18 @@ import ModifyTest from "../../modules/admin/ui/modifyTest";
 import Questions from '../../modules/admin/ui/questions';
 import Quiz from '../../modules/admin/ui/quiz';
 import AddQuiz from "../../modules/admin/ui/addQuiz";
+import Claims from "../../modules/admin/ui/claims";
 import QuizById from "../../modules/admin/ui/quizById";
 import Options from "../../modules/admin/ui/options";
-import Contact from "../../modules/admin/ui/contact";
 import Profile from '../../modules/admin/ui/profile';
-import Settings from '../../modules/admin/ui/settings';
-
+import AddAdmin from "../../modules/admin/ui/addAdmin";
+import Admins from "../../modules/admin/ui/admins";
 
 //main pages
 import Home from "../../modules/main/ui/home";
-import ContactUs from "../../modules/main/ui/contact";
+import ClaimsForm from "../../modules/main/ui/claims";
 import Login from "../../modules/main/ui/login";
+import RecoverPassword from "../../modules/main/ui/recoverPassword";
 
 //quiz Pages
 import QuizHome from "../../modules/quiz/ui/home";
@@ -53,10 +54,11 @@ const routes = (
 
             <Route path="Options" element={<Options />} />
             
-            <Route path="Réclamation" element={<Contact />} />
+            <Route path="Réclamation" element={<Claims />} />
     
             <Route path="Profil" element={<Profile />} />
-            <Route path="Paramètres" element={<Settings />} />
+            <Route path="gestion-administrateurs" element={<Admins />} />
+            <Route path="gestion-administrateurs/ajouter" element={<AddAdmin />} />
             
             <Route path="*" element={<AdminNotFound />} />
         </Route>
@@ -64,8 +66,10 @@ const routes = (
         {/* Main routes */}
         <Route path="/" element={<MainLayout />}>
             <Route index element={<Home />} /> 
-            <Route path="Contactez-nous" element={<ContactUs />} /> 
+            <Route path="Centre-réclamation" element={<ClaimsForm />} /> 
             <Route path="Connexion" element={<Login />} />
+            <Route path="Connexion/token=:token" element={<Login />} />
+            <Route path="Réinitialiser-Mot-Passe/token=:token" element={<RecoverPassword />} />
             <Route path="*" element={<NotFound />} /> 
         </Route>
 
@@ -96,8 +100,8 @@ export const locationNames = {
     "/admin/Profil": "Profil",
     "/admin/Options": "Options",
     "/admin/R%C3%A9clamation": "Réclamation",
-    "/admin/Param%C3%A8tres": "Paramètres",
-    
+    "/admin/gestion-administrateurs": "Gestion des Administrateurs",
+    "/admin/gestion-administrateurs/Ajouter": "Gestion des Administrateurs / Ajouter",
 };
 
 export const dynamicPaths = [
