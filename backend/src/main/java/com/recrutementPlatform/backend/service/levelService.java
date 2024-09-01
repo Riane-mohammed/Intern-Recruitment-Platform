@@ -44,34 +44,20 @@ public class levelService {
     }
 
     @Transactional
-    public level updatelevel(Long id, String name){
-        level level = levelRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("level with id " + id + " not found"));
-
-        level.setName(name);
-
-        levelRepo.save(level);
-
-        return level;
-    }
-
-    @Transactional
-    public void deleteLevelsId(List<Long> ids) {
-        if (ids != null && !ids.isEmpty()) {
+    public void deleteLevelId(Long id) {
+        if (id != null) {
             try {
-                for (Long id : ids) {
-                    level level = levelRepo.findById(id)
-                            .orElseThrow(() -> new RuntimeException("level not found with id: " + id));
+                level level = levelRepo.findById(id)
+                        .orElseThrow(() -> new RuntimeException("level not found with id: " + id));
 
-                    levelRepo.delete(level);
-                }
-                System.out.println("Successfully deleted Levels with ids: " + ids);
+                levelRepo.delete(level);
+                System.out.println("Successfully deleted Levels with id: " + id);
             } catch (Exception e) {
                 System.err.println("Failed to delete Levels: " + e.getMessage());
                 throw e;
             }
         } else {
-            throw new IllegalArgumentException("level IDs list is null or empty");
+            throw new IllegalArgumentException("level ID is null ");
         }
     }
 }

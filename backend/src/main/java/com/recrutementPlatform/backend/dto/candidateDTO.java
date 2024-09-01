@@ -20,6 +20,5 @@ public class candidateDTO {
     private String phone;
     private String cin;
     private String address;
-    private Long quizId;
 
 }

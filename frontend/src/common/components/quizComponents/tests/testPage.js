@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Checkbox, CircularProgress, Grid, Typography } from "@mui/material";
+import { Box, Button, Checkbox, CircularProgress, Grid, Radio, Typography } from "@mui/material";
 import { useDispatch, useSelector } from 'react-redux';
 
 //actions
-import { increment, incrementQuestionNumber, setFinished, setQuestionNumber, setStarted, updatePoints } from '../../../../modules/quiz/actions/candidateActions';
+import { increment, incrementQuestionNumber, setFinished, setQuestionNumber, setRemainingTime, setStarted, updatePoints } from '../../../../modules/quiz/actions/candidateActions';
 
 //helper functions
 import { formatTime } from '../../../utils/helpers';
 
+//apis 
+import { assignQuiz, assignResult, hasPassed, hasResultSaved } from '../../../api/quiz';
+
 // Function to render answers based on the question type
 const renderAnswers = (question, selectedAnswers, handleAnswer) => {
-    switch (question.answerType) {
+    switch (question.type) {
         case 'MULTIPLE_CHOICE':
             return question.answers.map((answer) => (
                 <Grid
@@ -43,16 +46,13 @@ const renderAnswers = (question, selectedAnswers, handleAnswer) => {
                                 alt="answer"
                                 sx={{
                                     maxWidth: '300px',
-                                    maxHeight: '100px', 
+                                    maxHeight: '100px',
                                     objectFit: 'contain',
-                                    display: 'block',
-                                }}
-                                onError={(e) => {
-                                    e.target.src = 'path_to_default_image'; 
+                                    display: 'block'
                                 }}
                             />
                         ) : (
-                            answer.answerText
+                            answer.answer
                         )}
                     </Box>
                 </Grid>
@@ -68,9 +68,29 @@ const renderAnswers = (question, selectedAnswers, handleAnswer) => {
                             alignItems: 'center'
                         }}
                     >
-                        <Button variant='contained' color='secondary' sx={{ width: '75%' }} onClick={handleAnswer(answer)}>
-                            {answer.answerText}
-                        </Button>
+                        {answer.image ? (
+                            <>
+                                <Radio
+                                    checked={selectedAnswers.includes(answer)}
+                                    onChange={handleAnswer(answer)}
+                                />
+                                <Box
+                                    component="img"
+                                    src={answer.image}
+                                    alt="answer"
+                                    sx={{
+                                        maxWidth: '300px',
+                                        maxHeight: '100px',
+                                        objectFit: 'contain',
+                                        display: 'block'
+                                    }}
+                                />
+                            </>
+                        ) : (
+                            <Button variant='contained' color='secondary' sx={{ width: '75%' }} onClick={handleAnswer(answer)}>
+                                {answer.answer}
+                            </Button>
+                        )}
                     </Box>
                 </Grid>
             ));
@@ -81,31 +101,80 @@ function TestPage({ test, time, quizLength }) {
     const dispatch = useDispatch(); 
     const questionNbr = useSelector(state => state.candidate.questionNbr) || 0; 
     const currentPage = useSelector(state => state.candidate.currentPage); 
-
-    const [remainingTime, setRemainingTime] = useState(time);
+    const email = useSelector(state => state.candidate.candidate.email);
+    const quizId = useSelector(state => state.candidate.quiz.id);
+    const quizResult = useSelector(state => state.candidate.quizResult);
+    const remainingTime = useSelector(state => state.candidate.remainingTime) || time;
+    
+    const [isAssigning, setIsAssigning] = useState(false);
     const [progress, setProgress] = useState(100);
     const [selectedAnswers, setSelectedAnswers] = useState([]); 
     const questionsLength = test.questions.length; 
 
-    // Effect to handle the countdown timer
     useEffect(() => {
-        if (remainingTime <= 0) return;
+        if (!remainingTime && time) {
+            dispatch(setRemainingTime(time));
+        }
+    }, [time, remainingTime, dispatch]);
 
-        const timerId = setInterval(() => {
-            setRemainingTime(prevTime => {
-                if (prevTime <= 1) {
+
+    const assign = async () => {
+        if (isAssigning) return;
+        setIsAssigning(true);
+            
+        try {
+            // Check if the quiz has already been assigned to this candidate
+            const alreadyAssigned = await hasPassed(email, quizId);
+            
+            if (!alreadyAssigned) {
+                await assignQuiz(email, quizId);
+
+                try {
+                    for (const [testId, score] of Object.entries(quizResult)) {
+                        const resultDTO = {
+                            score: score,
+                            quizId: quizId,
+                            testId: parseInt(testId),
+                            candidateId: email
+                        };
+
+                        const isTestSaved = await hasResultSaved(email, quizId, testId)
+                    
+                        if (!isTestSaved) {
+                            await assignResult(resultDTO);
+                        }
+
+                    }
+                } catch (error) {
+                    console.error('Error assigning results:', error);
+                }
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (remainingTime > 0) {
+            const timerId = setInterval(() => {
+                const newTime = remainingTime - 1;
+
+                if (newTime <= 0) {
                     clearInterval(timerId);
                     dispatch(setQuestionNumber(0));
                     dispatch(setStarted(false));
                     dispatch(increment(quizLength));
-                    return 0;
+                } else {
+                    dispatch(setRemainingTime(newTime));
                 }
-                return prevTime - 1;
-            });
-        }, 1000);
+            }, 1000);
 
-        return () => clearInterval(timerId);
-    }, [remainingTime, time, dispatch, quizLength]);
+            return () => clearInterval(timerId);
+        }
+    }, [remainingTime, dispatch, quizLength]);
+
+
 
     // Effect to update the progress bar based on remaining time
     useEffect(() => {
@@ -118,14 +187,17 @@ function TestPage({ test, time, quizLength }) {
     const nextQuestion = () => {
         if (questionNbr === questionsLength - 1) {
             if (currentPage === quizLength) {
-                dispatch(setFinished(true)); // Mark the quiz as finished if it's the last page
+                // Mark the quiz as finished if it's the last page
+                assign();
+                dispatch(setFinished(true));
             } else {
                 dispatch(setStarted(false)); // Mark the current test as finished
             }
             if (remainingTime > 20) {
-                dispatch(updatePoints(test.id, 2)); // Bonus points for finishing early
+                dispatch(updatePoints(test.id, 1)); // Bonus points for finishing early
             }
             dispatch(setQuestionNumber(0)); // Reset question number for the next test
+            dispatch(setRemainingTime(null));
             dispatch(increment(quizLength)); // Increment the page number
             return;
         }
@@ -135,7 +207,7 @@ function TestPage({ test, time, quizLength }) {
 
     // Function to handle answer selection
     const handleAnswer = (answer) => () => {
-        if (currentQuestion.answerType === 'MULTIPLE_CHOICE') {
+        if (currentQuestion.type === 'MULTIPLE_CHOICE') {
             setSelectedAnswers(prev => {
                 if (prev.includes(answer)) {
                     return prev.filter(a => a !== answer); // Deselect answer if already selected
@@ -144,10 +216,10 @@ function TestPage({ test, time, quizLength }) {
                 }
             });
         } else {
-            if (answer.isCorrect) {
+            if (answer.correct) {
                 dispatch(updatePoints(test.id, currentQuestion.point)); // Update points for correct answer
             } else {
-                dispatch(updatePoints(test.id, currentQuestion.point / 2 )); // Deduct points for incorrect answer
+                dispatch(updatePoints(test.id, (currentQuestion.point / 2) * -1 )); // Deduct points for incorrect answer
             }
             setTimeout(nextQuestion, 0); // Move to the next question after current render cycle
         }
@@ -155,18 +227,18 @@ function TestPage({ test, time, quizLength }) {
 
     // Function to handle submission of multiple choice answers
     const handleSubmitMultipleChoice = () => {
-        const correctAnswers = currentQuestion.answers.filter(answer => answer.isCorrect);
+        const correctAnswers = currentQuestion.answers.filter(answer => answer.correct);
         const selectedAnswerIds = selectedAnswers.map(answer => answer.id);
         const correctSelected = correctAnswers.filter(answer => selectedAnswerIds.includes(answer.id));
-        const incorrectSelected = selectedAnswers.filter(answer => !answer.isCorrect);
+        const incorrectSelected = selectedAnswers.filter(answer => !answer.correct);
 
-        const point = 2 / (correctAnswers.length || 1);
+        const point = currentQuestion.point / (correctAnswers.length || 1);
 
         if (correctAnswers.length === 0) {
             if (selectedAnswers.length === 0) {
-                dispatch(updatePoints(test.id, 2)); 
+                dispatch(updatePoints(test.id, currentQuestion.point)); 
             } else {
-                dispatch(updatePoints(test.id, -1));
+                dispatch(updatePoints(test.id, currentQuestion.point * -1));
             }
         } else {
             const totalPoints = correctSelected.length * point - incorrectSelected.length * point;
@@ -229,12 +301,11 @@ function TestPage({ test, time, quizLength }) {
                                     flexDirection: 'column',
                                     justifyContent: 'center',
                                     alignItems: 'center',
-                                    pt: currentQuestion.answerType !== 'BOOLEAN' ? '0 !important' : undefined,
-                                    pb: currentQuestion.answerType !== 'BOOLEAN' ? undefined : '25px !important',
+                                    pt: currentQuestion.type !== 'BOOLEAN' ? '0 !important' : undefined,
+                                    pb: currentQuestion.type !== 'BOOLEAN' ? undefined : '25px !important',
                                 }}
-                            
                             >
-                                <Typography fontWeight={600} color='primary' gutterBottom>{currentQuestion.questionText}</Typography>
+                                <Typography fontWeight={600} color='primary' gutterBottom>{currentQuestion.question}</Typography>
                                 <Box
                                     component="img"
                                     src={currentQuestion.image}
@@ -260,7 +331,7 @@ function TestPage({ test, time, quizLength }) {
                     :
                     <Box sx={{pt: 5}}>
                         <Typography align='center' fontWeight={600}>
-                            {currentQuestion.questionText}
+                            {currentQuestion.question}
                         </Typography>
                         <Grid container spacing={4} sx={{ py: 5 }}>
                             {renderAnswers(currentQuestion, selectedAnswers, handleAnswer)}
@@ -275,7 +346,7 @@ function TestPage({ test, time, quizLength }) {
                         mb: 2 
                     }}
                 >
-                    {currentQuestion.answerType === 'MULTIPLE_CHOICE' && (
+                    {currentQuestion.type === 'MULTIPLE_CHOICE' && (
                         <Button variant='contained' sx={{ width: '40%', mr: 2 }} onClick={handleSubmitMultipleChoice}>
                             Submit
                         </Button>

@@ -1,4 +1,4 @@
-import { DECREMENT, INCREMENT, INCREMENT_QUESTION_NUMBER, SET_CANDIDATE, SET_CANDIDATE_EMAIL, SET_CURRENT_PAGE, SET_DISQUALIFIED, SET_EXPIRED, SET_FINISHED, SET_PREVIOUS_PATH, SET_QUESTION_NUMBER, SET_STARTED, SET_VALID, SET_VERIFIED, UPDATE_POINTS } from "../../../common/constants/actionTypes";
+import { DECREMENT, INCREMENT, INCREMENT_QUESTION_NUMBER, SET_CANDIDATE, SET_CANDIDATE_EMAIL, SET_CODE_SENT, SET_CURRENT_PAGE, SET_DISQUALIFIED, SET_FINISHED, SET_PREVIOUS_PATH, SET_QUESTION_NUMBER, SET_QUIZ, SET_REMAINING_TIME, SET_STARTED, SET_VALID, SET_VERIFIED, UPDATE_POINTS } from "../../../common/constants/actionTypes";
 
 
 const getInitialStateFromLocalStorage = () => {
@@ -14,19 +14,21 @@ const getInitialStateFromLocalStorage = () => {
             lastName: "",
             gender: "",
             email: "",
-            date: "",
-            numero: "",
+            birthday: "",
+            phone: "",
             cin: "",
-            adresse: ""
+            address: ""
         },
         currentPage: 1,
         previousPath:"",
-        isValid : null,
-        isExpired : null,
+        isValid: null,
+        isCodeSent: false,
         isVerified: false,
         isDisqualified: false,
         isStarted: false,
         isFinished: false,
+        remainingTime: null,
+        quiz: [],
         questionNbr: 0,
         quizResult: {},
     };
@@ -43,11 +45,17 @@ const candidateReducer = (state = initialState, action) => {
         case SET_CANDIDATE:
             newState = { ...state, candidate: action.payload };
             break;
+        case SET_QUIZ:
+            newState = { ...state, quiz: action.payload };
+            break;
         case SET_PREVIOUS_PATH:
             newState = { ...state, previousPath: action.payload };
             break;
         case SET_CURRENT_PAGE:
             newState = { ...state, currentPage: action.payload };
+            break;
+        case SET_REMAINING_TIME:
+            newState = { ...state, remainingTime: action.payload };
             break;
         case INCREMENT:
             newState = { ...state, currentPage: state.currentPage < action.payload ? state.currentPage + 1 : state.currentPage };
@@ -58,8 +66,8 @@ const candidateReducer = (state = initialState, action) => {
         case SET_VALID:
             newState = { ...state, isValid: action.payload };
             break;
-        case SET_EXPIRED:
-            newState = { ...state, isExpired: action.payload };
+        case SET_CODE_SENT:
+            newState = { ...state, isCodeSent: action.payload };
             break;
         case SET_VERIFIED:
             newState = { ...state, isVerified: action.payload };

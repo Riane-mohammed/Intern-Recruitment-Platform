@@ -3,6 +3,9 @@ import logo from "../../../assets/images/home.svg";
 import { theme } from '../../../common/utils/theme';
 import { useNavigate } from "react-router-dom";
 
+//icon
+import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+
 function Home() {
     const navigate = useNavigate()
 
@@ -23,7 +26,7 @@ function Home() {
             >
                 <Box sx={{ padding: { xs: 2, md: 4 } }}>
                     <Typography variant="h4" color="primary" gutterBottom>
-                    Montrez vos compétences, passez  <Typography variant="span" component="span" fontWeight={600}>nos quiz</Typography> et saisissez <Typography variant="span" component="span" fontWeight={600}>l'opportunité</Typography> de devenir un membre clé de <Typography variant="span" component="span" fontWeight={600}>Portnet.</Typography>
+                        Testez, évaluez, recrutez : <Typography variant="span" component="span" fontWeight={600}>Gagnez du temps</Typography> et <Typography variant="span" component="span" fontWeight={600}>améliorez la précision</Typography> de vos recrutements
                     </Typography>
                     <Typography variant='h6' color="grey.text" fontWeight={300} >
                     L'avenir s'écrit ici, avec vous.
@@ -31,7 +34,7 @@ function Home() {
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: { xs: 'center', md: 'flex-start' }, marginTop: 1,pl: { xs: 2, md: 4 } }}>
                     <Button variant="contained" sx={{ mr: 2 }} onClick={() => navigate('/Connexion') }>Se Connecter</Button>
-                    <Button variant="outlined" onClick={() => navigate('/Contactez-nous') }>En savoir plus</Button>
+                    <Button variant="outlined" startIcon={<ReportProblemIcon />} onClick={() => navigate('/Centre-réclamation') }>Besoin d'Aide ? Réclamez Ici</Button>
                 </Box>
             </Grid>
 

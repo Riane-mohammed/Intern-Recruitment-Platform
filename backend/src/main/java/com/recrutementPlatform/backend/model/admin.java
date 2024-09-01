@@ -24,10 +24,14 @@ public class admin {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private boolean active = false;
+
     //constructor
-    public admin(String username, String email, String password) {
+    public admin(String username, String email, String password, boolean active) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.active = active;
     }
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Box, IconButton, Checkbox, Typography, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Box, IconButton, Checkbox, Typography, Button } from '@mui/material';
 
 //components
 import Search from '../../../common/components/search';
@@ -18,10 +18,10 @@ import { formatTimestampToDate, parseEmailString } from '../../../common/utils/h
 function Quiz() {
     const navigate = useNavigate();
     const [quiz, setQuiz] = useState([]);
+    const [filtredQuiz, setFiltredQuiz] = useState([]);
     const [page, setPage] = useState(0);
+    const [searchQuery, setSearchQuery] = useState('');
     const [selectedRows, setSelectedRows] = useState([]);
-    const [filter1, setFilter1] = useState('');
-    const [filter2, setFilter2] = useState('');
     const rowsPerPage = 8;
 
     useEffect(() => {
@@ -29,6 +29,7 @@ function Quiz() {
             try {
                 const QuizzesData = await getAllQuizzes();
                 setQuiz(QuizzesData);
+                setFiltredQuiz(QuizzesData);
             } catch (error) {
                 console.error("Failed to fetch Quizzes:", error);
             }
@@ -53,6 +54,7 @@ function Quiz() {
             setSelectedRows([]);
             const QuizzesData = await getAllQuizzes();
             setQuiz(QuizzesData);
+            setFiltredQuiz(QuizzesData);
         } catch (error) {
             console.error("Failed to delete quizzes:", error);
         }
@@ -60,7 +62,7 @@ function Quiz() {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = quiz.map((row) => row.id);
+            const newSelecteds = filtredQuiz.map((row) => row.id);
             setSelectedRows(newSelecteds);
         } else {
             setSelectedRows([]);
@@ -87,6 +89,18 @@ function Quiz() {
         setSelectedRows(newSelected);
     };
 
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
+
+    useEffect(() => {
+        setFiltredQuiz(
+            quiz.filter((q) =>
+                q.title.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+        );
+    }, [searchQuery, quiz]);
+
     return (
         <Box sx={{ p: '10px' }}>
             {/* Header */}
@@ -99,49 +113,15 @@ function Quiz() {
             {/* Filter Bar */}
             <Box sx={{ my: 2, p: '15px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: 5, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Search />
-                    <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                        <InputLabel id="demo-select-small-label">Filtre 1</InputLabel>
-                        <Select
-                            labelId="demo-select-small-label"
-                            id="demo-select-small"
-                            value={filter1}
-                            onChange={(e) => setFilter1(e.target.value)}
-                            label="Filtre 1"
-                        >
-                            <MenuItem value="">
-                                <em>None</em>
-                            </MenuItem>
-                            <MenuItem value={10}>choix 1</MenuItem>
-                            <MenuItem value={20}>choix 2</MenuItem>
-                            <MenuItem value={30}>choix 3</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                        <InputLabel id="demo-select-small-label">Filtre 2</InputLabel>
-                        <Select
-                            labelId="demo-select-small-label"
-                            id="demo-select-small"
-                            value={filter2}
-                            onChange={(e) => setFilter2(e.target.value)}
-                            label="Filtre 2"
-                        >
-                            <MenuItem value="">
-                                <em>None</em>
-                            </MenuItem>
-                            <MenuItem value={10}>choix 1</MenuItem>
-                            <MenuItem value={20}>choix 2</MenuItem>
-                            <MenuItem value={30}>choix 3</MenuItem>
-                        </Select>
-                    </FormControl>
+                    <Search value={searchQuery} onChange={handleSearchChange} placeholder="Rechercher par email" />
                 </Box>
-                <Button variant="outlined">Filtrer</Button>
+                <Button variant="outlined">Réinitialiser</Button>
             </Box>
             {/* Table */}
             <TableContainer sx={{ maxWidth: '100%', minHeight: '480px', my: 2, p: '15px 20px', borderRadius: 5, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Typography variant='h6' fontWeight={500} color='primary'>
-                        {quiz.length} Quizzes
+                        {filtredQuiz.length} Quizzes
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         {selectedRows.length > 0 && (
@@ -156,7 +136,7 @@ function Quiz() {
                         )}
                         <TablePagination
                             component="div"
-                            count={quiz.length}
+                            count={filtredQuiz.length}
                             rowsPerPage={rowsPerPage}
                             page={page}
                             onPageChange={handleChangePage}
@@ -186,7 +166,7 @@ function Quiz() {
                     </TableHead>
                     {quiz &&
                         <TableBody>
-                            {quiz
+                            {filtredQuiz
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((q) => {
                                     const isItemSelected = selectedRows.indexOf(q.id) !== -1;

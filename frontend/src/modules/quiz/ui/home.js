@@ -17,6 +17,9 @@ import AlertModal from '../../../common/components/quizComponents/home/alertModa
 //icons
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
+//apis
+import { addCandidate } from '../../../common/api/quiz';
+
 
 function QuizHome() {
     const confirmationAlert = "Confirmez-vous que toutes les données sont correctes? Une fois le quiz lancé, les informations saisies ne pourront plus être modifiées.";
@@ -29,6 +32,7 @@ function QuizHome() {
     
     const isVerified = useSelector(state => state.candidate.isVerified);
     const currentPage = useSelector(state => state.candidate.currentPage);
+    const candidate = useSelector(state => state.candidate.candidate);
     
     const pageNames = [
         "CONDITIONS",
@@ -39,9 +43,14 @@ function QuizHome() {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const handleStartQuiz = () => {
-        dispatch(setCurrentPage(1));
-        navigate('quiz-en-cours');
+    const handleStartQuiz = async () => {
+        try {
+            await addCandidate(candidate);
+            dispatch(setCurrentPage(1));
+            navigate('quiz-en-cours');
+        } catch (error) {
+            console.error('failed adding or updating candidate : ', error);
+        }
     };
     
     const handleNextButton = () => {

@@ -1,11 +1,11 @@
-import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, Divider } from '@mui/material'
+import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material'
 import { NavLink } from 'react-router-dom'
 
 //logo
 import logo from '../../../assets/images/logoPortNetWeb.png';
 
 //icon
-import LogoutIcon from '@mui/icons-material/Logout';
+// import LogoutIcon from '@mui/icons-material/Logout';
 
 function SideBar({ SideBarLinks, location, drawerWidth }) {
 
@@ -86,7 +86,7 @@ function SideBar({ SideBarLinks, location, drawerWidth }) {
             </List>
 
             {/* Quiz Link Section */}
-            <Box
+            {/* <Box
                 sx={{
                     mb: 2,
                     mr: 1
@@ -113,7 +113,7 @@ function SideBar({ SideBarLinks, location, drawerWidth }) {
                         }}
                     />
                 </ListItem>
-            </Box>  
+            </Box>   */}
         </Drawer>
     )
 }

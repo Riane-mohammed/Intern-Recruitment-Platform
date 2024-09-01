@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/quiz")
@@ -22,6 +23,21 @@ public class quizController {
     @GetMapping
     public List<quiz> getAllQuizzes(){
         return service.getAllQuizzes();
+    }
+
+    @GetMapping("/count")
+    public Long countQuizzes(){
+        return service.getNumberOfQuizzes();
+    }
+
+    @GetMapping("/latest")
+    public quiz getLatestQuiz() {
+        return service.getLastQuiz();
+    }
+
+    @GetMapping("/{id}")
+    public Optional<quiz> getQuizById(@PathVariable Long id){
+        return service.getQuizById(id);
     }
 
     @PostMapping("/add")

@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.recrutementPlatform.backend.util.stringUtil.splitEmails;
@@ -38,6 +35,23 @@ public class quizService {
 
     public List<quiz> getAllQuizzes() {
         return quizRepo.findAll();
+    }
+
+    public long getNumberOfQuizzes() {
+        return quizRepo.count();
+    }
+
+    public Optional<quiz> getQuizById(Long id) {
+        if(quizRepo.findById(id).isPresent()) {
+            return quizRepo.findById(id);
+        }
+
+        return Optional.empty();
+    }
+
+    public quiz getLastQuiz() {
+        Optional<quiz> latestQuiz = quizRepo.findTopByOrderByIdDesc();
+        return latestQuiz.orElse(null);
     }
 
     @Transactional
@@ -89,12 +103,14 @@ public class quizService {
         return newQuiz;
     }
 
-
     @Transactional
     public void deleteQuizzesByIds(List<Long> quizIds) {
         if (quizIds != null && !quizIds.isEmpty()) {
             try {
                 for (Long id : quizIds) {
+                    // Custom query to delete from candidate_quiz table
+                    quizRepo.deleteCandidateQuizAssociationsByQuizId(id);
+
                     quiz existingQuiz = quizRepo.findById(id)
                             .orElseThrow(() -> new RuntimeException("Quiz not found with id: " + id));
                     quizRepo.delete(existingQuiz);
@@ -108,6 +124,7 @@ public class quizService {
             throw new IllegalArgumentException("Quiz IDs list is null or empty");
         }
     }
+
 
 
     public String generateLink() {

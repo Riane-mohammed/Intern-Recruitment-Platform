@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/section")
@@ -38,9 +40,12 @@ public class sectionController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteSections(@RequestBody List<Long> ids) {
+    public ResponseEntity<Map<String, Object>> deleteSections(@RequestBody List<Long> ids) {
         service.deleteSectionsId(ids);
-        return ResponseEntity.ok("Successfully deleted section with ids: " + ids);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Successfully deleted sections");
+        response.put("ids", ids);
+        return ResponseEntity.ok(response);
     }
 
 }

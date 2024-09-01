@@ -1,6 +1,14 @@
 import { Box, Typography } from "@mui/material"
+import { useEffect } from "react";
 
 function FinishedPage() {
+    
+    useEffect(() => {
+        // Clear candidate state from localStorage
+        localStorage.removeItem('candidateState');
+    }, []);
+
+    
     return (
         <Box
             sx={{

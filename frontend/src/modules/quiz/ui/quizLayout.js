@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { Box } from '@mui/material'
-import { Outlet, useLocation, useParams } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
 
 //actions
-import { setCandidateEmail, setDisqualified, setExpired, setPreviousPath, setValid } from '../actions/candidateActions';
+import { setCandidateEmail, setDisqualified, setPreviousPath, setQuiz, setValid } from '../actions/candidateActions';
 
 //logo
 import logo from '../../../assets/images/logoPortNetWeb.png';
@@ -16,23 +16,22 @@ import FinishedPage from '../../../common/components/quizComponents/tests/finish
 //Error Pages
 import QuizErrorPage from '../../../common/errorPages/quizError';
 import DisqualifiedPage from '../../../common/errorPages/disqualifiedPage';
+import { hasPassed, verifyToken } from '../../../common/api/quiz';
 
 
 function QuizLayout() {
-    const message = "Please wait while we verify your authorization to access this page.";
+    const message = "Veuillez patienter pendant que nous vérifions votre autorisation d'accéder à cette page.";
     const quizPath = "/espace-quiz/azer/quiz-en-cours";
     const { token } = useParams();
     const location = useLocation();
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const previousPath = useSelector(state => state.candidate.previousPath);
     const isValid = useSelector(state => state.candidate.isValid);
-    const isExpired = useSelector(state => state.candidate.isExpired);
     const isDisqualified = useSelector(state => state.candidate.isDisqualified);
     const isFinished = useSelector(state => state.candidate.isFinished);
-
-    const email = "moha@gmail.com";
 
 
     useEffect(() => {
@@ -46,36 +45,40 @@ function QuizLayout() {
         dispatch(setPreviousPath(location.pathname));
     }, [location.pathname, previousPath, dispatch, quizPath, isFinished]);
 
+
     useEffect(() => {
-        const TokenIsExpired = (token) => {
-            return false;
-        };
 
-        const TokenIsValid = (token) => {
-            if (token === "azer") {
-                return true;
-            } else {
-                return false;
-            }
-        };
+        const validateToken = async (token) => {
+            try {
+                // Verify the token and get the quiz data
+                const quizData = await verifyToken({ 'token': token });
 
-        const validateToken = (token) => {
-            if (TokenIsValid(token)) {
-                if (TokenIsExpired(token)) {
-                    dispatch(setValid(false));
-                    dispatch(setExpired(true));
-                } else {
-                    dispatch(setValid(true));
-                    dispatch(setExpired(false));
-                    dispatch(setCandidateEmail(email))
+                // Set valid state to true
+                dispatch(setValid(true));
+
+                // Check if the candidate has passed the quiz
+                try {
+                    const hasTaken = await hasPassed(quizData.email, quizData.quiz.id);
+                    if (hasTaken) {
+                        navigate('/');
+                    }
+                } catch (error) {
+                    console.error('Error checking if the candidate has passed:', error);
                 }
-            } else {
+
+                // Set candidate email and quiz information
+                dispatch(setCandidateEmail(quizData.email));
+                dispatch(setQuiz(quizData.quiz));
+            } catch (error) {
+                // If there's an error verifying the token, set valid state to false and navigate
                 dispatch(setValid(false));
+                navigate('/Centre-réclamation');
             }
         };
+
 
         validateToken(token);
-    }, [token, dispatch]);
+    }, [token, dispatch, navigate]);
 
     if (isValid === null) {
         return (
@@ -114,14 +117,8 @@ function QuizLayout() {
             </Box>
             {isDisqualified && <DisqualifiedPage />}
             {isFinished && !isDisqualified && <FinishedPage />}
-            {isValid && !isExpired && !isDisqualified && !isFinished && <Outlet />}
-            {isExpired &&
-                <QuizErrorPage
-                    name="Token expiré"
-                    code="401"
-                    description="Votre token a expiré et n'est plus valide."
-                    instructions="Veuillez vous reconnecter pour obtenir un nouveau token et réessayer." />}
-            {isValid === false && !isExpired &&
+            { !isDisqualified && !isFinished && <Outlet />}
+            {isValid === false &&
                 <QuizErrorPage
                     name="Accès non autorisé"
                     code="401"

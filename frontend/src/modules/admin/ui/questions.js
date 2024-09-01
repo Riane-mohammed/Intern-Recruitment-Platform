@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Box, IconButton, Checkbox, Typography, FormControl, MenuItem, Select, InputLabel, Button } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Box, IconButton, Checkbox, Typography, FormControl, MenuItem, Select, InputLabel, Button, Snackbar, Alert } from '@mui/material';
 
 //components
 import Search from '../../../common/components/search';
@@ -16,12 +16,14 @@ import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import { questionTypes, truncateText } from '../../../common/utils/helpers';
 
 //api
-import { deleteQuestions, getAllQuestions, getTestById } from '../../../common/api/admin';
+import { deleteQuestions, getAllLevels, getAllQuestions, getAllSections, getTestById } from '../../../common/api/admin';
+import LoadingOverlay from '../../../common/components/loadingOverlay';
 
 function Questions() {
     const [page, setPage] = useState(0);
     const [selectedQuestions, setSelectedQuestions] = useState([]);
     const [questions, setQuestions] = useState([]);
+    const [filtredQuestions, setFiltredQuestions] = useState([]);
     const [openViewModal, setOpenViewModal] = useState(false);
     const [openModifyModal, setOpenModifyModal] = useState(false);
     const [openAddModal, setOpenAddModal] = useState(false);
@@ -29,6 +31,12 @@ function Questions() {
     const [level, setLevel] = useState('');
     const [category, setCategory] = useState('');
     const [type, setType] = useState('');
+    const [sections, setSections] = useState([]);
+    const [levels, setLevels] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [success, setSuccess] = useState('');
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const rowsPerPage = 8;
 
     const getQuestions = async () => {
@@ -53,6 +61,7 @@ function Questions() {
             );
 
             setQuestions(updatedQuestions);
+            setFiltredQuestions(updatedQuestions);
         } catch (error) {
             console.error("Failed to fetch Questions:", error);
         }
@@ -63,14 +72,38 @@ function Questions() {
         getQuestions();
     }, []);
 
+    const getSections = async () => {
+        try {
+            const SectionsData = await getAllSections();
+            setSections(SectionsData);
+        } catch (error) {
+            console.error("Failed to fetch Sections:", error);
+        }
+    };
+    const getLevels = async () => {
+        try {
+            const LevelsData = await getAllLevels();
+            setLevels(LevelsData);
+        } catch (error) {
+            console.error("Failed to fetch Levels:", error);
+        }
+    };
+    
+    useEffect(() => {
+        getSections();
+        getLevels();
+    }, []);
 
     const handleOpenViewModal = (row) => {
         setSelectedQuestionData(row);
         setOpenViewModal(true);
     };
 
-    const handleFilter = (row) => {
-        console.log(level, category, type);
+    const handleReset = () => {
+        setSearchQuery('');
+        setCategory('');
+        setLevel('');
+        setType('');
     };
 
     const handleOpenModifyModal = (row) => {
@@ -92,7 +125,7 @@ function Questions() {
         try {
             await deleteQuestions(selectedQuestions);
             setSelectedQuestions([]);
-            await getQuestions();
+            getQuestions();
         } catch (error) {
             console.error("Failed to delete Questions:", error);
         }
@@ -100,7 +133,7 @@ function Questions() {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = questions.map((row) => row.id);
+            const newSelecteds = filtredQuestions.map((row) => row.id);
             setSelectedQuestions(newSelecteds);
         } else {
             setSelectedQuestions([]);
@@ -128,14 +161,39 @@ function Questions() {
     };
 
     const handleSave = async () => {
+        setIsLoading(true);
         try {
             await getQuestions();
+            setError('');
+            setSuccess('Question ajouté avec succès!');
         } catch (error) {
-            console.error("Failed to delete Questions:", error);
+            console.error("Failed to add Questions:", error);
+            setError('Erreur lors de l\'ajout du Question.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
+
+    useEffect(() => {
+        setFiltredQuestions(
+            questions.filter((qst) =>
+                qst.testName.toLowerCase().includes(searchQuery.toLowerCase()) &&
+                (category ? qst.testSection.id === category : true) &&
+                (level ? qst.testLevel.id === level : true) &&
+                (type ? qst.type === type : true)
+            )
+        );
+    }, [searchQuery, category, level, type, questions]);
+
     return (
+        <>
+            {/* Loading Overlay */}
+            <LoadingOverlay isLoading={isLoading} />
+
         <Box sx={{ p: '10px' }}>
             {/* Header */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -147,7 +205,7 @@ function Questions() {
             {/* Filter Bar */}
             <Box sx={{ my: 2, p: '15px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: 5, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Search />
+                    <Search value={searchQuery} onChange={handleSearchChange} placeholder="Rechercher par email" />
                     <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
                         <InputLabel id="demo-select-small-label">Catégorie</InputLabel>
                         <Select
@@ -160,8 +218,9 @@ function Questions() {
                             <MenuItem value="">
                                 <em>Aucun</em>
                             </MenuItem>
-                            <MenuItem value="Technical" >Technique</MenuItem>
-                            <MenuItem value="Psychotechnique" >Psychotechnique</MenuItem>
+                            {sections.map((section) => (
+                                <MenuItem key={section.id} value={section.id}>{section.name}</MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                     <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
@@ -176,9 +235,9 @@ function Questions() {
                             <MenuItem value="">
                                 <em>Aucun</em>
                             </MenuItem>
-                            <MenuItem value="Beginner" >Débutant</MenuItem>
-                            <MenuItem value="Intermediate" >Intermédiaire</MenuItem>
-                            <MenuItem value="Advanced" >Avancé</MenuItem>
+                            {levels.map((level) => (
+                                <MenuItem key={level.id} value={level.id}>{level.name}</MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                     <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
@@ -193,19 +252,19 @@ function Questions() {
                             <MenuItem value="">
                                 <em>Aucun</em>
                             </MenuItem>
-                            <MenuItem value="MULTI_CHOICE" >Choix multiple</MenuItem>
-                            <MenuItem value="SINGLE_CHOICE" >Choix unique</MenuItem>
-                            <MenuItem value="BOOLEAN" >Boolean</MenuItem>
+                            <MenuItem value="MULTIPLE_CHOICE" >{questionTypes["MULTIPLE_CHOICE"]}</MenuItem>
+                            <MenuItem value="SINGLE_CHOICE" >{questionTypes["SINGLE_CHOICE"]}</MenuItem>
+                            <MenuItem value="BOOLEAN" >{questionTypes["BOOLEAN"]}</MenuItem>
                         </Select>
                     </FormControl>
                 </Box>
-                <Button variant="outlined" onClick={handleFilter}>Filtrer</Button>
+                <Button variant="outlined" onClick={handleReset}>Réinitialiser</Button>
             </Box>
             {/* Table */}
             <TableContainer sx={{ maxWidth: '100%', minHeight: '480px', my: 2, p: '15px 20px', borderRadius: 5, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Typography variant='h6' fontWeight={500} color='primary'>
-                        {questions.length} Questions
+                        {filtredQuestions.length} Questions
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         {selectedQuestions.length > 0 && (
@@ -220,7 +279,7 @@ function Questions() {
                         )}
                         <TablePagination
                             component="div"
-                            count={questions.length}
+                            count={filtredQuestions.length}
                             rowsPerPage={rowsPerPage}
                             page={page}
                             onPageChange={handleChangePage}
@@ -240,8 +299,8 @@ function Questions() {
                                 }}
                             >
                                 <Checkbox
-                                    indeterminate={selectedQuestions.length > 0 && selectedQuestions.length < questions.length}
-                                    checked={questions.length > 0 && selectedQuestions.length === questions.length}
+                                    indeterminate={selectedQuestions.length > 0 && selectedQuestions.length < filtredQuestions.length}
+                                    checked={filtredQuestions.length > 0 && selectedQuestions.length === filtredQuestions.length}
                                     onChange={handleSelectAllClick}
                                     inputProps={{
                                         'aria-label': 'Select all candidates'
@@ -263,7 +322,7 @@ function Questions() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {questions
+                        {filtredQuestions
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             .map((question) => {
                                 const isItemSelected = selectedQuestions.indexOf(question.id) !== -1;
@@ -313,9 +372,24 @@ function Questions() {
                 </Table>
             </TableContainer>
             <ViewModal open={openViewModal} handleClose={handleCloseViewModal} selectedQuestionData={selectedQuestionData} />
-            <AddModal open={openAddModal} handleClose={handleCloseAddModal} handleSave={handleSave}/>
+            <AddModal open={openAddModal} handleClose={handleCloseAddModal} handleSave={handleSave} />
             <ModifyModal open={openModifyModal} handleClose={handleCloseModifyModal} selectedQuestionData={selectedQuestionData} handleSave={handleSave} />
-        </Box>
+            {/* Error Snackbar */}
+            <Snackbar open={Boolean(error)} autoHideDuration={6000} onClose={() => setError('')} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                <Alert onClose={() => setError('')} severity="error">
+                    {error}
+                </Alert>
+            </Snackbar>
+
+            {/* Success Snackbar */}
+            <Snackbar open={Boolean(success)} autoHideDuration={6000} onClose={() => setSuccess('')} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                <Alert onClose={() => setSuccess('')} severity="success">
+                    {success}
+                </Alert>
+            </Snackbar>
+        
+            </Box>
+            </>
     );
 }
 

@@ -18,7 +18,7 @@ public class adminConfig {
     public CommandLineRunner initDefaultAccount() {
         return args -> {
             if (adminRepo.count() == 0){
-                admin defaultAccount = new admin("admin", "admin@gmail.com", passwordUtil.hashPassword("admin123"));
+                admin defaultAccount = new admin("admin", "admin@gmail.com", passwordUtil.hashPassword("admin123"),true);
                 adminRepo.save(defaultAccount);
             }
         };

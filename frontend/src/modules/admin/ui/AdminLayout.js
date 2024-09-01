@@ -24,15 +24,12 @@ import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
 import FeedRoundedIcon from '@mui/icons-material/FeedRounded';
 
-import { Settings } from '@mui/icons-material';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 
 import QuestionAnswerRoundedIcon from '@mui/icons-material/QuestionAnswerRounded';
 import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
-
-//image
-// import bg from '../../../assets/images/bg.svg';
 
 const drawerWidth = 240;
 
@@ -96,12 +93,11 @@ function AdminLayout() {
     ];
 
     const accountItems = [
-      
-        {
-            name: "Paramètres",
-            icon: <Settings fontSize="small" />,
-            path: "/admin/Paramètres"
-        },
+        ...(admin.id === 1 ? [{
+            name: "Gestion des Administrateurs",
+            icon: <AdminPanelSettingsIcon />,
+            path: "/admin/gestion-administrateurs"
+        }] : [])
     ];
 
     return (
@@ -109,8 +105,6 @@ function AdminLayout() {
             sx={{
                 display: 'flex',
                 bgcolor: 'blue.light',
-                // backgroundImage: `url(${bg})`, 
-                // backgroundSize: 'cover',
             }}>
             {isAuthenticated &&
                 <>

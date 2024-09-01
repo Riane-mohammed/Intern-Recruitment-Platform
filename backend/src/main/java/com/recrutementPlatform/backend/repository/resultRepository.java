@@ -15,4 +15,6 @@ public interface resultRepository extends JpaRepository<result, Long> {
 
     Optional<result> findByQuizAndTestAndCandidate(quiz quiz, test test, candidate candidate);
 
+    List<result> findByQuiz(quiz quiz);
+
 }

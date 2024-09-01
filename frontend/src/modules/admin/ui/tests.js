@@ -12,19 +12,23 @@ import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 
 // API
-import { deleteTests, getAllTests } from '../../../common/api/admin';
+import { deleteTests, getAllLevels, getAllSections, getAllTests } from '../../../common/api/admin';
 
 function Tests() {
   const navigate = useNavigate();
 
   // State variables
   const [tests, setTests] = useState([]);
+  const [filteredTests, setFilteredTests] = useState([]);
   const [page, setPage] = useState(0);
   const [selectedTests, setSelectedTests] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedTest, setSelectedTest] = useState([]);
   const [openViewModal, setOpenViewModal] = useState(false);
   const [category, setCategory] = useState('');
   const [level, setLevel] = useState('');
+  const [sections, setSections] = useState([]);
+  const [levels, setLevels] = useState([]);
   const rowsPerPage = 8;
 
   // Fetch all tests on component mount
@@ -33,6 +37,7 @@ function Tests() {
       try {
         const TestsData = await getAllTests();
         setTests(TestsData);
+        setFilteredTests(TestsData);
       } catch (error) {
         console.error("Failed to fetch Tests:", error);
       }
@@ -40,6 +45,27 @@ function Tests() {
 
     getTests();
   }, []);
+
+  const getSections = async () => {
+      try {
+          const SectionsData = await getAllSections();
+          setSections(SectionsData);
+      } catch (error) {
+          console.error("Failed to fetch Sections:", error);
+      }
+  };
+  const getLevels = async () => {
+      try {
+          const LevelsData = await getAllLevels();
+          setLevels(LevelsData);
+      } catch (error) {
+          console.error("Failed to fetch Levels:", error);
+      }
+  };
+      useEffect(() => {
+        getSections();
+        getLevels();
+    }, []);
 
   // Open the modal to view a test
   const handleOpenViewModal = (test) => {
@@ -64,10 +90,12 @@ function Tests() {
   // Handle delete action (currently logs selected rows)
   const handleDelete = async () => {
       try {
-          await deleteTests(selectedTests);
-          setSelectedTests([]);
-          const TestsData = await getAllTests();
-          setTests(TestsData);
+        await deleteTests(selectedTests);
+        setSelectedTests([]);
+        const TestsData = await getAllTests();
+        setTests(TestsData);
+        setFilteredTests(TestsData);
+        setSearchQuery('');
       } catch (error) {
           console.error("Failed to delete Tests:", error);
       }
@@ -75,7 +103,7 @@ function Tests() {
   // Handle selecting or deselecting all rows
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = tests.map((row) => row.id);
+      const newSelecteds = filteredTests.map((row) => row.id);
       setSelectedTests(newSelecteds);
     } else {
       setSelectedTests([]);
@@ -102,6 +130,26 @@ function Tests() {
 
     setSelectedTests(newSelected);
   };
+  
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  useEffect(() => {
+    setFilteredTests(
+      tests.filter((test) =>
+        test.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        (category ? test.section.id === category : true) &&
+        (level ? test.level.id === level : true)
+      )
+    );
+  }, [searchQuery, category, level, tests]);
+
+  const handleReset = () => {
+    setSearchQuery('');
+    setCategory('');
+    setLevel('');
+  };
 
   return (
     <Box sx={{ p: '10px' }}>
@@ -115,7 +163,7 @@ function Tests() {
       {/* Filter Bar */}
       <Box sx={{ my: 2, p: '15px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: 5, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Search />
+          <Search value={searchQuery} onChange={handleSearchChange} placeholder="Rechercher par email" />
           <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
             <InputLabel id="demo-select-small-label">Catégorie</InputLabel>
             <Select
@@ -128,8 +176,9 @@ function Tests() {
               <MenuItem value="">
                 <em>Aucun</em>
               </MenuItem>
-              <MenuItem value="Technical" >Technique</MenuItem>
-              <MenuItem value="Psychotechnique" >Psychotechnique</MenuItem>
+              {sections.map((section) => (
+                <MenuItem key={section.id} value={section.id}>{section.name}</MenuItem>
+              ))}
             </Select>
           </FormControl>
           <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
@@ -144,13 +193,13 @@ function Tests() {
               <MenuItem value="">
                 <em>Aucun</em>
               </MenuItem>
-              <MenuItem value="Beginner" >Débutant</MenuItem>
-              <MenuItem value="Intermediate" >Intermédiaire</MenuItem>
-              <MenuItem value="Advanced" >Avancé</MenuItem>
+              {levels.map((level) => (
+                <MenuItem key={level.id} value={level.id}>{level.name}</MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Box>
-        <Button variant="outlined">Filtrer</Button>
+        <Button variant="outlined" onClick={handleReset}>Réinitialiser</Button>
       </Box>
       {/* Table */}
       <TableContainer sx={{ maxWidth: '100%', minHeight: '480px', my: 2, p: '15px 20px', borderRadius: 5, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff' }}>
@@ -158,7 +207,7 @@ function Tests() {
         <>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography variant='h6' fontWeight={500} color='primary'>
-            {tests.length} Tests
+            {filteredTests.length} Tests
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             {selectedTests.length > 0 && (
@@ -173,7 +222,7 @@ function Tests() {
             )}
             <TablePagination
               component="div"
-              count={tests.length}
+              count={filteredTests.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -201,8 +250,8 @@ function Tests() {
                 }}
               >
                 <Checkbox
-                  indeterminate={selectedTests.length > 0 && selectedTests.length < tests.length}
-                  checked={tests.length > 0 && selectedTests.length === tests.length}
+                  indeterminate={selectedTests.length > 0 && selectedTests.length < filteredTests.length}
+                  checked={filteredTests.length > 0 && selectedTests.length === filteredTests.length}
                   onChange={handleSelectAllClick}
                   inputProps={{
                     'aria-label': 'Select all candidates'
@@ -220,7 +269,7 @@ function Tests() {
             </TableRow>
           </TableHead>
             <TableBody>
-              {tests
+              {filteredTests
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((test) => {
                   const isItemSelected = selectedTests.indexOf(test.id) !== -1;

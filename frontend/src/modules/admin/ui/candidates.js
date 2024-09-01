@@ -18,19 +18,23 @@ import { calculateAge } from '../../../common/utils/helpers';
 import { deleteCandidates, getAllCandidates, updateCandidate } from '../../../common/api/admin';
 
 function Candidates() {
+  const [candidates, setCandidates] = useState([]);
+  
   const [page, setPage] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
   const [openViewModal, setOpenViewModal] = useState(false);
   const [openModifyModal, setOpenModifyModal] = useState(false);
+  const [filteredCandidates, setFilteredCandidates] = useState([]);
   const [selectedCandidateData, setSelectedCandidateData] = useState(null);
   const rowsPerPage = 8;
-  const [candidates, setCandidates] = useState([]);
 
   useEffect(() => {
     const getCandidates = async () => {
       try {
         const CandidatesData = await getAllCandidates();
         setCandidates(CandidatesData);
+        setFilteredCandidates(CandidatesData);
       } catch (error) {
         console.error("Failed to fetch Candidates:", error);
       }
@@ -58,8 +62,10 @@ function Candidates() {
     try {
       await deleteCandidates(selectedRows);
       setSelectedRows([]);
+      setSearchQuery('');
       const CandidatesData = await getAllCandidates();
       setCandidates(CandidatesData);
+      setFilteredCandidates(CandidatesData);
     } catch (error) {
       console.error("Failed to delete candidates:", error);
     }
@@ -67,7 +73,7 @@ function Candidates() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = candidates.map((candidate) => candidate.email);
+      const newSelecteds = filteredCandidates.map((candidate) => candidate.email);
       setSelectedRows(newSelecteds);
     } else {
       setSelectedRows([]);
@@ -100,10 +106,23 @@ function Candidates() {
       await updateCandidate(candidateDetails);
       const CandidatesData = await getAllCandidates();
       setCandidates(CandidatesData);
+      setFilteredCandidates(CandidatesData);
     } catch (error) {
       console.error("Error updating candidate:", error);
     }
   };
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  useEffect(() => {
+    setFilteredCandidates(
+      candidates.filter((candidate) =>
+        candidate.email.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  }, [searchQuery, candidates]);
 
   return (
     <Box sx={{ p: '10px' }}>
@@ -115,14 +134,14 @@ function Candidates() {
       </Box>
       {/* Filter Bar */}
       <Box sx={{ my: 2, p: '15px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: 5, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff' }}>
-        <Search />
+        <Search value={searchQuery} onChange={handleSearchChange} placeholder="Rechercher par email" />
       </Box>
       {/* Table */}
       {candidates &&
         <TableContainer sx={{ maxWidth: '100%', minHeight: '480px', my: 2, p: '15px 20px', borderRadius: 5, border: '1px solid rgba(0, 0, 0, 0.12)', bgcolor: '#fff' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Typography variant='h6' fontWeight={500} color='primary'>
-              {candidates.length} Candidats
+              {filteredCandidates.length} Candidats
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               {selectedRows.length > 0 && (
@@ -137,7 +156,7 @@ function Candidates() {
               )}
               <TablePagination
                 component="div"
-                count={candidates.length}
+                count={filteredCandidates.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
@@ -157,8 +176,8 @@ function Candidates() {
                   }}
                 >
                 <Checkbox
-                  indeterminate={selectedRows.length > 0 && selectedRows.length < candidates.length}
-                  checked={candidates.length > 0 && selectedRows.length === candidates.length}
+                  indeterminate={selectedRows.length > 0 && selectedRows.length < filteredCandidates.length}
+                  checked={filteredCandidates.length > 0 && selectedRows.length === filteredCandidates.length}
                   onChange={handleSelectAllClick}
                   inputProps={{
                     'aria-label': 'Select all candidates',
@@ -179,7 +198,7 @@ function Candidates() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {candidates
+              {filteredCandidates
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((candidate) => {
                   const isItemSelected = selectedRows.includes(candidate.email);
