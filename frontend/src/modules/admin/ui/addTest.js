@@ -21,8 +21,11 @@ import { extractFilePath, truncateText } from '../../../common/utils/helpers';
 import LoadingOverlay from '../../../common/components/loadingOverlay';
 
 const RenderAnswers = ({ answerType, activeQuestion, handleAnswerChange, newTest, contentType, localImages, handleDeleteImage }) => {
-    const renderOptions = (count, isCheckbox) => (
-        <RadioGroup name={`question-${activeQuestion}`} aria-labelledby={`choix-label-${activeQuestion}`}>
+    const renderOptions = (count, isCheckbox) => {
+        const answers = newTest.questions[activeQuestion]?.answers || [];
+        const selectedAnswerIndex = answers.findIndex(answer => answer?.correct);
+
+        return (
             <Grid container spacing={4}>
                 {Array.from({ length: count }, (_, index) => (
                     <Fragment key={index}>
@@ -54,13 +57,13 @@ const RenderAnswers = ({ answerType, activeQuestion, handleAnswerChange, newTest
                                         </IconButton>
                                     </label>
                                     
-                                    {(localImages[index] || newTest.questions[activeQuestion]?.answers[index]?.image) && (
+                                    {(localImages[activeQuestion]?.[index] || answers[index]?.image) && (
                                         <>
                                             <Typography
                                                 variant="body2"
                                                 sx={{ ml: 1, color: 'text.secondary' }}
                                             >
-                                                {(localImages[index] || newTest.questions[activeQuestion]?.answers[index]?.image).split('/').pop()}
+                                                {(localImages[activeQuestion]?.[index] || answers[index]?.image)?.split('/').pop()}
                                             </Typography>
                                             <IconButton
                                                 aria-label="delete"
@@ -80,7 +83,7 @@ const RenderAnswers = ({ answerType, activeQuestion, handleAnswerChange, newTest
                                     label={`Réponse ${index + 1}`}
                                     id={`answer-text-${activeQuestion}-${index}`} // Unique ID
                                     sx={{ width: '100%' }}
-                                    value={newTest.questions[activeQuestion]?.answers[index]?.answer || ''}
+                                    value={answers[index]?.answer || ''}
                                     onChange={(e) => handleAnswerChange(e, activeQuestion, index, false, 'text')}
                                 />
                             )}
@@ -89,15 +92,15 @@ const RenderAnswers = ({ answerType, activeQuestion, handleAnswerChange, newTest
                             {isCheckbox ? (
                                 <Checkbox
                                     id={`checkbox-${activeQuestion}-${index}`} // Unique ID
-                                    checked={newTest.questions[activeQuestion]?.answers[index]?.correct || false}
+                                    checked={answers[index]?.correct || false}
                                     onChange={(e) => handleAnswerChange(e, activeQuestion, index, true)}
                                 />
                             ) : (
                                 <Radio
-                                    id={`radio-${activeQuestion}-${index}`} // Unique ID
-                                    value={`answer-${index}`}
+                                    value={index}
+                                    name={`radio-${activeQuestion}`}
                                     inputProps={{ 'aria-label': `Réponse ${index + 1}` }}
-                                    checked={newTest.questions[activeQuestion]?.answers[index]?.correct || false}
+                                    checked={selectedAnswerIndex === index}
                                     onChange={(e) => handleAnswerChange(e, activeQuestion, index, true)}
                                 />
                             )}
@@ -105,8 +108,8 @@ const RenderAnswers = ({ answerType, activeQuestion, handleAnswerChange, newTest
                     </Fragment>
                 ))}
             </Grid>
-        </RadioGroup>
-    );
+        );
+    };
 
     switch (answerType) {
         case 'MULTIPLE_CHOICE':
@@ -220,49 +223,124 @@ const AddTest = () => {
         });
     };
 
-    const handleAnswerChange = async (e, questionIndex, answerIndex, isCorrectField = false) => {
-        const { value, checked, files } = e.target;
+const handleCheckboxChange = (e, questionIndex, answerIndex) => {
+    const { checked } = e.target;
 
-        setNewTest((prevTest) => {
-            const updatedQuestions = [...prevTest.questions];
-            const updatedAnswers = [...(updatedQuestions[questionIndex]?.answers || [])];
+    setNewTest((prevTest) => {
+        // Create a copy of the questions array
+        const updatedQuestions = [...prevTest.questions];
+        // Create a copy of the answers array for the current question
+        const answers = updatedQuestions[questionIndex]?.answers || [];
 
-            if (!updatedAnswers[answerIndex]) {
-                updatedAnswers[answerIndex] = { answer: '', image: '', correct: false };
+        // Initialize answer object if it doesn't exist
+        if (!answers[answerIndex]) {
+            answers[answerIndex] = { answer: '', image: '', correct: false };
+        }
+
+        // Update the specific checkbox answer's correct property
+        answers[answerIndex].correct = checked;
+
+        // Update the answers for the question
+        updatedQuestions[questionIndex].answers = answers;
+
+        return { ...prevTest, questions: updatedQuestions };
+    });
+};
+
+
+const handleRadioChange = (e, questionIndex, answerIndex) => {
+    const { checked } = e.target;
+
+    setNewTest((prevTest) => {
+        // Create a copy of the questions array
+        const updatedQuestions = [...prevTest.questions];
+        // Create a copy of the answers array for the current question
+        const answers = updatedQuestions[questionIndex]?.answers || [];
+
+        // Initialize answer object if it doesn't exist
+        if (!answers[answerIndex]) {
+            answers[answerIndex] = { answer: '', image: '', correct: false };
+        }
+
+        // Set the selected answer's correct property
+        if (checked) {
+            // Find the index of the previously selected radio button (if any)
+            const previousSelectedIndex = answers.findIndex(answer => answer.correct);
+            if (previousSelectedIndex !== -1 && previousSelectedIndex !== answerIndex) {
+                answers[previousSelectedIndex].correct = false;
             }
+            answers[answerIndex].correct = true;
+        } else {
+            answers[answerIndex].correct = false;
+        }
 
-            const currentContentType = contentTypes[questionIndex];
-            
-            if (isCorrectField) {
-                updatedAnswers[answerIndex].correct = checked;
-            } else if (currentContentType === 'text') {
-                updatedAnswers[answerIndex].answer = value;
-            } else if (currentContentType === 'image' && files?.length > 0) {
-                (async () => {
-                    try {
-                        const file = files[0];
+        // Update the answers for the question
+        updatedQuestions[questionIndex].answers = answers;
 
-                        const tempImages = { ...localImages };
-                        tempImages[answerIndex] = file.name;
-                        setLocalImages(tempImages);
+        return { ...prevTest, questions: updatedQuestions };
+    });
+};
 
-                        if (updatedAnswers[answerIndex].image) {
-                            await deleteImg(extractFilePath(updatedAnswers[answerIndex].image));
-                        }
+const handleAnswerChange = async (e, questionIndex, answerIndex, isCorrectField = false, contentType) => {
+    const { value, files } = e.target;
 
-                        const path = await uploadAnswerImg(file);
-                        updatedAnswers[answerIndex].image = path;
-                    } catch (error) {
-                        console.error("Error uploading answer image:", error);
+    if (isCorrectField) {
+        if (e.target.type === 'checkbox') {
+            handleCheckboxChange(e, questionIndex, answerIndex);
+        } else if (e.target.type === 'radio') {
+            handleRadioChange(e, questionIndex, answerIndex);
+        }
+        return;
+    }
+
+    // Handle text and image changes
+    setNewTest((prevTest) => {
+        // Create a copy of the questions array
+        const updatedQuestions = [...prevTest.questions];
+        // Create a copy of the answers array for the current question
+        const answers = updatedQuestions[questionIndex]?.answers || [];
+
+        // Initialize answer object if it doesn't exist
+        if (!answers[answerIndex]) {
+            answers[answerIndex] = { answer: '', image: '', correct: false };
+        }
+
+        if (contentType === 'text') {
+            answers[answerIndex].answer = value;
+        } else if (contentType === 'image' && files?.length > 0) {
+            const file = files[0];
+
+            // Reset local image state for the specific answer
+            const tempImages = { ...localImages };
+            tempImages[questionIndex] = tempImages[questionIndex] || {};
+            tempImages[questionIndex][answerIndex] = URL.createObjectURL(file);
+            setLocalImages(tempImages);
+
+            (async () => {
+                try {
+                    // Delete previous image if it exists
+                    if (answers[answerIndex].image) {
+                        await deleteImg(extractFilePath(answers[answerIndex].image));
                     }
-                })();
-            }
 
-            updatedQuestions[questionIndex].answers = updatedAnswers;
-            return { ...prevTest, questions: updatedQuestions };
-        });
-    };
+                    // Upload new image and update state
+                    const path = await uploadAnswerImg(file);
+                    answers[answerIndex].image = path;
+                } catch (error) {
+                    console.error("Error uploading answer image:", error);
+                }
+            })();
+        }
 
+        // Update the answers for the question
+        updatedQuestions[questionIndex].answers = answers;
+
+        return { ...prevTest, questions: updatedQuestions };
+    });
+
+    // Reset the file input (optional)
+    e.target.value = '';
+};
 
 
 
