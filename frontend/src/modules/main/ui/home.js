@@ -1,5 +1,5 @@
 import { Box, Button, Grid, Typography } from "@mui/material";
-import logo from "../../../assets/images/home.svg";
+import logo from "../../../Assets/images/home.svg";
 import { theme } from '../../../common/utils/theme';
 import { useNavigate } from "react-router-dom";
 

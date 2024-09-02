@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 
 // svg
-import logo from "../../../assets/images/profile.svg";
+import logo from "../../../Assets/images/profile.svg";
 
 // icon
 import AccountBoxIcon from '@mui/icons-material/AccountBox';

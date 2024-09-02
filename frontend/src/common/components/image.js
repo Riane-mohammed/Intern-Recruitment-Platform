@@ -5,7 +5,7 @@ const ImageComponent = ({ imagePath, alt }) => {
 
     useEffect(() => {
         if (imagePath) {
-            setImageUrl(`./src/assets/${imagePath}`);
+            setImageUrl(`./src/Assets/${imagePath}`);
         }
     }, [imagePath]);
 

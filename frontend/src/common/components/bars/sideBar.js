@@ -2,7 +2,7 @@ import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/ma
 import { NavLink } from 'react-router-dom'
 
 //logo
-import logo from '../../../assets/images/logoPortNetWeb.png';
+import logo from '../../../Assets/images/logoPortNetWeb.png';
 
 //icon
 // import LogoutIcon from '@mui/icons-material/Logout';
