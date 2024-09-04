@@ -678,6 +678,7 @@ const handleAnswerChange = async (e, questionIndex, answerIndex, isCorrectField 
                                                                 size="small"
                                                                 type="number"
                                                                 sx={{ width: '100%' }}
+                                                                inputProps={{ min: 0 }}
                                                                 value={newTest.questions[activeQuestion]?.point || 0}
                                                                 onChange={(e) =>
                                                                     setNewTest((prevTest) => {

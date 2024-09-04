@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Box, IconButton, Checkbox, Typography, Button } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Box, IconButton, Checkbox, Typography, Button, Modal } from '@mui/material';
 
 // Components
 import Search from '../../../common/components/search';
@@ -8,21 +8,131 @@ import Search from '../../../common/components/search';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DisabledByDefaultRoundedIcon from '@mui/icons-material/DisabledByDefaultRounded';
+import FileUploadRoundedIcon from '@mui/icons-material/FileUploadRounded';
+import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
 
 // APIs
-import { deleteAdmins, getAllAdmins } from '../../../common/api/admin';
+import { deleteAdmins, downgradeAdmin, getAllAdmins, upgradeAdmin } from '../../../common/api/admin';
 import { useNavigate } from 'react-router-dom';
+
+const AlertModal = ({open, title, handleClose, color, icon, message, hendleConfirm }) => {
+
+    return (
+        <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+            >
+            <Box sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 500,
+                    bgcolor: 'background.paper',
+                    border: `2px solid ${color} `,
+                    borderRadius: 4,
+                    boxShadow: 24,
+                    p: 4,
+            }}>
+                <Typography
+                    id="modal-modal-title"
+                    variant="h6"
+                    component="div"
+                    display='flex'
+                    alignItems='center'>
+                    {icon}{title}
+                </Typography>
+                <Typography
+                    id="modal-modal-description"
+                    sx={{
+                        mt: 2,
+                        ml: 4
+                    }}>
+                        {message}
+                </Typography>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'end',
+                        mt: 2
+                    }}
+                >
+                    <Button
+                        variant='outlined'
+                        onClick={handleClose}
+                        sx={{
+                            mr: 2,
+                            color: color,
+                            borderColor: color,
+                            '&:hover': {
+                                borderColor: color,
+                            },
+                        }}
+                    >
+                        Annuler</Button>
+                    <Button
+                        variant='contained'
+                        onClick={hendleConfirm}
+                        sx={{
+                            bgcolor: color,
+                            '&:hover': {
+                                bgcolor: color,
+                            },
+                        }}>Confirmer</Button>
+                </Box>
+            </Box>
+        </Modal>
+    )
+}
 
 function Admins() {
     const navigate = useNavigate();
     
+    const [openUpgrade, setOpenUpgrade] = useState(false);
+    const [openDowngrade, setOpenDowngrade] = useState(false);
+
     const [admins, setAdmins] = useState([]);
+    const [selectedAdminId, setSelectedAdminId] = useState(null);
     const [page, setPage] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedRows, setSelectedRows] = useState([]);
     const [filteredAdmins, setFilteredAdmins] = useState([]);
 
     const rowsPerPage = 8;
+
+    const handleCloseUpgrade = () => setOpenUpgrade(false);
+    const handleCloseDowngrade = () => setOpenDowngrade(false);
+
+    const handleOpenUpgrade = (id) => {
+        setSelectedAdminId(id);
+        setOpenUpgrade(true);
+    }
+    const handleOpenDowngrade = (id) => {
+        setSelectedAdminId(id);
+        setOpenDowngrade(true);
+    }
+
+    const handleConfirmUpgrade = async () => {
+        try {
+            await upgradeAdmin(selectedAdminId);
+            getAdmins();
+        } catch (error) {
+            console.error("Failed to upgrade admin with id " + selectedAdminId + " : " , error);
+        }
+        handleCloseUpgrade();
+    }
+
+    const handleConfirmDowngrade = async () => {
+        try {
+            await downgradeAdmin(selectedAdminId);
+            getAdmins();
+        } catch (error) {
+            console.error("Failed to downgrade admin with id " + selectedAdminId + " : " , error);
+        }
+        handleCloseDowngrade();
+    }
 
     const getAdmins = async () => {
         try {
@@ -159,8 +269,9 @@ function Admins() {
                                     />
                                 </TableCell>
                                 <TableCell sx={{ fontWeight: 600 }}>Nom d'utilisateur</TableCell>
-                                <TableCell sx={{ fontWeight: 600 }}>Email</TableCell>
-                                <TableCell sx={{ fontWeight: 600 }}>Activé</TableCell>
+                                <TableCell sx={{ fontWeight: 600 }} >Email</TableCell>
+                                <TableCell sx={{ fontWeight: 600 }} align='center'>Super Administrateur</TableCell>
+                                <TableCell sx={{ fontWeight: 600 }} align='center'>Activé</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -184,7 +295,33 @@ function Admins() {
                                             </TableCell>
                                             <TableCell sx={{ py: 0 }}>{admin.username}</TableCell>
                                             <TableCell sx={{ py: 0 }}>{admin.email}</TableCell>
-                                            <TableCell sx={{ py: 0 }}>
+                                            <TableCell sx={{ py: 0 }} align='center'>
+                                                {admin.superAdmin ?
+                                                    <>
+                                                        <IconButton
+                                                            aria-label="super"
+                                                            disabled={admin.superAdmin}
+                                                        >
+                                                            <CheckBoxIcon color='green' />
+                                                        </IconButton>
+                                                        <IconButton
+                                                            aria-label="downgrade"
+                                                            onClick={() => handleOpenDowngrade(admin.id)}
+                                                        >
+                                                            <DownloadRoundedIcon align='red' />
+                                                        </IconButton>
+                                                    </>
+                                                    :
+                                                    <IconButton
+                                                        aria-label="upgrade"
+                                                        disabled={admin.superAdmin}
+                                                        onClick={() => handleOpenUpgrade(admin.id)}
+                                                    >
+                                                        <FileUploadRoundedIcon color='primary' />
+                                                    </IconButton>
+                                                }
+                                            </TableCell>
+                                            <TableCell sx={{ py: 0 }} align='center'>
                                                 <IconButton
                                                     aria-label="done"
                                                     disabled
@@ -204,6 +341,24 @@ function Admins() {
                     </Table>
                 </TableContainer>
             }
+            <AlertModal
+                open={openUpgrade}
+                title="Confirmer l'élévation de privilèges"
+                handleClose={handleCloseUpgrade}
+                color='red.main'
+                icon={<FileUploadRoundedIcon  color='red' sx={{ mr: 1 }} />}
+                message='Êtes-vous sûr de vouloir élever cet utilisateur au statut de Super Administrateur ?'
+                hendleConfirm={handleConfirmUpgrade} 
+                />
+            <AlertModal
+                open={openDowngrade}
+                title="Confirmer la rétrogradation"
+                handleClose={handleCloseDowngrade}
+                color='red.main'
+                icon={<DownloadRoundedIcon color='red' sx={{ mr: 1 }} />}
+                message='Êtes-vous sûr de vouloir rétrograder cet utilisateur du statut de Super Administrateur ?'
+                hendleConfirm={handleConfirmDowngrade} 
+                />
         </Box>
     );
 }

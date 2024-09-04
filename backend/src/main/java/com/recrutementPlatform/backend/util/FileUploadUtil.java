@@ -1,6 +1,7 @@
 package com.recrutementPlatform.backend.util;
 
-
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -10,11 +11,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+@Component
 public class FileUploadUtil {
 
-    private static final String BASE_UPLOAD_DIR = "C:/Users/user/Desktop/Intern Recruitment Platform/uploads/";
+    private final String BASE_UPLOAD_DIR;
 
-    public static String saveFile(MultipartFile file, String subFolder) throws IOException {
+    public FileUploadUtil(@Value("${file.upload-dir}") String uploadDir) {
+        this.BASE_UPLOAD_DIR = uploadDir;
+    }
+
+    public String saveFile(MultipartFile file, String subFolder) throws IOException {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("File is empty");
         }
@@ -22,8 +28,8 @@ public class FileUploadUtil {
         // Generate a unique filename
         String uniqueFilename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
 
-        // Define the subfolder path (e.g., "questions" or "answers")
-        Path uploadPath = Paths.get(BASE_UPLOAD_DIR + subFolder);
+        // Define the subfolder path
+        Path uploadPath = Paths.get(BASE_UPLOAD_DIR, subFolder);
         createDirectoryIfNotExists(uploadPath);
 
         // Save the file
@@ -34,13 +40,13 @@ public class FileUploadUtil {
         return "/files/" + subFolder + "/" + uniqueFilename;
     }
 
-    public static boolean deleteFile(String filePath) {
+    public boolean deleteFile(String filePath) {
         File file = new File(filePath);
         return file.delete();
     }
 
     // Function to create directory if it does not exist
-    private static void createDirectoryIfNotExists(Path path) throws IOException {
+    private void createDirectoryIfNotExists(Path path) throws IOException {
         if (!Files.exists(path)) {
             Files.createDirectories(path);
         }
