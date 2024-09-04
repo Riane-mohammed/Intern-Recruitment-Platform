@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import LoadingOverlay from '../../../common/components/loadingOverlay';
 
 //apis
-import { addAdmin, getAllUsernames } from '../../../common/api/admin';
+import { addAdmin, getAllEmails, getAllUsernames } from '../../../common/api/admin';
 
 //icons
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -24,28 +24,41 @@ function AddAdmin() {
 
     // States for error and success messages
     const [usernameError, setUsernameError] = useState('');
+    const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [success, setSuccess] = useState('');
 
     // States
     const [existingUsernames, setExistingUsernames] = useState([]);
+    const [existingEmails, setExistingEmails] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-        const fetchAndSetUsernames = async () => {
-            try {
-                const usernamesData = await getAllUsernames();
-                setExistingUsernames(usernamesData);
-            } catch (error) {
-                console.error("Failed to fetch usernames:", error);
-            }
-        };
+    const fetchAndSetUsernames = async () => {
+        try {
+            const usernamesData = await getAllUsernames();
+            setExistingUsernames(usernamesData);
+        } catch (error) {
+            console.error("Failed to fetch usernames:", error);
+        }
+    };
 
+    const fetchAndSetEmails = async () => {
+        try {
+            const emailsData = await getAllEmails();
+            setExistingEmails(emailsData);
+        } catch (error) {
+            console.error("Failed to fetch emails:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchAndSetEmails();
         fetchAndSetUsernames();
     }, []);
 
     const handleCreateAccount = async () => {
         setUsernameError('');
+        setEmailError('');
         setPasswordError('');
         setSuccess('');
 
@@ -57,6 +70,11 @@ function AddAdmin() {
 
         if (existingUsernames.includes(newUsername)) {
             setUsernameError("Le nom d'utilisateur est déjà pris.");
+            return;
+        }
+
+        if (existingEmails.includes(newEmail)) {
+            setEmailError("L'email d'utilisateur est déjà pris.");
             return;
         }
 
@@ -124,6 +142,8 @@ function AddAdmin() {
                             sx={{ maxWidth: 400 }}
                             value={newEmail}
                             onChange={(e) => setNewEmail(e.target.value)}
+                            error={!!emailError}
+                            helperText={emailError}
                         />
                         <TextField
                             label="Mot de passe"

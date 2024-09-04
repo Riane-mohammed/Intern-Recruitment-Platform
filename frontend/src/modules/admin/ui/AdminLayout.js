@@ -93,7 +93,7 @@ function AdminLayout() {
     ];
 
     const accountItems = [
-        ...(admin.id === 1 ? [{
+        ...(admin.superAdmin ? [{
             name: "Gestion des Administrateurs",
             icon: <AdminPanelSettingsIcon />,
             path: "/admin/gestion-administrateurs"

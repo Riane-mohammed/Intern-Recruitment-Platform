@@ -1,40 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Checkbox, CircularProgress, Grid, Radio, Typography } from "@mui/material";
+import { Box, Button, Checkbox, CircularProgress, Grid, Radio, Typography, Snackbar, Alert } from "@mui/material";
 import { useDispatch, useSelector } from 'react-redux';
 
-//actions
+// Actions
 import { increment, incrementQuestionNumber, setFinished, setQuestionNumber, setRemainingTime, setStarted, updatePoints } from '../../../../modules/quiz/actions/candidateActions';
 
-//helper functions
+// Helper functions
 import { formatTime } from '../../../utils/helpers';
 
-//apis 
+// APIs 
 import { assignQuiz, assignResult, hasPassed, hasResultSaved } from '../../../api/quiz';
 
 // Function to render answers based on the question type
 const renderAnswers = (question, selectedAnswers, handleAnswer) => {
-    switch (question.type) {
-        case 'MULTIPLE_CHOICE':
-            return question.answers.map((answer) => (
-                <Grid
-                    item xs={question.image ? 12 : 6}
-                    key={answer.id}
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        pt: '0 !important',
-                        pb: 1,
-                    }}
-                >
-                    <Box
-                        sx={{
-                            minWidth: '40%',
-                            maxHeight: '100px',
-                            display: 'flex',
-                            alignItems: 'center',
-                        }}
-                    >
+    const isMultipleChoice = question.type === 'MULTIPLE_CHOICE';
+    
+    return question.answers.map((answer) => (
+        <Grid
+            item
+            xs={question.image ? 12 : 6}
+            key={answer.id}
+            sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                pt: '0 !important',
+                pb: 1,
+            }}
+        >
+            <Box
+                sx={{
+                    minWidth: '40%',
+                    maxHeight: '100px',
+                    display: 'flex',
+                    alignItems: 'center',
+                }}
+            >
+                {isMultipleChoice ? (
+                    <>
                         <Checkbox
                             checked={selectedAnswers.includes(answer)}
                             onChange={handleAnswer(answer)}
@@ -54,62 +57,49 @@ const renderAnswers = (question, selectedAnswers, handleAnswer) => {
                         ) : (
                             answer.answer
                         )}
-                    </Box>
-                </Grid>
-            ));
-
-        default:
-            return question.answers.map((answer) => (
-                <Grid item xs={question.image ? 12 : 6} key={answer.id} >
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}
-                    >
+                    </>
+                ) : (
+                    <>
+                        <Radio
+                            checked={selectedAnswers.includes(answer)}
+                            onChange={handleAnswer(answer)}
+                        />
                         {answer.image ? (
-                            <>
-                                <Radio
-                                    checked={selectedAnswers.includes(answer)}
-                                    onChange={handleAnswer(answer)}
-                                />
-                                <Box
-                                    component="img"
-                                    src={answer.image}
-                                    alt="answer"
-                                    sx={{
-                                        maxWidth: '300px',
-                                        maxHeight: '100px',
-                                        objectFit: 'contain',
-                                        display: 'block'
-                                    }}
-                                />
-                            </>
+                            <Box
+                                component="img"
+                                src={answer.image}
+                                alt="answer"
+                                sx={{
+                                    maxWidth: '300px',
+                                    maxHeight: '100px',
+                                    objectFit: 'contain',
+                                    display: 'block'
+                                }}
+                            />
                         ) : (
-                            <Button variant='contained' color='secondary' sx={{ width: '75%' }} onClick={handleAnswer(answer)}>
-                                {answer.answer}
-                            </Button>
+                            answer.answer
                         )}
-                    </Box>
-                </Grid>
-            ));
-    }
+                    </>
+                )}
+            </Box>
+        </Grid>
+    ));
 };
 
 function TestPage({ test, time, quizLength }) {
-    const dispatch = useDispatch(); 
-    const questionNbr = useSelector(state => state.candidate.questionNbr) || 0; 
-    const currentPage = useSelector(state => state.candidate.currentPage); 
+    const dispatch = useDispatch();
+    const questionNbr = useSelector(state => state.candidate.questionNbr) || 0;
+    const currentPage = useSelector(state => state.candidate.currentPage);
     const email = useSelector(state => state.candidate.candidate.email);
     const quizId = useSelector(state => state.candidate.quiz.id);
     const quizResult = useSelector(state => state.candidate.quizResult);
     const remainingTime = useSelector(state => state.candidate.remainingTime) || time;
-    
+
     const [isAssigning, setIsAssigning] = useState(false);
     const [progress, setProgress] = useState(100);
-    const [selectedAnswers, setSelectedAnswers] = useState([]); 
-    const questionsLength = test.questions.length; 
+    const [selectedAnswers, setSelectedAnswers] = useState([]);
+    const [error, setError] = useState(''); // New state for error message
+    const questionsLength = test.questions.length;
 
     useEffect(() => {
         if (!remainingTime && time) {
@@ -117,39 +107,35 @@ function TestPage({ test, time, quizLength }) {
         }
     }, [time, remainingTime, dispatch]);
 
-
     const assign = async () => {
         if (isAssigning) return;
         setIsAssigning(true);
-            
+
         try {
-            // Check if the quiz has already been assigned to this candidate
             const alreadyAssigned = await hasPassed(email, quizId);
-            
+
             if (!alreadyAssigned) {
                 await assignQuiz(email, quizId);
 
                 try {
                     for (const [testId, score] of Object.entries(quizResult)) {
                         const resultDTO = {
-                            score: score,
-                            quizId: quizId,
+                            score,
+                            quizId,
                             testId: parseInt(testId),
                             candidateId: email
                         };
 
-                        const isTestSaved = await hasResultSaved(email, quizId, testId)
-                    
+                        const isTestSaved = await hasResultSaved(email, quizId, testId);
+
                         if (!isTestSaved) {
                             await assignResult(resultDTO);
                         }
-
                     }
                 } catch (error) {
                     console.error('Error assigning results:', error);
                 }
             }
-
         } catch (error) {
             console.error('Error:', error);
         }
@@ -174,20 +160,15 @@ function TestPage({ test, time, quizLength }) {
         }
     }, [remainingTime, dispatch, quizLength]);
 
-
-
-    // Effect to update the progress bar based on remaining time
     useEffect(() => {
-        setProgress(remainingTime * 100 / time);
+        setProgress((remainingTime * 100) / time);
     }, [remainingTime, time]);
 
     const currentQuestion = test.questions[questionNbr]; // Get the current question based on the question number
 
-    // Function to move to the next question
     const nextQuestion = () => {
         if (questionNbr === questionsLength - 1) {
             if (currentPage === quizLength) {
-                // Mark the quiz as finished if it's the last page
                 assign();
                 dispatch(setFinished(true));
             } else {
@@ -205,7 +186,6 @@ function TestPage({ test, time, quizLength }) {
         setSelectedAnswers([]); // Reset selected answers
     };
 
-    // Function to handle answer selection
     const handleAnswer = (answer) => () => {
         if (currentQuestion.type === 'MULTIPLE_CHOICE') {
             setSelectedAnswers(prev => {
@@ -216,16 +196,22 @@ function TestPage({ test, time, quizLength }) {
                 }
             });
         } else {
-            if (answer.correct) {
-                dispatch(updatePoints(test.id, currentQuestion.point)); // Update points for correct answer
-            } else {
-                dispatch(updatePoints(test.id, (currentQuestion.point / 2) * -1 )); // Deduct points for incorrect answer
-            }
-            setTimeout(nextQuestion, 0); // Move to the next question after current render cycle
+            setSelectedAnswers([answer]); // Single selection for radio buttons
         }
     };
 
-    // Function to handle submission of multiple choice answers
+    const handleSubmit = () => {
+        if (currentQuestion.type === 'MULTIPLE_CHOICE') {
+            handleSubmitMultipleChoice();
+        } else {
+            if (selectedAnswers.length === 0) {
+                setError('Veuillez sélectionner une réponse avant de soumettre.');
+                return;
+            }
+            handleSubmitRadioChoice();
+        }
+    };
+
     const handleSubmitMultipleChoice = () => {
         const correctAnswers = currentQuestion.answers.filter(answer => answer.correct);
         const selectedAnswerIds = selectedAnswers.map(answer => answer.id);
@@ -236,7 +222,7 @@ function TestPage({ test, time, quizLength }) {
 
         if (correctAnswers.length === 0) {
             if (selectedAnswers.length === 0) {
-                dispatch(updatePoints(test.id, currentQuestion.point)); 
+                dispatch(updatePoints(test.id, currentQuestion.point));
             } else {
                 dispatch(updatePoints(test.id, currentQuestion.point * -1));
             }
@@ -248,13 +234,28 @@ function TestPage({ test, time, quizLength }) {
         setTimeout(nextQuestion, 0);
     };
 
-    // Function to handle passing a question
-    const handlePass = () => {
+    const handleSubmitRadioChoice = () => {
+        const selectedAnswer = selectedAnswers[0];
+        if (selectedAnswer.correct) {
+            dispatch(updatePoints(test.id, currentQuestion.point));
+        } else {
+            dispatch(updatePoints(test.id, (currentQuestion.point / 2) * -1));
+        }
         setTimeout(nextQuestion, 0);
+    };
+
+    // New handler for passing a question
+    const handlePass = () => {
+        nextQuestion();
     };
 
     return (
         <Box>
+            <Snackbar open={Boolean(error)} autoHideDuration={6000} onClose={() => setError('')} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
+                    {error}
+                </Alert>
+            </Snackbar>
             <Box display="flex" alignItems="center" justifyContent="center" position="relative" pt={4}>
                 <CircularProgress
                     variant="determinate"
@@ -301,35 +302,39 @@ function TestPage({ test, time, quizLength }) {
                                     flexDirection: 'column',
                                     justifyContent: 'center',
                                     alignItems: 'center',
-                                    pt: currentQuestion.type !== 'BOOLEAN' ? '0 !important' : undefined,
-                                    pb: currentQuestion.type !== 'BOOLEAN' ? undefined : '25px !important',
+                                    p: 2,
                                 }}
                             >
-                                <Typography fontWeight={600} color='primary' gutterBottom>{currentQuestion.question}</Typography>
+                                <Typography variant="h6">{currentQuestion.question}</Typography>
                                 <Box
                                     component="img"
                                     src={currentQuestion.image}
-                                    alt="question-image"
+                                    alt="question"
                                     sx={{
-                                        width: '100%',
-                                        height: 'auto',
-                                        maxHeight: '400px',
-                                        objectFit: 'contain',
-                                        display: 'block',
-                                        margin: '0 auto',
+                                        maxWidth: '400px',
+                                        maxHeight: '300px',
+                                        objectFit: 'contain'
                                     }}
                                 />
                             </Grid>
-                            <Grid item xs={6} sx={{ py: '0 !important' }}>
-                                <Grid container spacing={4} sx={{ py: 5 }}>
+                            <Grid
+                                item
+                                xs={6}
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <Grid container spacing={1}>
                                     {renderAnswers(currentQuestion, selectedAnswers, handleAnswer)}
                                 </Grid>
                             </Grid>
                         </Grid>
-
                     </>
                     :
-                    <Box sx={{pt: 5}}>
+                    <Box sx={{ pt: 5 }}>
                         <Typography align='center' fontWeight={600}>
                             {currentQuestion.question}
                         </Typography>
@@ -342,17 +347,28 @@ function TestPage({ test, time, quizLength }) {
                     sx={{
                         display: 'flex',
                         justifyContent: 'center',
-                        alignItems: 'center',
-                        mb: 2 
+                        mt: 2,
+                        gap: 2, // Add spacing between buttons
                     }}
                 >
-                    {currentQuestion.type === 'MULTIPLE_CHOICE' && (
-                        <Button variant='contained' sx={{ width: '40%', mr: 2 }} onClick={handleSubmitMultipleChoice}>
-                            Submit
-                        </Button>
-                    )}
-                    <Button variant='contained' sx={{ width: '40%', backgroundColor: 'red', color: 'white'}} onClick={handlePass}>
-                        Pass
+                    {/* New Pass Button */}
+                    <Button
+                        variant="outlined"
+                        color="red"
+                        onClick={handlePass}
+                        sx={{ width: '40%' , mr: 2 }}
+                    >
+                        Passer
+                    </Button>
+
+                    {/* Existing Submit/Next Button */}
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSubmit}
+                        sx={{ width: '40%' }} 
+                    >
+                        {questionNbr === questionsLength - 1 ? 'Terminer' : 'Soumettre'}
                     </Button>
                 </Box>
             </Box>

@@ -11,6 +11,7 @@ import com.recrutementPlatform.backend.repository.passwordVerificationRepository
 import com.recrutementPlatform.backend.repository.verificationTokenRepository;
 import com.recrutementPlatform.backend.util.passwordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,9 @@ public class adminService {
 
     @Autowired
     private passwordVerificationRepository passwordVerificationRepo;
+
+    @Value("${app.base.url}")
+    private String baseUrl;
 
 
     public admin addAdmin(adminDTO adminDTO) {
@@ -60,8 +64,14 @@ public class adminService {
         tokenRepo.save(verificationToken);
 
         // Send verification email
-        String verificationUrl = "http://localhost:3000/Connexion/token=" + token;
-        emailService.sendMail(newAdmin.getEmail(), "Verify your email", "Please click the link to verify your email: " + verificationUrl);
+        String verificationUrl = baseUrl + "/Connexion/token=" + token;
+        emailService.sendMail(
+                newAdmin.getEmail(),
+                "Vérifiez votre adresse e-mail",
+                "Bonjour,\n\nVeuillez cliquer sur le lien suivant pour vérifier votre adresse e-mail : " + verificationUrl +
+                        ".\n\nSi vous n'avez pas demandé cette vérification, veuillez ignorer ce message.\n\nMerci de votre compréhension.\n\nCordialement,\nL'équipe de PORTNET"
+        );
+
 
         return newAdmin;
     }
@@ -69,6 +79,20 @@ public class adminService {
     public void activateAdmin(admin admin) {
         admin.setActive(true);
         adminRepo.save(admin);
+    }
+
+    public void upgradeAdmin(Long id) {
+        admin existingAdmin = adminRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Admin not found with id: " + id));
+        existingAdmin.setSuperAdmin(true);
+        adminRepo.save(existingAdmin);
+    }
+
+    public void downgradeAdmin(Long id) {
+        admin existingAdmin = adminRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Admin not found with id: " + id));
+        existingAdmin.setSuperAdmin(false);
+        adminRepo.save(existingAdmin);
     }
 
     public admin updatePassword(admin admin, String password){
@@ -131,9 +155,22 @@ public class adminService {
         passwordVerificationRepo.save(verificationToken);
 
         // Send recovery email
-        String recoveryUrl = "http://localhost:3000/Réinitialiser-Mot-Passe/token=" + token;
-        emailService.sendMail(admin.getEmail(), "Réinitialisation du mot de passe",
-                "Veuillez cliquer sur le lien suivant pour réinitialiser votre mot de passe : " + recoveryUrl);
+        String recoveryUrl = baseUrl + "/Réinitialiser-Mot-Passe/token=" + token;
+        emailService.sendMail(
+                admin.getEmail(),
+                "Réinitialisation de votre mot de passe",
+                "Bonjour " + admin.getUsername() + ",\n\n" +
+                        "Nous avons reçu une demande de réinitialisation de votre mot de passe. " +
+                        "Veuillez cliquer sur le lien ci-dessous pour définir un nouveau mot de passe :\n\n" +
+                        recoveryUrl + "\n\n" +
+                        "Ce lien est valable pendant 24 heures. Si vous n'avez pas demandé cette réinitialisation, " +
+                        "merci de bien vouloir ignorer cet email ou de contacter notre support.\n\n" +
+                        "Merci de votre confiance.\n\n" +
+                        "Cordialement,\n" +
+                        "L'équipe de [Votre Nom d'Entreprise]\n" +
+                        "[Site Web de l'Entreprise]\n" +
+                        "[Contact Support]"
+        );
 
         return admin;
     }
@@ -180,5 +217,9 @@ public class adminService {
 
     public List<String> getAllUsernames() {
         return adminRepo.findAllUsernames();
+    }
+
+    public List<String> getAllEmails() {
+        return adminRepo.findAllEmails();
     }
 }

@@ -32,47 +32,27 @@ function Dashboard() {
         <Box sx={{ pt: 2 }}>
             {/* cards */}
             <CardsDashboard />
-
-            <Grid container sx={{ minWidth: '100%', minHeight: 230, px: '20px', mt: 3 }}>
-                <Grid component={NavLink} to="/admin/Candidats" item xs={6} sx={{ display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>
-                    <Box sx={{
-                        width: '95%',
-                        maxHeight: '100%',
-                        p: 2,
-                        borderRadius: 3,
-                        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-                        backgroundColor: 'white',
-                        cursor: 'pointer',
-                        transition: 'background-color 0.3s ease',
-                        '&:hover': {
-                            backgroundColor: '#F4F9F9',
-                        },
-                    }}>
-                    </Box>
+            <Grid container sx={{ minWidth: '100%', minHeight: 255, px: '20px', mt: 3 }}>
+                <Grid item xs={6} sx={{ display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>
+                    <Grid container>
+                        {/* Pie */}
+                        <Grid component={NavLink} to="/admin/Options" item xs={6} sx={{ height: 255, display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>
+                            <BarChartDashboard />
+                        </Grid>
+                        {/* Doughnut */}
+                        <Grid component={NavLink} to="/admin/Quiz" item xs={6} sx={{ height: 255, display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>
+                            <DoughnutDashboard options={options} />
+                        </Grid>
+                    </Grid>
                 </Grid>
                 <Grid item xs={6} sx={{ display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>
                     <LastQuizCard />
                 </Grid>
             </Grid>
-
             <Grid container sx={{ minWidth: '100%', minHeight: 230, px: '20px', mt: 3 }}>
+                <Grid item xs={3}></Grid>
                 <Grid item xs={6} sx={{ display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>
                     <LineChartDashboard />
-                </Grid>
-                <Grid item xs={6} sx={{ display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>
-                    <Grid container>
-                        
-                        {/* Pie */}
-                        <Grid component={NavLink} to="/admin/Options" item xs={6} sx={{ height: 230, display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>
-                            <BarChartDashboard />
-                        </Grid>
-
-                        {/* Doughnut */}
-                        <Grid component={NavLink} to="/admin/Quiz" item xs={6} sx={{ height: 230, display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>
-                            <DoughnutDashboard options={options} />
-                        </Grid>
-
-                    </Grid>
                 </Grid>
             </Grid>
         </Box>

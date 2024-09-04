@@ -14,7 +14,7 @@ function AddModal({ open, handleClose, handleSave }) {
         question: '',
         image: '',
         type: '',
-        point: 2,
+        point: 0,
         answers: [
             {
                 answer: '',
@@ -175,6 +175,21 @@ function AddModal({ open, handleClose, handleSave }) {
     const handleSubmit = async () => {
         try {
             await addOrUpdateQuestion(formData);
+            setFormData({
+                id: null,
+                question: '',
+                image: '',
+                type: '',
+                point: 0,
+                answers: [
+                    {
+                        answer: '',
+                        correct: false,
+                        image: ''
+                    }
+                ],
+                testId: 1,
+            });
         } catch (error) {
             console.error("Error updating candidate:", error);
         }
@@ -381,6 +396,23 @@ function AddModal({ open, handleClose, handleSave }) {
                                 }}
                             />
                         }
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+                            <Typography fontWeight={500} width={80} mt={2}>Point</Typography>
+                            <TextField
+                                id={`point-${formData}`}
+                                variant="outlined"
+                                type="number"
+                                sx={{ width: '20%', mt: 2 }}
+                                size='small'
+                                inputProps={{ min: 0 }}
+                                value={formData.point || ''}
+                                onChange={(e) =>
+                                    setFormData((prevForm) => {
+                                        return { ...prevForm, point: parseInt(e.target.value, 10) };
+                                    })
+                                }
+                            />
+                        </Box>
                     </Grid>
                     <Grid item xs={6}>
                         <Typography fontWeight={500} width={200} sx={{ mr: 2 }}>Type des Réponses</Typography>

@@ -10,6 +10,7 @@ import com.recrutementPlatform.backend.repository.quizRepository;
 import com.recrutementPlatform.backend.repository.testRepository;
 import com.recrutementPlatform.backend.repository.tokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,9 @@ public class quizService {
 
     @Autowired
     private emailService emailService;
+
+    @Value("${app.base.url}")
+    private String baseUrl;
 
     public List<quiz> getAllQuizzes() {
         return quizRepo.findAll();
@@ -128,7 +132,7 @@ public class quizService {
 
 
     public String generateLink() {
-        return "http://localhost:3000/espace-quiz/token=";
+        return baseUrl + "/espace-quiz/token=";
     }
 
     public void sendTokenLink(String to, String link, int duration) {

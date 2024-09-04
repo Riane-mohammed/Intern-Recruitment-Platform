@@ -6,16 +6,25 @@ import {
 } from '@mui/material';
 import { Link, useParams } from 'react-router-dom';
 import { theme } from '../../../common/utils/theme';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { addOrUpdateTest, deleteImage, getAllLevels, getAllSections, getTestById, uploadAnswerImage, uploadQuestionImage } from '../../../common/api/admin';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import AddIcon from '@mui/icons-material/Add';
-import EditQuestionModal from '../../../common/components/adminComponents.js/tests/EditQuestionModal';
+
+//apis
+import { addOrUpdateTest, deleteImage, deleteQuestions, getAllLevels, getAllSections, getTestById, uploadAnswerImage, uploadQuestionImage } from '../../../common/api/admin';
+
+//helpers
 import { extractFilePath, truncateText } from '../../../common/utils/helpers';
+
+//components
 import AddQuestion from '../../../common/components/adminComponents.js/tests/addQuestion';
 import DataByIdNotFound from '../../../common/errorPages/dataByIdNotFound';
 import LoadingOverlay from '../../../common/components/loadingOverlay';
+import EditQuestionModal from '../../../common/components/adminComponents.js/tests/EditQuestionModal';
+
+//icons
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import AddIcon from '@mui/icons-material/Add';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 
 const RenderAnswers = ({ answerType, activeQuestion, handleAnswerChange, updatedTest, contentType, localImages, handleDeleteImage }) => {
     const question = updatedTest.questions[activeQuestion];
@@ -171,6 +180,7 @@ const ModifyTest = () => {
                 sectionId: testData.section.id,
                 levelId: testData.level.id,
                 questions: testData.questions.map((question) => ({
+                    id: question.id,
                     question: question.question,
                     image: question.image,
                     type: question.type,
@@ -472,6 +482,17 @@ const ModifyTest = () => {
         }
     };
 
+    const handleDelete = async () => {
+        try {
+            await deleteQuestions([test.questions[activeQuestion].id]);
+            if (id) {
+                fetchTest(id);
+            }
+        } catch (error) {
+            console.error("Failed to delete Questions:", error);
+        }
+    };
+
 
     if (!test && !isLoading) return <DataByIdNotFound name='Test' />;
 
@@ -584,6 +605,9 @@ const ModifyTest = () => {
 
                                 <IconButton aria-label="delete" onClick={handleOpenAddModal}>
                                     <AddIcon />
+                                </IconButton>
+                                <IconButton sx={{ width: '45px', height: '45px' }} onClick={handleDelete} aria-label="delete">
+                                    <DeleteRoundedIcon color='error' />
                                 </IconButton>
                             </Box>
                         
