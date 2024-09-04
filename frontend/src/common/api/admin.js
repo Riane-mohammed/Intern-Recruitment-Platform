@@ -9,12 +9,24 @@ export const updateAdmin = async (admin) => {
     return await apiRequest("api/admin/update", 'PUT', admin);
 };
 
+export const upgradeAdmin = async (id) => {
+    return await apiRequest(`api/admin/${id}/upgrade`, 'PUT');
+};
+
+export const downgradeAdmin = async (id) => {
+    return await apiRequest(`api/admin/${id}/downgrade`, 'PUT');
+};
+
 export const addAdmin = async (admin) => {
     return await apiRequest("api/admin/add", 'POST', admin);
 };
 
 export const getAllUsernames = async () => {
     return await apiRequest("api/admin/usernames");
+};
+
+export const getAllEmails = async () => {
+    return await apiRequest("api/admin/emails");
 };
 
 export const deleteAdmins = async (ids) => {

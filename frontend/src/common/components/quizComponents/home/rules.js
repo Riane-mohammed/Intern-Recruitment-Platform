@@ -1,6 +1,14 @@
 import { Box, Button, Typography } from '@mui/material'
+import { useSelector } from 'react-redux';
+import { formatTime } from '../../../utils/helpers';
 
 function Rules({ handleBackButton, handleStart }) {
+    const quiz = useSelector(state => state.candidate.quiz);
+
+    const testNames = quiz?.quizTests.map(quizTest => quizTest.test.title);
+    const totalQuestions = quiz?.quizTests.reduce((acc, quizTest) => acc + quizTest.test.questions.length, 0) || 0;
+    const globalTimeInMinutes = (totalQuestions * 20);
+    
     return (
         <Box
             sx={{
@@ -19,18 +27,24 @@ function Rules({ handleBackButton, handleStart }) {
                 </Typography>
             </Box>
             <Typography  component='div' mx='150px' fontFamily='poppins, Sora' >
-                Pour compléter votre candidature, vous devrez passer un test en ligne d'une durée de 15 minutes.
-                Ce test se divise en trois sections : <span style={{color: 'blue'}}>Calcul Mental</span>, <span style={{color: 'blue'}}>Psychologique</span> et<span style={{color: 'blue'}}>Technique</span> .
+                Pour compléter votre candidature, vous devrez passer un test en ligne d'une durée de {formatTime(globalTimeInMinutes)} minutes.
+                Ce test se divise en trois sections :
+                {testNames.map((name, index) => (
+                    <span key={index} style={{ color: 'blue' }}>
+                        {name}
+                        {index < testNames.length - 1 && ', '}
+                    </span>
+                ))}
                 <br/>
                 <br/>
-                Chaque section comprend 15 questions ne nécessitant aucune connaissance préalable spécifique. Vous pouvez passer à la question suivante si vous êtes bloqué ou si vous ne connaissez pas la réponse. Une réponse incorrecte entraînera une déduction d'un point.
+                Chaque section peut comprendre un nombre différent de questions. Vous pouvez passer à la question suivante si vous êtes bloqué ou si vous ne connaissez pas la réponse. Une réponse incorrecte entraînera une déduction d'un point.
                 <br/>
                 <br/>
                 <span style={{fontWeight: 'bold'}}>Important :</span> Plus vous répondez rapidement, plus vous accumulez de points.
                 <br/>
                 <br/>
                 <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-                    Bonne chance et que le meilleur gagne 🙏 ! 
+                    Bonne chance 🙏 ! 
                 </Box>
             </Typography>
             <Box
