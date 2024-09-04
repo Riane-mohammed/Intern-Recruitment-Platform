@@ -41,9 +41,32 @@ public class adminController {
         return adminService.getAllUsernames();
     }
 
+    @GetMapping("/emails")
+    public List<String> getAllEmails() {
+        return adminService.getAllEmails();
+    }
+
     @GetMapping("/all-admins")
     public List<admin> getAll() {
         return adminService.getAllAdmins();
+    }
+
+    @PutMapping("/{id}/upgrade")
+    public ResponseEntity<Map<String, Object>> upgradeAdmin(@PathVariable Long id){
+        adminService.upgradeAdmin(id);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Successfully upgrading Admin");
+        response.put("id", id);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}/downgrade")
+    public ResponseEntity<Map<String, Object>> downgradeAdmin(@PathVariable Long id){
+        adminService.downgradeAdmin(id);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Successfully downgrading Admin");
+        response.put("id", id);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/update")

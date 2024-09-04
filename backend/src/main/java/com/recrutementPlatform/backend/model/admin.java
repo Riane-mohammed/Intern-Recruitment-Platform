@@ -27,11 +27,15 @@ public class admin {
     @Column(nullable = false)
     private boolean active = false;
 
+    @Column(nullable = false)
+    private boolean superAdmin = false;
+
     //constructor
-    public admin(String username, String email, String password, boolean active) {
+    public admin(String username, String email, String password, boolean active, boolean superUser) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.active = active;
+        this.superAdmin = superUser;
     }
 }

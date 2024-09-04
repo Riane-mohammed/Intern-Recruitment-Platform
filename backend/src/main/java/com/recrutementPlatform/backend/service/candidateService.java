@@ -153,8 +153,8 @@ public class candidateService {
         verificationCodes.put(email, verificationCode);
 
         // Create email content
-        String subject = "Your Verification Code";
-        String text = "Your verification code is: " + code;
+        String subject = "Votre code de vérification";
+        String text = "Bonjour,\n\nVotre code de vérification est : " + code + ".\n\nCe code est valable pour une durée limitée. Si vous n'avez pas demandé ce code, veuillez ignorer ce message.\n\nMerci de votre confiance.\n\nCordialement,\nL'équipe de PORTNET";
 
         // Send the email
         emailService.sendMail(email, subject, text);

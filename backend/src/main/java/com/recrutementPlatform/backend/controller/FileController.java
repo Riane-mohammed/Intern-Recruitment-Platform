@@ -1,6 +1,7 @@
 package com.recrutementPlatform.backend.controller;
 
 import com.recrutementPlatform.backend.util.FileUploadUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +16,18 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:3000")
 public class FileController {
 
+    private final FileUploadUtil fileUploadUtil;
+    private final String uploadDir;
+
+    public FileController(FileUploadUtil fileUploadUtil, @Value("${file.upload-dir}") String uploadDir) {
+        this.fileUploadUtil = fileUploadUtil;
+        this.uploadDir = uploadDir;
+    }
+
     @PostMapping("/uploadQuestion")
     public ResponseEntity<Map<String, String>> uploadQuestionImage(@RequestParam("image") MultipartFile file) {
         try {
-            String fileUrl = FileUploadUtil.saveFile(file, "questions");
+            String fileUrl = fileUploadUtil.saveFile(file, "questions");
 
             // Create a JSON-like response
             Map<String, String> response = new HashMap<>();
@@ -34,7 +43,7 @@ public class FileController {
     @PostMapping("/uploadAnswer")
     public ResponseEntity<Map<String, String>> uploadAnswerImage(@RequestParam("image") MultipartFile file) {
         try {
-            String fileUrl = FileUploadUtil.saveFile(file, "answers");
+            String fileUrl = fileUploadUtil.saveFile(file, "answers");
 
             // Create a JSON-like response
             Map<String, String> response = new HashMap<>();
@@ -53,8 +62,8 @@ public class FileController {
 
         try {
             // Assuming the path is relative to the root directory of your application
-            String fullPath = "C:/Users/user/Desktop/Intern Recruitment Platform/uploads/" + filePath;
-            boolean isDeleted = FileUploadUtil.deleteFile(fullPath);
+            String fullPath = uploadDir + filePath;
+            boolean isDeleted = fileUploadUtil.deleteFile(fullPath);
 
             if (isDeleted) {
                 response.put("status", "success");
@@ -72,6 +81,4 @@ public class FileController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 }
-
